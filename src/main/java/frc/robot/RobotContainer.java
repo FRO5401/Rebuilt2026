@@ -4,11 +4,19 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Utils.FakePosition;
+import frc.robot.subsystems.Turret.Turret;
+import frc.robot.subsystems.Turret.TurretIO;
+import frc.robot.subsystems.Turret.TurretIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -17,6 +25,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  CommandXboxController controller = new CommandXboxController(0);
+
+
+
+  TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
+
+  FakePosition faker = new FakePosition();
+
+  Turret turret = new Turret(turretIO, faker::getPose);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -35,7 +53,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-   
+    controller.a().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(2, 2, new Rotation2d()))));
+    controller.b().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(1, 1, new Rotation2d()))));
+    controller.y().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(10, 1, new Rotation2d()))));
+
+
   }
 
   /**
