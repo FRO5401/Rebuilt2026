@@ -42,7 +42,7 @@ public final class Constants {
   public static final double KI = 0.0;
   public static final double KD = 0.0;
   
-  public static final double KP_SIM = 1000;
+  public static final double KP_SIM = 12;
   public static final double KI_SIM = 0.0;
   public static final double KD_SIM = 0.0;
 
