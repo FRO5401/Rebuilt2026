@@ -7,8 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,8 +25,6 @@ import frc.robot.subsystems.Turret.TurretIOSim;
 public class RobotContainer {
 
   CommandXboxController controller = new CommandXboxController(0);
-
-
 
   TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
 
@@ -56,6 +52,10 @@ public class RobotContainer {
     controller.a().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(2, 2, new Rotation2d()))));
     controller.b().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(1, 1, new Rotation2d()))));
     controller.y().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(10, 1, new Rotation2d()))));
+
+    controller.leftBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))));
+    controller.rightBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(11.9, 4, new Rotation2d()))));
+
 
 
   }

@@ -6,13 +6,10 @@ package frc.robot.subsystems.Turret;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -24,7 +21,6 @@ import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
 
 public class Turret extends SubsystemBase {
 
-  private final Field2d m_field = new Field2d();
   
   private final TurretIO io;
   TurretIOInputs inputs = new TurretIOInputs();
@@ -34,7 +30,7 @@ public class Turret extends SubsystemBase {
   : new PIDController(TurretConstants.KP_SIM, TurretConstants.KI_SIM, TurretConstants.KD_SIM); 
 
   //target on the field
-  Pose2d target = new Pose2d(4.5, 4, new Rotation2d());
+  Pose2d target;
 
   //I like having a supplier as the function already exists for auto and it makes the code cleaner. 
   Supplier<Pose2d> robotPose;
@@ -61,14 +57,14 @@ public class Turret extends SubsystemBase {
       poseDifference = robotPose.get().minus(target);
       setTurretAngle(Math.atan2(poseDifference.getY(), poseDifference.getX())+poseDifference.getRotation().getRadians()+Math.PI);
     } 
-    SmartDashboard.putNumber("Turret Angle", currentAngle-robotPose.get().getRotation().getRadians());
-    SmartDashboard.putData("Field", m_field);
+    
+    Logger.recordOutput("Turret Angle", currentAngle-robotPose.get().getRotation().getRadians());
+    
+    Logger.recordOutput("Robot Pose", robotPose.get());
 
-    m_field.setRobotPose(robotPose.get());
-
-    SmartDashboard.putNumber("MotorRotation", Units.rotationsToRadians(inputs.position));
-    SmartDashboard.putNumber("sim output", controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
-    SmartDashboard.putNumber("Inputs", inputs.voltage);
+    Logger.recordOutput("MotorRotation", Units.rotationsToRadians(inputs.position));
+    Logger.recordOutput("sim output", controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
+    Logger.recordOutput("Inputs", inputs.voltage);
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
   }
@@ -80,4 +76,6 @@ public class Turret extends SubsystemBase {
   public void setTarget(Pose2d target){
     this.target = target;
   }
+
+
 }
