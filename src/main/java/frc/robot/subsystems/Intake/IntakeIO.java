@@ -9,12 +9,14 @@ public interface IntakeIO {
         public double angle = 0;
         public double velocityRPS = 0;
 
+        public boolean isMasterConnected = false;
         public double masterTempCelcius = 0;
 
         public double masterAppliedVolts = 0;
         public double masterStatorCurrent = 0;
         public double masterSupplyCurrent = 0; 
 
+        public boolean isFollowerConnected = false;
         public double followerTempCelcius = 0;
 
         public double followerAppliedVolts = 0;
@@ -25,6 +27,8 @@ public interface IntakeIO {
 
     @AutoLog
     public static class InfeedIOInputs{
+        public boolean isConnected = false;
+        
         public double velocityRPS = 0;
 
         public double tempCelcius = 0;

@@ -27,6 +27,10 @@ public class IntakeIOTalonFX implements IntakeIO{
         infeedConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.INFEED_STATOR_LIMIT;
         infeedConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.INFEED_SUPPLY_LIMIT;
 
+        pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.PIVOT_GEAR_RATIO;
+        pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.PIVOT_STATOR_LIMIT;
+        pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.PIVOT_SUPPLY_LIMIT;
+
         infeed.getConfigurator().apply(infeedConfig);
         pivotMaster.getConfigurator().apply(pivotConfig);
         pivotFollower.getConfigurator().apply(pivotConfig);
