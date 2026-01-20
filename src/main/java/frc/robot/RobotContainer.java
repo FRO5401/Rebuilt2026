@@ -49,12 +49,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.a().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(2, 2, new Rotation2d()))));
+    controller.a().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(2, 2, new Rotation2d(35 )))));
     controller.b().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(1, 1, new Rotation2d()))));
     controller.y().onTrue(Commands.runOnce(()->faker.changePose(new Pose2d(10, 1, new Rotation2d()))));
 
     controller.leftBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))));
     controller.rightBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(11.9, 4, new Rotation2d()))));
+    controller.x().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(2, 2, new Rotation2d()))));
+
 
 
 

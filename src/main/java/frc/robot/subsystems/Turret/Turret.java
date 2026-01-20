@@ -7,6 +7,7 @@ package frc.robot.subsystems.Turret;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
+import org.opencv.core.Mat;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -56,15 +57,18 @@ public class Turret extends SubsystemBase {
     if(robotPose != null && target != null){
       poseDifference = robotPose.get().minus(target);
       setTurretAngle(Math.atan2(poseDifference.getY(), poseDifference.getX())+poseDifference.getRotation().getRadians()+Math.PI);
+      Logger.recordOutput("Current target",  target);
     } 
     
     Logger.recordOutput("Turret Angle", currentAngle-robotPose.get().getRotation().getRadians());
     
     Logger.recordOutput("Robot Pose", robotPose.get());
 
-    Logger.recordOutput("MotorRotation", Units.rotationsToRadians(inputs.position));
+    Logger.recordOutput("MotorRotation", Units.rotationsToRadians(inputs.position)-robotPose.get().getRotation().getRadians());
     Logger.recordOutput("sim output", controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
     Logger.recordOutput("Inputs", inputs.voltage);
+
+    
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
   }
