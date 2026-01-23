@@ -4,27 +4,22 @@
 
 package frc.robot.subsystems.Turret;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -90,6 +85,7 @@ public class Turret extends SubsystemBase {
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
         tof = MathHelp.findTOF(poseDifference);
+
         poseDifference = robotPose.get().minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
@@ -102,13 +98,14 @@ public class Turret extends SubsystemBase {
 
       Logger.recordOutput("Poses/Difference", poseDifference);
 
+      Logger.recordOutput("FlyWheel", MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(poseDifference)));
+
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
-
-    }
-
-    if (robotPose != null && target != null && fieldSpeedsSupplier.get() != null) {
+        
       updateFuel();
+
+
     }
 
     Logger.recordOutput("Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
@@ -116,7 +113,9 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Robot Pose", robotPose.get());
 
     Logger.recordOutput("MotorRotation",
-        Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRotations());
+        (inputs.position) - robotPose.get().getRotation().getRotations());
+
+    Logger.recordOutput("Motor", inputs.position);
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
 
@@ -138,8 +137,8 @@ public class Turret extends SubsystemBase {
     double xVel = horizontalVel * Math.cos(currentAngle - robotPose.get().getRotation().getRadians());
     double yVel = horizontalVel * Math.sin(currentAngle - robotPose.get().getRotation().getRadians());
 
-    xVel += fieldSpeeds.vxMetersPerSecond * tof.in(Seconds);
-    yVel += fieldSpeeds.vyMetersPerSecond * tof.in(Seconds);
+    xVel += fieldSpeeds.vxMetersPerSecond;
+    yVel += fieldSpeeds.vyMetersPerSecond;
 
     return new Translation3d(xVel, yVel, verticalVel);
   }
@@ -148,7 +147,7 @@ public class Turret extends SubsystemBase {
     Pose3d robot = new Pose3d(robotPose.get());
     Translation3d trajVel = launchVel(MathHelp.findFlyWheelVelocity(poseDifference));
     for (int i = 0; i < trajectory.length; i++) {
-      double t = i * 0.04;
+      double t = i * 0.08;
       double x = trajVel.getX() * t + robot.getTranslation().getX();
       double y = trajVel.getY() * t + robot.getTranslation().getY();
       double z = trajVel.getZ() * t

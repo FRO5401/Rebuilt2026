@@ -4,11 +4,12 @@ package frc.robot.Utils;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -21,7 +22,13 @@ public class MathHelp {
         double numerator = targetDistance.in(Meters)*Math.sqrt(9.8/(2*(Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians))*targetDistance.in(Meters)-MathConstants.HUB_HEIGHT.in(Meters))));
         double denominator = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians));
 
+
         return MetersPerSecond.of(numerator/denominator);
+    }
+
+    public static AngularVelocity findFlyWheelRPM(LinearVelocity flywheelVelocity){
+        //60 is for the seconds to minute, 3.82 
+        return RotationsPerSecond.of((60*flywheelVelocity.in(MetersPerSecond))/(Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
     }
 
     //Once again splitting up the math, this is the quadatric equation of height displacement formula to find the time of flight
@@ -29,7 +36,7 @@ public class MathHelp {
         double a = -4.9;
         double b = findFlyWheelVelocity(targDistance).in(MetersPerSecond) * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians));
         double c = -MathConstants.HUB_HEIGHT.in(Meters);
-        return Seconds.of((-b + Math.sqrt(Math.pow(b, 2)-(4*a*c)))/(2*a));
+        return Seconds.of((-b - Math.sqrt(Math.pow(b, 2)-(4*a*c)))/(2*a));
     }
 
     //*will find the hypotenuse/resultant of a pose */
