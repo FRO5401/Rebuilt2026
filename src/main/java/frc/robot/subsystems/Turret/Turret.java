@@ -61,7 +61,7 @@ public class Turret extends SubsystemBase {
   // The current angle the turret is set too
   double currentAngle = 0;
 
-  //TOF used for transforming the target
+  // TOF used for transforming the target
   Time tof;
 
   // Chassis speeds
@@ -85,10 +85,11 @@ public class Turret extends SubsystemBase {
       poseDifference = robotPose.get().minus(target);
       var robotVelocities = new Transform2d(
           fieldSpeedsSupplier.get().vxMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds),
-          fieldSpeedsSupplier.get().vyMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds), Rotation2d.kZero).times(1.1);
+          fieldSpeedsSupplier.get().vyMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds), Rotation2d.kZero)
+          .times(1.1);
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-        tof =  MathHelp.findTOF(poseDifference);
+        tof = MathHelp.findTOF(poseDifference);
         poseDifference = robotPose.get().minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
@@ -104,7 +105,6 @@ public class Turret extends SubsystemBase {
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
 
-      
     }
 
     if (robotPose != null && target != null && fieldSpeedsSupplier.get() != null) {
@@ -138,7 +138,7 @@ public class Turret extends SubsystemBase {
     double xVel = horizontalVel * Math.cos(currentAngle - robotPose.get().getRotation().getRadians());
     double yVel = horizontalVel * Math.sin(currentAngle - robotPose.get().getRotation().getRadians());
 
-    xVel += fieldSpeeds.vxMetersPerSecond * tof.in(Seconds) ;
+    xVel += fieldSpeeds.vxMetersPerSecond * tof.in(Seconds);
     yVel += fieldSpeeds.vyMetersPerSecond * tof.in(Seconds);
 
     return new Translation3d(xVel, yVel, verticalVel);
