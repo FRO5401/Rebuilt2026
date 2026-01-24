@@ -1,6 +1,5 @@
 package frc.robot.generated;
 
-import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;

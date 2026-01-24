@@ -110,7 +110,7 @@ public final class Constants {
   public static final class MathConstants {
 
     public static final Distance HUB_HEIGHT = Meters.of(1.83);
-    public static final Angle LAUNCH_ANGLE = Degrees.of(70);
+    public static final Angle LAUNCH_ANGLE = Degrees.of(75);
     public static final Distance FLY_WHEEL_DIAMETER = Inches.of(4);
 
   }

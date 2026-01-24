@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;

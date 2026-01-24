@@ -108,12 +108,14 @@ public class Turret extends SubsystemBase {
 
     }
 
+  
+
     Logger.recordOutput("Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
 
     Logger.recordOutput("Robot Pose", robotPose.get());
 
     Logger.recordOutput("MotorRotation",
-        (inputs.position) - robotPose.get().getRotation().getRotations());
+        Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
     Logger.recordOutput("Motor", inputs.position);
 
@@ -122,6 +124,9 @@ public class Turret extends SubsystemBase {
   }
 
   public void setTurretAngle(double angle) {
+    if (Double.isNaN(angle)){
+      return;
+    }
     currentAngle = angle;
   }
 
