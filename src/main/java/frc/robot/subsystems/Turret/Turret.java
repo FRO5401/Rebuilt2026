@@ -108,8 +108,6 @@ public class Turret extends SubsystemBase {
 
     }
 
-  
-
     Logger.recordOutput("Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
 
     Logger.recordOutput("Robot Pose", robotPose.get());
