@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldConstants.CurrentZone;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.MathHelp;
@@ -170,34 +172,22 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Trajectory", trajectory);
   }
 
-  Pose2d fieldLimits = new Pose2d(Inches.of(651.2), Inches.of(317.7), Rotation2d.kZero);
 
-  Pose2d blueZoneStart = new Pose2d(Inches.of(0), Inches.of(0), Rotation2d.kZero);
-  Pose2d blueZoneEnd = new Pose2d(Inches.of(158.6), Inches.of(317.7), Rotation2d.kZero);
 
-  Pose2d redZoneStart = new Pose2d(Inches.of(651.2), Inches.of(0), Rotation2d.kZero);
-  Pose2d redZoneEnd = new Pose2d(Inches.of(492.6), Inches.of(317.7), Rotation2d.kZero);
-
-  public enum CurrentZone{
-    RED,
-    BLUE,
-    NUETRAL,
-    OUTSIDE_BOUNDS
-  }
 
   public CurrentZone getCurrentZone(){
     Pose2d currentPose = robotPose.get();
-    if(blueZoneStart.getX()>currentPose.getX() 
-      || fieldLimits.getX()<currentPose.getX() 
-      || blueZoneStart.getY()>currentPose.getY()
-      || fieldLimits.getY()<currentPose.getY()
+    if(FieldConstants.blueZoneEnd.getX()>currentPose.getX() 
+      || FieldConstants.fieldLimits.getX()<currentPose.getX() 
+      || FieldConstants.blueZoneStart.getY()>currentPose.getY()
+      || FieldConstants.fieldLimits.getY()<currentPose.getY()
       ){
         return CurrentZone.OUTSIDE_BOUNDS;
       }
-    if(redZoneStart.getX() >= currentPose.getX() && currentPose.getX() >= redZoneEnd.getX()){
+    if(FieldConstants.redZoneStart.getX() >= currentPose.getX() && currentPose.getX() >= FieldConstants.redZoneEnd.getX()){
       return CurrentZone.RED;
 
-    } else if(blueZoneStart.getX() <= currentPose.getX() && currentPose.getX() <= blueZoneEnd.getX()){
+    } else if(FieldConstants.blueZoneStart.getX() <= currentPose.getX() && currentPose.getX() <= FieldConstants.blueZoneEnd.getX()){
       return CurrentZone.BLUE;
 
     } else {

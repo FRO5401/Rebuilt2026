@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -101,9 +102,9 @@ public final class Constants {
     Transform2d TURRET_TRANSFORM = new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(0));
 
     /**
-    *Used for number of iterations of the turret angle 
-    *
-    */
+     * Used for number of iterations of the turret angle
+     *
+     */
     public static int ITERATIONS = 20;
   }
 
@@ -159,4 +160,20 @@ public final class Constants {
     public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
   }
 
+  public static final class FieldConstants {
+    public static final Pose2d fieldLimits = new Pose2d(Inches.of(651.2), Inches.of(317.7), Rotation2d.kZero);
+
+    public static final Pose2d blueZoneStart = new Pose2d(Inches.of(0), Inches.of(0), Rotation2d.kZero);
+    public static final Pose2d blueZoneEnd = new Pose2d(Inches.of(158.6), Inches.of(317.7), Rotation2d.kZero);
+
+    public static final Pose2d redZoneStart = new Pose2d(Inches.of(651.2), Inches.of(0), Rotation2d.kZero);
+    public static final Pose2d redZoneEnd = new Pose2d(Inches.of(492.6), Inches.of(317.7), Rotation2d.kZero);
+
+    public enum CurrentZone {
+      RED,
+      BLUE,
+      NUETRAL,
+      OUTSIDE_BOUNDS
+    }
+  }
 }
