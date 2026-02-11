@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
-import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -46,6 +45,7 @@ public class RobotContainer {
             .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
             .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    @SuppressWarnings("unused")
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   Autos autos = new Autos(drivetrain, turret);
