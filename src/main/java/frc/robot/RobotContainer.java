@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+
+import org.littletonrobotics.junction.AutoLog;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,6 +38,7 @@ public class RobotContainer {
 
   TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
 
+  
   Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
 
       /* Setting up bindings for necessary control of the swerve drive platform */
@@ -46,10 +50,13 @@ public class RobotContainer {
 
   Autos autos = new Autos(drivetrain, turret);
 
+
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+  
   }
 
   /**
@@ -75,7 +82,6 @@ public class RobotContainer {
                         .withVelocityY(-controller.getLeftX() * Constants.Swerve.MaxSpeed)                                                                          
                         .withRotationalRate(
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
-                                //SwerveUtils.rotationPoint(new Rotation2d(-driver.getRightY(), -driver.getRightX()).getDegrees(), drivetrain.getYaw()) * Constants.Swerve.MaxAngularRate * elevator.getSpeedModifier()) 
                 .withDesaturateWheelSpeeds(true)));
 
   }
@@ -87,6 +93,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    return autos.testAuto().cmd();
+    return autos.testAuto().cmd().withName("Auto");
   }
 }

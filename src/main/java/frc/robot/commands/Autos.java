@@ -36,7 +36,7 @@ public class Autos {
             )
         );
 
-        testTraj.atTime("target").onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))));
+        testTraj.atTime("target").onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))).withName("target"));
 
         return routine;
     }

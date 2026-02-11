@@ -75,6 +75,10 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
 
+    if (getCurrentCommand() != null) {
+      Logger.recordOutput("Commands/Turret Command", getCurrentCommand().getName());
+    }
+
     if (robotPose != null && target != null) {
 
       poseDifference = robotPose.get().minus(target);
@@ -94,35 +98,32 @@ public class Turret extends SubsystemBase {
             Rotation2d.kZero);
       }
 
-      Logger.recordOutput("target", target.plus(robotVelocities.inverse()));
+      Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
-      Logger.recordOutput("Poses/Difference", poseDifference);
+      Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
 
-      Logger.recordOutput("FlyWheel", MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(poseDifference)));
+      Logger.recordOutput("Turret/FlyWheel", MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(poseDifference)));
 
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
-        
-      updateFuel();
 
+      updateFuel();
 
     }
 
-    Logger.recordOutput("Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
+    Logger.recordOutput("Turret/Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
 
-    Logger.recordOutput("Robot Pose", robotPose.get());
+    Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-    Logger.recordOutput("MotorRotation",
+    Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
-
-    Logger.recordOutput("Motor", inputs.position);
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
 
   }
 
   public void setTurretAngle(double angle) {
-    if (Double.isNaN(angle)){
+    if (Double.isNaN(angle)) {
       return;
     }
     currentAngle = angle;
