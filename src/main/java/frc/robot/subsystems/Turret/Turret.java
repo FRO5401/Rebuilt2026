@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
@@ -22,7 +24,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
@@ -120,6 +124,9 @@ public class Turret extends SubsystemBase {
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
 
+    Logger.recordOutput("Current Zone", getCurrentZone());
+    Logger.recordOutput("Is Shooting Zone", isShootingZone());
+
   }
 
   public void setTurretAngle(double angle) {
@@ -162,5 +169,51 @@ public class Turret extends SubsystemBase {
     }
     Logger.recordOutput("Turret/Trajectory", trajectory);
   }
+
+  Pose2d fieldLimits = new Pose2d(Inches.of(651.2), Inches.of(317.7), Rotation2d.kZero);
+
+  Pose2d blueZoneStart = new Pose2d(Inches.of(0), Inches.of(0), Rotation2d.kZero);
+  Pose2d blueZoneEnd = new Pose2d(Inches.of(158.6), Inches.of(317.7), Rotation2d.kZero);
+
+  Pose2d redZoneStart = new Pose2d(Inches.of(651.2), Inches.of(0), Rotation2d.kZero);
+  Pose2d redZoneEnd = new Pose2d(Inches.of(492.6), Inches.of(317.7), Rotation2d.kZero);
+
+  public enum CurrentZone{
+    RED,
+    BLUE,
+    NUETRAL,
+    OUTSIDE_BOUNDS
+  }
+
+  public CurrentZone getCurrentZone(){
+    Pose2d currentPose = robotPose.get();
+    if(blueZoneStart.getX()>currentPose.getX() 
+      || fieldLimits.getX()<currentPose.getX() 
+      || blueZoneStart.getY()>currentPose.getY()
+      || fieldLimits.getY()<currentPose.getY()
+      ){
+        return CurrentZone.OUTSIDE_BOUNDS;
+      }
+    if(redZoneStart.getX() >= currentPose.getX() && currentPose.getX() >= redZoneEnd.getX()){
+      return CurrentZone.RED;
+
+    } else if(blueZoneStart.getX() <= currentPose.getX() && currentPose.getX() <= blueZoneEnd.getX()){
+      return CurrentZone.BLUE;
+
+    } else {
+      return CurrentZone.NUETRAL;
+    }
+  }
+
+  public boolean isShootingZone(){
+    if(DriverStation.getAlliance().get().equals(Alliance.Blue)){
+      return getCurrentZone().equals(CurrentZone.BLUE);
+    } else {
+      return getCurrentZone().equals(CurrentZone.RED);
+    }
+
+  }
+
+  
 
 }
