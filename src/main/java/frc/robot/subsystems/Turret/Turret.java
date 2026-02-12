@@ -128,6 +128,7 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
     Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
+    Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
   }
 

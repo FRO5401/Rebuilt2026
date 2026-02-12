@@ -162,6 +162,12 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
+    /*
+     * Field dimensions:
+     * Width: 317.6 Inches
+     * Inches: 651.2 Inches
+     * Zones: 158.6 Inches from each wall
+     */
     public static final Rectangle2d fieldZone = new Rectangle2d(
       new Translation2d(), 
       new Translation2d(Inches.of(651.2), Inches.of(317.7))
@@ -170,6 +176,23 @@ public final class Constants {
       new Translation2d(), 
       new Translation2d(Inches.of(158.6), Inches.of(317.7))
     );
+    public static final Rectangle2d blueTrench = new Rectangle2d(
+      new Translation2d(Inches.of(158.6), Inches.of(0)), 
+      new Translation2d(Inches.of(205.6), Inches.of(317.7)) //  65.65 - 50.34 = 15.31 
+    );
+    public static final Rectangle2d blueTrenchBlock = new Rectangle2d(
+      new Translation2d(Inches.of(158.6), Inches.of(50.34)), 
+      new Translation2d(Inches.of(205.6), Inches.of(267.36))
+    ); 
+    public static final Rectangle2d blueBump = new Rectangle2d(
+      new Translation2d(Inches.of(158.6), Inches.of(65.65)), 
+      new Translation2d(Inches.of(205.6), Inches.of(251.05))
+    );
+    public static final Rectangle2d blueHub = new Rectangle2d(
+      new Translation2d(Inches.of(158.6), Inches.of(135.35)), 
+      new Translation2d(Inches.of(205.6), Inches.of(182.1)) 
+    );
+
     public static final Rectangle2d redZone = new Rectangle2d(
       new Translation2d(Inches.of(492.6), Inches.of(0)), 
       new Translation2d(Inches.of(651.2), Inches.of(317.7))
@@ -190,6 +213,7 @@ public final class Constants {
       BLUE_TRENCH,
       BLUE_BUMP,
       NUETRAL,
+      PHASING,
       OUTSIDE_BOUNDS
     }
   }

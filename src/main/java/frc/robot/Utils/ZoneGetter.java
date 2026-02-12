@@ -28,6 +28,33 @@ public class ZoneGetter {
     }
   }
 
+  public static CurrentZone getCurrentZoneSpecific(Pose2d robotPose){
+    if(!FieldConstants.fieldZone.contains(robotPose.getTranslation())){
+        return CurrentZone.OUTSIDE_BOUNDS;
+    }
+    if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+      return CurrentZone.RED;
+
+    } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
+      return CurrentZone.BLUE;
+
+    } else if(FieldConstants.blueHub.contains(robotPose.getTranslation())){
+      return CurrentZone.PHASING;
+
+    } else if(FieldConstants.blueBump.contains(robotPose.getTranslation())){
+      return CurrentZone.BLUE_BUMP;
+
+    }else if(FieldConstants.blueTrenchBlock.contains(robotPose.getTranslation())){
+      return CurrentZone.PHASING;
+
+    }else if(FieldConstants.blueTrench.contains(robotPose.getTranslation())){
+      return CurrentZone.BLUE_TRENCH;
+
+    }else {
+      return CurrentZone.NUETRAL;
+    }
+  }
+
   public static boolean isShootingZone(Pose2d robotPose){
     // Prevents simulation without driver station from erroring 
     if(DriverStation.getAlliance().isEmpty()){
