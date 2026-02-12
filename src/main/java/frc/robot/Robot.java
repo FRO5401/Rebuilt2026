@@ -88,7 +88,7 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
     Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
-    Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+    //Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
 
     Logger.recordOutput("Robot Pose", new Pose2d());
