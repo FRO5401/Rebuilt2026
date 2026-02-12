@@ -35,6 +35,21 @@ public class ZoneGetter {
     if(FieldConstants.redZone.contains(robotPose.getTranslation())){
       return CurrentZone.RED;
 
+    } else if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+      return CurrentZone.RED;
+
+    } else if(FieldConstants.redHub.contains(robotPose.getTranslation())){
+      return CurrentZone.PHASING;
+
+    } else if(FieldConstants.redBump.contains(robotPose.getTranslation())){
+      return CurrentZone.RED_BUMP;
+
+    } else if(FieldConstants.redTrenchBlock.contains(robotPose.getTranslation())){
+      return CurrentZone.PHASING;
+
+    } else if(FieldConstants.redTrench.contains(robotPose.getTranslation())){
+      return CurrentZone.RED_TRENCH;
+
     } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
       return CurrentZone.BLUE;
 

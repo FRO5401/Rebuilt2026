@@ -191,10 +191,25 @@ public final class Constants {
       new Translation2d(Inches.of(158.6), Inches.of(135.35)), 
       new Translation2d(Inches.of(205.6), Inches.of(182.1)) 
     );
-
     public static final Rectangle2d redZone = new Rectangle2d(
       new Translation2d(Inches.of(492.6), Inches.of(0)), 
       new Translation2d(Inches.of(651.2), Inches.of(317.7))
+    );
+    public static final Rectangle2d redTrench = new Rectangle2d(
+      new Translation2d(Inches.of(492.6), Inches.of(0)), 
+      new Translation2d(Inches.of(445.6), Inches.of(317.7)) 
+    );
+    public static final Rectangle2d redTrenchBlock = new Rectangle2d(
+      new Translation2d(Inches.of(492.6), Inches.of(50.34)), 
+      new Translation2d(Inches.of(445.6), Inches.of(267.36)) 
+    );
+    public static final Rectangle2d redBump = new Rectangle2d(
+      new Translation2d(Inches.of(492.6), Inches.of(65.65)), 
+      new Translation2d(Inches.of(445.6), Inches.of(251.05)) 
+    );
+    public static final Rectangle2d redHub = new Rectangle2d(
+      new Translation2d(Inches.of(492.6), Inches.of(135.35)), 
+      new Translation2d(Inches.of(445.6), Inches.of(182.1)) 
     );
 
     public enum CurrentZone {
