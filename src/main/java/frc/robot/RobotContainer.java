@@ -4,10 +4,24 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+
+
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.Autos;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Turret.Turret;
+import frc.robot.subsystems.Turret.TurretIO;
+import frc.robot.subsystems.Turret.TurretIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -17,11 +31,32 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
+  CommandXboxController controller = new CommandXboxController(0);
+
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
+
+  
+  Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+
+      /* Setting up bindings for necessary control of the swerve drive platform */
+    public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    @SuppressWarnings("unused")
+    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+  Autos autos = new Autos(drivetrain, turret);
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+  
   }
 
   /**
@@ -34,7 +69,21 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-   
+    controller.leftBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))));
+    controller.rightBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(11.9, 4, new Rotation2d()))));
+    controller.x().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(2, 2, new Rotation2d()))));
+
+
+
+    drivetrain.setDefaultCommand(
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX(-controller.getLeftY() * Constants.Swerve.MaxSpeed) 
+                        .withVelocityY(-controller.getLeftX() * Constants.Swerve.MaxSpeed)                                                                          
+                        .withRotationalRate(
+                                -controller.getRightX() * Constants.Swerve.MaxAngularRate)
+                .withDesaturateWheelSpeeds(true)));
+
   }
 
   /**
@@ -44,6 +93,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     
-    return Commands.print("oops");
+    return autos.testAuto().cmd().withName("Auto");
   }
 }
