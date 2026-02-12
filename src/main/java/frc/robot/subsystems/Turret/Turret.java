@@ -118,8 +118,6 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-    Logger.recordOutput("Poses/Turret Trans", robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
-
     Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
