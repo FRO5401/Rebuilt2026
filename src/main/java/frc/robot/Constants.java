@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -161,6 +162,18 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
+    public static final Rectangle2d fieldZone = new Rectangle2d(
+      new Translation2d(), 
+      new Translation2d(Inches.of(651.2), Inches.of(317.7))
+    );
+    public static final Rectangle2d blueZone = new Rectangle2d(
+      new Translation2d(), 
+      new Translation2d(Inches.of(158.6), Inches.of(317.7))
+    );
+    public static final Rectangle2d redZone = new Rectangle2d(
+      new Translation2d(Inches.of(492.6), Inches.of(0)), 
+      new Translation2d(Inches.of(651.2), Inches.of(317.7))
+    );
     public static final Pose2d fieldLimits = new Pose2d(Inches.of(651.2), Inches.of(317.7), Rotation2d.kZero);
 
     public static final Pose2d blueZoneStart = new Pose2d(Inches.of(0), Inches.of(0), Rotation2d.kZero);
@@ -171,7 +184,11 @@ public final class Constants {
 
     public enum CurrentZone {
       RED,
+      RED_TRENCH,
+      RED_BUMP,
       BLUE,
+      BLUE_TRENCH,
+      BLUE_BUMP,
       NUETRAL,
       OUTSIDE_BOUNDS
     }

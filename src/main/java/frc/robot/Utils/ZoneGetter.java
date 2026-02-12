@@ -14,17 +14,13 @@ import frc.robot.Constants.FieldConstants.CurrentZone;
 public class ZoneGetter {
     
   public static CurrentZone getCurrentZone(Pose2d robotPose){
-    if(FieldConstants.blueZoneStart.getX()>robotPose.getX() 
-      || FieldConstants.fieldLimits.getX()<robotPose.getX() 
-      || FieldConstants.blueZoneStart.getY()>robotPose.getY()
-      || FieldConstants.fieldLimits.getY()<robotPose.getY()
-      ){
+    if(!FieldConstants.fieldZone.contains(robotPose.getTranslation())){
         return CurrentZone.OUTSIDE_BOUNDS;
-      }
-    if(FieldConstants.redZoneStart.getX() >= robotPose.getX() && robotPose.getX() >= FieldConstants.redZoneEnd.getX()){
+    }
+    if(FieldConstants.redZone.contains(robotPose.getTranslation())){
       return CurrentZone.RED;
 
-    } else if(FieldConstants.blueZoneStart.getX() <= robotPose.getX() && robotPose.getX() <= FieldConstants.blueZoneEnd.getX()){
+    } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
       return CurrentZone.BLUE;
 
     } else {
@@ -33,6 +29,10 @@ public class ZoneGetter {
   }
 
   public static boolean isShootingZone(Pose2d robotPose){
+    // Prevents simulation without driver station from erroring 
+    if(DriverStation.getAlliance().isEmpty()){
+      return getCurrentZone(robotPose).equals(CurrentZone.RED);
+    } 
     if(DriverStation.getAlliance().get().equals(Alliance.Blue)){ 
       return getCurrentZone(robotPose).equals(CurrentZone.BLUE);
     } else {
