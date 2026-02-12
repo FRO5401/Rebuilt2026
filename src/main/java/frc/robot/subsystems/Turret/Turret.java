@@ -167,9 +167,4 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Trajectory", trajectory);
   }
 
-
-
-
-  
-
 }
