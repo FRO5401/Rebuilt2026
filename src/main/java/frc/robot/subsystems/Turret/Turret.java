@@ -88,7 +88,7 @@ public class Turret extends SubsystemBase {
       var robotVelocities = new Transform2d(
           fieldSpeedsSupplier.get().vxMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds),
           fieldSpeedsSupplier.get().vyMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds), Rotation2d.kZero)
-          .times(1.1);
+          .times(1);
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
         tof = MathHelp.findTOF(poseDifference);
