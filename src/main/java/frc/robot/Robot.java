@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -18,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * the TimedRobot documentation. If you change the name of this class or the package after creating
  * this project, you must also update the Main.java file in the project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -28,6 +30,10 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   public Robot() {
+    Logger.recordMetadata("Rebuilt2026", "TurretTest");
+    Logger.addDataReceiver(new NT4Publisher());
+    Logger.start();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -42,21 +48,22 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
+    Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+    Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+
+
+    Logger.recordOutput("Robot Pose", new Pose2d());
+    Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
+    Logger.recordOutput("Final Pose", new Pose3d[] {
+      intake, indexer, turret
+    });
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    Pose3d intake = new Pose3d(0, 0, 0, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
-    Pose3d indexer = new Pose3d(0, 0, 0, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
-    Pose3d turret = new Pose3d(0, 0, 0, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
-
-    Logger.recordOutput("Robot Pose", new Pose3d());
-    Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
-    Logger.recordOutput("Final Pose", new Pose3d[] {
-      intake, indexer, turret
-    });
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
