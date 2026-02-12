@@ -13,9 +13,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -41,7 +38,7 @@ public class Robot extends LoggedRobot {
    */
   public Robot() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    Logger.recordMetadata("Rebuilt2026", "TurretTest"); // Set a metadata value
+    Logger.recordMetadata("Rebuilt2026","TurretTest"); // Set a metadata value
 
     switch (Constants.currentMode) {
       case REAL:
@@ -97,7 +94,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Robot Pose", new Pose2d());
     Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
     Logger.recordOutput("Final Pose", new Pose3d[] {
-      intake, indexer, turret
+      intake, indexer
     });
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
