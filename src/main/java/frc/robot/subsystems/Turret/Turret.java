@@ -93,7 +93,7 @@ public class Turret extends SubsystemBase {
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
         tof = MathHelp.findTOF(poseDifference);
 
-        poseDifference = robotPose.get().minus(target.plus(robotVelocities.inverse()));
+        poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM).minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
             fieldSpeedsSupplier.get().vxMetersPerSecond * tof.in(Seconds),
@@ -118,10 +118,12 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
+    Logger.recordOutput("Poses/Turret Trans", robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
+
     Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
-    Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians())));
+    Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position)  - robotPose.get().getRotation().getRadians())));
 
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
@@ -159,7 +161,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void updateFuel() {
-    Pose3d robot = new Pose3d(robotPose.get());
+    Pose3d robot = new Pose3d(robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
     Translation3d trajVel = launchVel(MathHelp.findFlyWheelVelocity(poseDifference));
     for (int i = 0; i < trajectory.length; i++) {
       double t = i * 0.08;
@@ -169,7 +171,7 @@ public class Turret extends SubsystemBase {
           - 0.5 * 9.81 * t * t
           + robot.getTranslation().getZ();
 
-      trajectory[i] = new Translation3d(x, y, z);
+      trajectory[i] = new Translation3d(x, y, z+0.345);
     }
     Logger.recordOutput("Turret/Trajectory", trajectory);
   }

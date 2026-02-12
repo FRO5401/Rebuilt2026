@@ -99,7 +99,7 @@ public final class Constants {
      * The transform of the center of the robot to the position of the turret
      * This is used to calculate the required velocity of the shot
      */
-    Transform2d TURRET_TRANSFORM = new Transform2d(Inches.of(0), Inches.of(0), new Rotation2d(0));
+    public static final Transform2d TURRET_TRANSFORM = new Transform2d(-0.15, 0, new Rotation2d(0));
 
     /**
      * Used for number of iterations of the turret angle
