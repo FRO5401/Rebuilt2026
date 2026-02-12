@@ -4,6 +4,14 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -32,6 +40,7 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     Logger.recordMetadata("Rebuilt2026", "TurretTest"); // Set a metadata value
 
     switch (Constants.currentMode) {
@@ -80,15 +89,22 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
+    Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
+    Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+    Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+
+
+    Logger.recordOutput("Robot Pose", new Pose2d());
+    Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
+    Logger.recordOutput("Final Pose", new Pose3d[] {
+      intake, indexer, turret
+    });
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
