@@ -91,7 +91,6 @@ public class Robot extends LoggedRobot {
     //Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
 
-    Logger.recordOutput("Robot Pose", new Pose2d());
     Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
     Logger.recordOutput("Final Pose", new Pose3d[] {
       intake, indexer

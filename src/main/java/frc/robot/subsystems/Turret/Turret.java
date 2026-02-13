@@ -66,6 +66,7 @@ public class Turret extends SubsystemBase {
 
   public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
     controller.enableContinuousInput(0, 1);
+    
     this.fieldSpeedsSupplier = fieldSpeedsSupplier;
 
     this.io = io;
@@ -117,10 +118,12 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
+    Logger.recordOutput("Turret Position", Units.rotationsToRadians(inputs.position));
+
     Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
-    Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position)  - robotPose.get().getRotation().getRadians())));
+    Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
 
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
@@ -149,8 +152,8 @@ public class Turret extends SubsystemBase {
 
     double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
-    double xVel = horizontalVel * Math.cos(currentAngle - robotPose.get().getRotation().getRadians());
-    double yVel = horizontalVel * Math.sin(currentAngle - robotPose.get().getRotation().getRadians());
+    double xVel = horizontalVel * Math.cos(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
+    double yVel = horizontalVel * Math.sin(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
     xVel += fieldSpeeds.vxMetersPerSecond;
     yVel += fieldSpeeds.vyMetersPerSecond;

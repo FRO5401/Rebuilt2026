@@ -58,7 +58,7 @@
                 },
                 {
                     "axis" : "z",
-                    "degrees" : -10
+                    "degrees" : 0
                 },
                 {"axis" : "y",
                  "degrees" : 0
