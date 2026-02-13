@@ -108,6 +108,21 @@ public final class Constants {
     public static int ITERATIONS = 20;
   }
 
+  public static final class ShooterConstants {
+    public static final int MOTOR_ID = 0;
+    public static final double GEAR_RATIO = 0;
+
+    public static final double KP = 0.5;
+    public static final double KI = 0.0;
+    public static final double KD = 0.0;
+
+    
+    public static final double KP_SIM = 100;
+    public static final double KI_SIM = 0.0;
+    public static final double KD_SIM = 0;
+
+  }
+
   public static final class MathConstants {
 
     public static final Distance HUB_HEIGHT = Meters.of(1.83);
