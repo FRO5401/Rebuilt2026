@@ -4,10 +4,12 @@
 
 package frc.robot.subsystems.Shooter;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.RobotBase;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
@@ -17,31 +19,56 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   ShooterIOInputs inputs = new ShooterIOInputs();
 
-  // Checks if the robot is real or fake, and uses the correct PID controller
-  PIDController controller = RobotBase.isReal()
-      ? new PIDController(ShooterConstants.KP, ShooterConstants.KI, ShooterConstants.KD)
-      : new PIDController(ShooterConstants.KP_SIM, ShooterConstants.KI_SIM, ShooterConstants.KD_SIM);
+  double num =0;
 
-  TalonFX motor;
+  //SmartDashBoard Tuning
+  double kP;
+  double kI;
+  double kD;
 
   public Shooter(ShooterIO io) {
-    controller.enableContinuousInput(0, 1);
-    motor = new TalonFX(ShooterConstants.MOTOR_ID);
     this.io = io;
+
+    kP = ShooterConstants.KP_SIM;
+    kI = ShooterConstants.KI_SIM;
+    kD = ShooterConstants.KD_SIM;
+
+    SmartDashboard.putNumber("P Gain", kP);
+    SmartDashboard.putNumber("I Gain", kI);
+    SmartDashboard.putNumber("D Gain", kD);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
     io.updateInputs(inputs);
-    io.applyVoltage(controller.calculate(inputs.voltage));
+
+    Logger.recordOutput("Shooter velocity", inputs.velocity);
+    Logger.recordOutput("Left Trigger x Max Velocity??", num/ ShooterConstants.GEAR_RATIO);
     
-    setVelocity(inputs.velocity);
-  
+    Logger.recordOutput("P Gain", ShooterConstants.KP_SIM);
+    Logger.recordOutput("I Gain", ShooterConstants.KI_SIM);
+    Logger.recordOutput("D Gain", ShooterConstants.KD_SIM);
+    
+    /*  PID Tuning */
+    //    Gets Values from SmartDashBoard
+    double p = SmartDashboard.getNumber("P Gain", 0);
+    double i = SmartDashboard.getNumber("I Gain", 0);
+    double d = SmartDashboard.getNumber("D Gain", 0);
+
+    //  If the Value Changes Update the PID Values
+    if((p != kP)) { ShooterConstants.KP_SIM = p; kP = p; }
+    if((i != kI)) { ShooterConstants.KI_SIM = i; kI = i; }
+    if((d != kD)) { ShooterConstants.KD_SIM = d; kD = d; }
+    
+
   }
 
-  public void setVelocity(double vel){
-    motor.set(vel);
+  public Command setVelocity(DoubleSupplier vel){
+    return run(()->{
+      io.setVelocity(vel.getAsDouble(), inputs);
+      num = vel.getAsDouble();
+    });
   }
+
 }

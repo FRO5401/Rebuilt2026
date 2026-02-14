@@ -14,7 +14,7 @@ public interface ShooterIO {
 
     public default void applyVoltage(double voltage){};
 
-    public default void setVelocity(double velocity){};
+    public default void setVelocity(double velocity, ShooterIOInputs inputs){};
 
     public default void stop(){};
 
