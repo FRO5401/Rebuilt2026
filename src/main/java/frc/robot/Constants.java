@@ -4,6 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -56,7 +62,7 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
-
+  public static boolean isTuningMode = true;
   public static final class TurretConstants {
 
     public static final Current STATOR_LIMIT = Amps.of(120);

@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
@@ -40,8 +42,6 @@ import frc.robot.Utils.MathHelp;
  */
 public class RobotContainer {
 
-  CommandXboxController controller = new CommandXboxController(0);
-
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
@@ -61,11 +61,13 @@ public class RobotContainer {
 
   Autos autos = new Autos(drivetrain, turret);
 
-
+  Intake intake = new Intake(new IntakeIOSim());
+  CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
     configureBindings();
   
   }
@@ -94,7 +96,9 @@ public class RobotContainer {
                         .withRotationalRate(
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
-    
+    controller.a().onTrue(Commands.runOnce(()->intake.setPivotPosition(90), intake));
+   controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
+   controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
   }
 
   /**
