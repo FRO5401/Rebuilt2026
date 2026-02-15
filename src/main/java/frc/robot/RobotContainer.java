@@ -16,9 +16,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterIO;
+import frc.robot.subsystems.Shooter.ShooterIOSim;
 import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIO;
 import frc.robot.subsystems.Turret.TurretIOSim;
@@ -36,9 +40,11 @@ public class RobotContainer {
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
-
-  
   Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+
+  ShooterIO shooterIO = RobotBase.isReal() ? null : new ShooterIOSim();
+  Shooter shooter = new Shooter(shooterIO);
+
 
       /* Setting up bindings for necessary control of the swerve drive platform */
     public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -81,7 +87,11 @@ public class RobotContainer {
                         .withRotationalRate(
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
+    
 
+    shooter.setDefaultCommand( 
+      shooter.setVelocity(()->(controller.getLeftTriggerAxis() * ShooterConstants.MAX_VELOCITY))
+    );
   }
 
   /**
