@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -16,11 +18,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
+  Intake intake = new Intake(new IntakeIOSim());
+  CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
     configureBindings();
   }
 
@@ -34,7 +38,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-   
+   controller.a().onTrue(Commands.runOnce(()->intake.setPivotPosition(90), intake));
+   controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
+   controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
   }
 
   /**

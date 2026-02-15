@@ -39,32 +39,30 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs){
         pivotInputs.angle = pivotMaster.getPosition().getValueAsDouble();
-        pivotInputs.velocityRPS = pivotMaster.getVelocity().getValueAsDouble();
+        pivotInputs.velocity = pivotMaster.getVelocity().getValueAsDouble();
 
-        pivotInputs.masterTempCelcius = pivotMaster.getDeviceTemp().getValueAsDouble();
-        pivotInputs.masterAppliedVolts = pivotMaster.getMotorVoltage().getValueAsDouble();
-        pivotInputs.masterSupplyCurrent = pivotMaster.getSupplyCurrent().getValueAsDouble();
-        pivotInputs.masterStatorCurrent = pivotMaster.getStatorCurrent().getValueAsDouble();
+        pivotInputs.temperature = pivotMaster.getDeviceTemp().getValueAsDouble();
+        pivotInputs.voltage = pivotMaster.getMotorVoltage().getValueAsDouble();
+        pivotInputs.current = pivotMaster.getSupplyCurrent().getValueAsDouble();
 
-        pivotInputs.followerTempCelcius = pivotFollower.getDeviceTemp().getValueAsDouble();
-        pivotInputs.followerAppliedVolts = pivotFollower.getMotorVoltage().getValueAsDouble();
-        pivotInputs.followerSupplyCurrent = pivotFollower.getSupplyCurrent().getValueAsDouble();
-        pivotInputs.followerStatorCurrent = pivotFollower.getStatorCurrent().getValueAsDouble();
+        pivotInputs.followerTemperature = pivotFollower.getDeviceTemp().getValueAsDouble();
+        pivotInputs.followerVoltage = pivotFollower.getMotorVoltage().getValueAsDouble();
+        pivotInputs.followerCurrent = pivotFollower.getSupplyCurrent().getValueAsDouble();
 
-        infeedInputs.velocityRPS = infeed.getVelocity().getValueAsDouble();
-        infeedInputs.tempCelcius = infeed.getDeviceTemp().getValueAsDouble();
-        infeedInputs.appliedVolts = infeed.getMotorVoltage().getValueAsDouble();
-        infeedInputs.supplyCurrent = infeed.getSupplyCurrent().getValueAsDouble();
-        infeedInputs.statorCurrent = infeed.getStatorCurrent().getValueAsDouble();
+        infeedInputs.velocity = infeed.getVelocity().getValueAsDouble();
+        infeedInputs.temperature = infeed.getDeviceTemp().getValueAsDouble();
+        infeedInputs.voltage = infeed.getMotorVoltage().getValueAsDouble();
+        infeedInputs.current = infeed.getSupplyCurrent().getValueAsDouble();
     }
+    
     @Override
     public void setPivotPosition(double angle){
         pivotMaster.setControl(pivotPositionRequest.withPosition(angle));
     }
 
     @Override
-    public void setInfeedVelocity(double velocity){
-        infeed.set(velocity);
+    public void setInfeedVelocity(double percent){
+        infeed.set(percent);
     }
 
     @Override

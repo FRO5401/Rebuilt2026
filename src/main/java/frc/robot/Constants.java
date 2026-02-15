@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -27,4 +28,5 @@ public final class Constants {
     
         REPLAY
     }
+    public static boolean isTuningMode = true;
 }
