@@ -80,6 +80,27 @@ public class ZoneGetter {
     } else {
       return getCurrentZone(robotPose).equals(CurrentZone.RED);
     }
+  }
+
+  public static Pose2d getShootingTarget(Pose2d robotPose){
+    if(DriverStation.getAlliance().isEmpty()){
+      return FieldConstants.RED_HUB_TARGET;
+    } 
+    if(DriverStation.getAlliance().get().equals(Alliance.Blue) && isShootingZone(robotPose)){ 
+      return FieldConstants.BLUE_HUB_TARGET;
+    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && isShootingZone(robotPose)){
+      return FieldConstants.RED_HUB_TARGET;
+    }
+
+    if(DriverStation.getAlliance().get().equals(Alliance.Blue) && !isShootingZone(robotPose)){ 
+      return FieldConstants.BLUE_PASSING_TARGET;
+    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && !isShootingZone(robotPose)){
+      return FieldConstants.RED_PASSING_TARGET;
+    }
+
+    
+
+    return null;
 
   }
 }

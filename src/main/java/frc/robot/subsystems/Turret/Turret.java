@@ -24,6 +24,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
@@ -145,6 +147,14 @@ public class Turret extends SubsystemBase {
 
   public void setTarget(Pose2d target) {
     this.target = target;
+  }
+
+  public Command setSmartTarget(){
+    if (target != ZoneGetter.getShootingTarget(robotPose.get())){
+      return Commands.runOnce(()->setTarget(ZoneGetter.getShootingTarget(robotPose.get())), this);
+    } else {
+      return Commands.none();
+    } 
   }
 
   private Translation3d launchVel(LinearVelocity vel) {

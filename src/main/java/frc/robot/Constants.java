@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -111,7 +112,7 @@ public final class Constants {
   public static final class MathConstants {
 
     public static final Distance HUB_HEIGHT = Meters.of(1.83-0.345); // Height of the hub - height of the turret
-    public static final Angle LAUNCH_ANGLE = Degrees.of(75);
+    public static final Angle LAUNCH_ANGLE = Degrees.of(65);
     public static final Distance FLY_WHEEL_DIAMETER = Inches.of(4);
 
   }
@@ -212,6 +213,15 @@ public final class Constants {
       new Translation2d(Inches.of(445.6), Inches.of(182.1)) 
     );
 
+    public static final Pose2d BLUE_HUB_TARGET = new Pose2d(4.5, 4, new Rotation2d());
+
+    public static final Pose2d RED_HUB_TARGET = new Pose2d(11.9, 4, new Rotation2d());
+
+    public static final Pose2d BLUE_PASSING_TARGET = new Pose2d(2, 2, new Rotation2d());
+
+    public static final Pose2d RED_PASSING_TARGET = new Pose2d(14, 7, new Rotation2d());
+    
+
     public enum CurrentZone {
       RED,
       RED_TRENCH,
@@ -223,5 +233,7 @@ public final class Constants {
       PHASING,
       OUTSIDE_BOUNDS
     }
+
+
   }
 }

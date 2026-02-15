@@ -69,9 +69,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.leftBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))));
-    controller.rightBumper().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(11.9, 4, new Rotation2d()))));
-    controller.x().onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(2, 2, new Rotation2d()))));
+    turret.setDefaultCommand(turret.setSmartTarget());
 
 
 
