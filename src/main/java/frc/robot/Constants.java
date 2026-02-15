@@ -67,7 +67,7 @@ public final class Constants {
     public static final double KI = 0.0;
     public static final double KD = 0.0;
 
-    public static final double KP_SIM = 100;
+    public static final double KP_SIM = 50;
     public static final double KI_SIM = 0.0;
     public static final double KD_SIM = 0;
 
@@ -111,18 +111,20 @@ public final class Constants {
 
   public static final class ShooterConstants {
     public static final int MOTOR_ID = 0;
-    public static final double GEAR_RATIO = 3;
+    public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
     public static final double KP = 0.5;
     public static final double KI = 0.0;
     public static final double KD = 0.0;
 
-
+    public static double KS_SIM = 0;
+    public static double KV_SIM = 0.0022;
+    public static double KA_SIM = 0;
     
-    public static double KP_SIM = 0.003093;
+    public static double KP_SIM = 0.04093;
     public static double KI_SIM = 0.0;
-    public static double KD_SIM = 0.0008;
+    public static double KD_SIM = 0.0;
 
   }
 

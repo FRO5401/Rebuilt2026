@@ -4,13 +4,21 @@
 
 package frc.robot.subsystems.Shooter;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 
@@ -22,20 +30,9 @@ public class Shooter extends SubsystemBase {
   double num =0;
 
   //SmartDashBoard Tuning
-  double kP;
-  double kI;
-  double kD;
 
   public Shooter(ShooterIO io) {
     this.io = io;
-
-    kP = ShooterConstants.KP_SIM;
-    kI = ShooterConstants.KI_SIM;
-    kD = ShooterConstants.KD_SIM;
-
-    SmartDashboard.putNumber("P Gain", kP);
-    SmartDashboard.putNumber("I Gain", kI);
-    SmartDashboard.putNumber("D Gain", kD);
   }
 
   @Override
@@ -43,32 +40,24 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
 
-    Logger.recordOutput("Shooter velocity", inputs.velocity);
-    Logger.recordOutput("Left Trigger x Max Velocity??", num/ ShooterConstants.GEAR_RATIO);
-    
-    Logger.recordOutput("P Gain", ShooterConstants.KP_SIM);
-    Logger.recordOutput("I Gain", ShooterConstants.KI_SIM);
-    Logger.recordOutput("D Gain", ShooterConstants.KD_SIM);
-    
-    /*  PID Tuning */
-    //    Gets Values from SmartDashBoard
-    double p = SmartDashboard.getNumber("P Gain", 0);
-    double i = SmartDashboard.getNumber("I Gain", 0);
-    double d = SmartDashboard.getNumber("D Gain", 0);
-
-    //  If the Value Changes Update the PID Values
-    if((p != kP)) { ShooterConstants.KP_SIM = p; kP = p; }
-    if((i != kI)) { ShooterConstants.KI_SIM = i; kI = i; }
-    if((d != kD)) { ShooterConstants.KD_SIM = d; kD = d; }
-    
+    Logger.recordOutput("Shooter/Shooter velocity", inputs.velocity);
+    Logger.recordOutput("Shooter/Shooter Desired Velocity", num);
 
   }
 
-  public Command setVelocity(DoubleSupplier vel){
+  public Command setVelocity(Supplier<AngularVelocity> vel){
     return run(()->{
-      io.setVelocity(vel.getAsDouble(), inputs);
-      num = vel.getAsDouble();
+      io.setVelocity(vel.get().in(RotationsPerSecond)*60, inputs);
+      num = vel.get().in(RotationsPerSecond)*60;
     });
   }
+
+  public AngularVelocity getVelocity(){
+    return RotationsPerSecond.of(inputs.velocity/60);
+  }
+
+   public void stop(){
+     io.stop();
+   }
 
 }

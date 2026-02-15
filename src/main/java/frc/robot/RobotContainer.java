@@ -6,6 +6,9 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -16,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
@@ -26,6 +30,7 @@ import frc.robot.subsystems.Shooter.ShooterIOSim;
 import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIO;
 import frc.robot.subsystems.Turret.TurretIOSim;
+import frc.robot.Utils.MathHelp;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -75,9 +80,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    turret.setDefaultCommand(turret.setSmartTarget());
+    turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
 
-
+    shooter.setDefaultCommand(
+      shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
+    );
 
     drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
@@ -88,10 +95,6 @@ public class RobotContainer {
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
     
-
-    shooter.setDefaultCommand( 
-      shooter.setVelocity(()->(controller.getLeftTriggerAxis() * ShooterConstants.MAX_VELOCITY))
-    );
   }
 
   /**

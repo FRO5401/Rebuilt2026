@@ -14,6 +14,8 @@ public class ShooterIOSim implements ShooterIO {
 
     private final DCMotor motorModel = DCMotor.getKrakenX60Foc(1);
     private final PIDController controller = new PIDController(ShooterConstants.KP_SIM, ShooterConstants.KI_SIM, ShooterConstants.KD_SIM);
+    private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.KS_SIM, ShooterConstants.KV_SIM, ShooterConstants.KA_SIM);
+
 
 
     private final DCMotorSim driveSim = new DCMotorSim(
@@ -21,6 +23,7 @@ public class ShooterIOSim implements ShooterIO {
 
 
     public ShooterIOSim(){
+        
     }
 
     public void updateInputs(ShooterIOInputs inputs){
@@ -29,7 +32,6 @@ public class ShooterIOSim implements ShooterIO {
         inputs.current = driveSim.getCurrentDrawAmps();
         driveSim.update(.02);
 
-        controller.setPID(ShooterConstants.KP_SIM, ShooterConstants.KI_SIM, ShooterConstants.KD_SIM);
     }
 
     public void applyVoltage(double voltage){
@@ -38,7 +40,10 @@ public class ShooterIOSim implements ShooterIO {
     }
 
     public void setVelocity(double velocity, ShooterIOInputs inputs){
-        double appliedPower = MathUtil.clamp(controller.calculate(inputs.velocity, velocity), 0, 12);
+        if (Double.isNaN(velocity)) {
+            return;
+        }
+        double appliedPower = feedforward.calculate(velocity) + controller.calculate(inputs.velocity, velocity);
         driveSim.setInputVoltage(appliedPower);
         Logger.recordOutput("Applied Power", appliedPower); //TODO remove
     }

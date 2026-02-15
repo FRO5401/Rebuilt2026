@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -22,13 +23,17 @@ public class MathHelp {
         double numerator = targetDistance.in(Meters)*Math.sqrt(9.8/(2*(Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians))*targetDistance.in(Meters)-MathConstants.HUB_HEIGHT.in(Meters))));
         double denominator = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians));
 
+        Logger.recordOutput("MathHelp/Velocity", (numerator/denominator));
+
+        
 
         return MetersPerSecond.of(numerator/denominator);
     }
 
     public static AngularVelocity findFlyWheelRPM(LinearVelocity flywheelVelocity){
         //60 is for the seconds to minute, 3.82 
-        return RotationsPerSecond.of((60*flywheelVelocity.in(MetersPerSecond))/(Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
+        Logger.recordOutput("MathHelp/Flywheel RPM", (flywheelVelocity.in(MetersPerSecond))/(Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 60);
+        return RotationsPerSecond.of((flywheelVelocity.in(MetersPerSecond))/(Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
     }
 
     //Once again splitting up the math, this is the quadatric equation of height displacement formula to find the time of flight

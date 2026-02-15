@@ -112,15 +112,13 @@ public class Turret extends SubsystemBase {
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
 
-      updateFuel();
-
     }
 
-    Logger.recordOutput("Turret/Turret Angle", currentAngle - robotPose.get().getRotation().getRadians());
+    Logger.recordOutput("Turret/Turret Angle", Units.radiansToRotations(currentAngle));
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-    Logger.recordOutput("Turret Position", Units.rotationsToRadians(inputs.position));
+    Logger.recordOutput("Turret Position", (inputs.position));
 
     Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
@@ -159,6 +157,7 @@ public class Turret extends SubsystemBase {
 
   private Translation3d launchVel(LinearVelocity vel) {
     ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+    Logger.recordOutput("Vel", vel.in(MetersPerSecond));
 
     double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
@@ -171,9 +170,9 @@ public class Turret extends SubsystemBase {
     return new Translation3d(xVel, yVel, verticalVel);
   }
 
-  public void updateFuel() {
+  public void updateFuel(LinearVelocity vel) {
     Pose3d robot = new Pose3d(robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
-    Translation3d trajVel = launchVel(MathHelp.findFlyWheelVelocity(poseDifference));
+    Translation3d trajVel = launchVel(vel);
     for (int i = 0; i < trajectory.length; i++) {
       double t = i * 0.08;
       double x = trajVel.getX() * t + robot.getTranslation().getX();
@@ -187,9 +186,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Trajectory", trajectory);
   }
 
-
-
-
-  
-
+  public Transform2d getPoseDifference(){
+    return poseDifference;
+  }
 }
