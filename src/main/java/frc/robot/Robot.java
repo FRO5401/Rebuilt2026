@@ -8,7 +8,6 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
@@ -86,14 +85,14 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
+    //Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
     Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
     //Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
 
     Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
     Logger.recordOutput("Final Pose", new Pose3d[] {
-      intake, indexer
+      indexer
     });
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,

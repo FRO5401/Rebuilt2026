@@ -96,9 +96,10 @@ public class RobotContainer {
                         .withRotationalRate(
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
+
     controller.a().onTrue(Commands.runOnce(()->intake.setPivotPosition(90), intake));
-   controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
-   controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
+    controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
+    controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
   }
 
   /**

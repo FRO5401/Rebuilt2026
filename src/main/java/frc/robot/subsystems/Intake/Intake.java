@@ -4,8 +4,13 @@
 
 package frc.robot.subsystems.Intake;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.TunableNumber;
 
@@ -30,6 +35,7 @@ public class Intake extends SubsystemBase {
         io.updateIntakeInputs(pivotInputs, infeedInputs);
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
+        Logger.recordOutput("Intake/Intake Pose", new Pose3d(0.215, 0, 0.178, new Rotation3d(0, pivotInputs.angle - Degrees.of(70).in(Radians), 0)));
 
         if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged()){
             io.setPivotPID(kp.get(), ki.get(), kd.get());
