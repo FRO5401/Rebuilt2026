@@ -112,6 +112,9 @@ public class Turret extends SubsystemBase {
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
 
+          Logger.recordOutput("Turret/Test Pose", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, -robotPose.get().getRotation().getRadians() + (Math.atan2(poseDifference.getY(), poseDifference.getX())) + Math.PI)));
+
+
     }
 
     Logger.recordOutput("Turret/Turret Angle", Units.radiansToRotations(currentAngle));
