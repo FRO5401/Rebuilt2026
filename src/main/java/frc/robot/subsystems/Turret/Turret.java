@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -116,9 +118,6 @@ public class Turret extends SubsystemBase {
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
 
-      Logger.recordOutput("Turret/Test Pose", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, -robotPose.get().getRotation().getRadians() + (Math.atan2(poseDifference.getY(), poseDifference.getX())) + Math.PI)));
-
-
     }
 
     Logger.recordOutput("Turret/Turret Angle", Units.radiansToRotations(currentAngle));
@@ -130,9 +129,9 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/MotorRotation",
         Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 
-    Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
+    //Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
 
-    Logger.recordOutput("Turret/Test Pose Clean", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, (-2 *robotPose.get().getRotation().getRadians()) + currentAngle + Math.PI)));
+    Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, (-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
 
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
@@ -198,5 +197,9 @@ public class Turret extends SubsystemBase {
 
   public Transform2d getPoseDifference(){
     return poseDifference;
+  }
+
+  public Angle getTurretAngle(){
+    return Radians.of((-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position));
   }
 }

@@ -35,7 +35,6 @@ public class Intake extends SubsystemBase {
         io.updateIntakeInputs(pivotInputs, infeedInputs);
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
-        Logger.recordOutput("Intake/Intake Pose", new Pose3d(0.215, 0, 0.178, new Rotation3d(0, pivotInputs.angle - Degrees.of(70).in(Radians), 0)));
 
         if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged()){
             io.setPivotPID(kp.get(), ki.get(), kd.get());
@@ -55,5 +54,13 @@ public class Intake extends SubsystemBase {
    public void setIntake(double angle, double percent){
         setPivotPosition(angle);
         setInfeedVelocity(percent);
+   }
+   
+   public boolean isIntakeDeployed(){
+    return pivotInputs.angle<10;
+   }
+
+   public double getPivotPosition(){
+    return pivotInputs.angle;
    }
 }

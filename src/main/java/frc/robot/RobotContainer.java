@@ -6,15 +6,19 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,12 +31,14 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Visulization;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIO;
 import frc.robot.subsystems.Shooter.ShooterIOSim;
 import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIO;
 import frc.robot.subsystems.Turret.TurretIOSim;
+import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 
@@ -59,6 +65,7 @@ public class RobotContainer {
   private static Turret turret;
   private static Shooter shooter;
   private static Intake intake;
+  private static Visulization visulization = null;
 
   //  Command Declaration
   private static Autos autos;
@@ -73,25 +80,33 @@ public class RobotContainer {
 
   CommandXboxController controller = new CommandXboxController(0);
 
+  // Simulation Visulization 
+  FuelSim fuelSim;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Instantiation 
     switch(RobotMode.currentMode){
-      case REAL -> {
+      case REAL: 
         intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(null);
         turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-      }
-      case SIM -> {
+        break;
+
+      case SIM:
+        configureFuelSim();
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-      }
-      case REPLAY -> {
+        visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
+        configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
+        break;
+
+      default:
         intake = new Intake(null);
         shooter = new Shooter(null);
         turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-      }
+        break;
     }
 
     autos = new Autos(drivetrain, turret);
@@ -140,5 +155,37 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
     return autos.testAuto().cmd().withName("Auto");
+  }
+
+  private void configureFuelSim() {
+    fuelSim = new FuelSim("Fuel Pose");
+    fuelSim.spawnStartingFuel();
+    fuelSim.enableAirResistance();
+
+    fuelSim.start();
+    SmartDashboard.putData(Commands.runOnce(() -> {
+                fuelSim.clearFuel();
+                fuelSim.spawnStartingFuel();
+            })
+            .withName("Reset Fuel")
+            .ignoringDisable(true));
+  }
+
+  private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
+    fuelSim.registerRobot(
+            Inches.of(34.56),
+            Inches.of(34.560082),
+            Inches.of(5.858080),
+            drivetrain::getPose,
+            drivetrain::getFieldRelativeChassisSpeeds
+    );
+    fuelSim.registerIntake(
+            Inches.of(34.560082).div(2).in(Meters),
+            Inches.of(34.560082).div(2).plus(Inches.of(8.345)).in(Meters),
+            -Inches.of(34.56).div(2).in(Meters),
+            Inches.of(34.56).div(2).in(Meters),
+            ()-> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
+            intakeCallback
+    );
   }
 }

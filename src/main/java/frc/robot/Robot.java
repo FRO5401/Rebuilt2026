@@ -86,15 +86,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
-    //Pose3d intake = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1, 0));
-    Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
-    //Pose3d turret = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
-
-    Logger.recordOutput("Zeroed Components", new Pose3d[] {new Pose3d()});
-    Logger.recordOutput("Final Pose", new Pose3d[] {
-      indexer
-    });
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -166,6 +158,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
+    m_robotContainer.fuelSim.updateSim();
   }
 
 }
