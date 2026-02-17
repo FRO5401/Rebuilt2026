@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
+import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.Autos;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIO;
 import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.Utils.MathHelp;
+import frc.robot.Utils.RobotMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,12 +46,22 @@ public class RobotContainer {
 
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
-  Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+  //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
+  //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
 
-  ShooterIO shooterIO = RobotBase.isReal() ? null : new ShooterIOSim();
-  Shooter shooter = new Shooter(shooterIO);
+  //ShooterIO shooterIO = RobotBase.isReal() ? null : new ShooterIOSim();
+  //Shooter shooter = new Shooter(shooterIO);
 
+  //IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
+  //Intake intake = new Intake(new IntakeIOSim());
+
+  //  Subsystem Declaration
+  private static Turret turret;
+  private static Shooter shooter;
+  private static Intake intake;
+
+  //  Command Declaration
+  private static Autos autos;
 
       /* Setting up bindings for necessary control of the swerve drive platform */
     public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -59,13 +71,31 @@ public class RobotContainer {
     @SuppressWarnings("unused")
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  Autos autos = new Autos(drivetrain, turret);
-
-  Intake intake = new Intake(new IntakeIOSim());
   CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Instantiation 
+    switch(RobotMode.currentMode){
+      case REAL -> {
+        intake = new Intake(new IntakeIOTalonFX());
+        shooter = new Shooter(null);
+        turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+      }
+      case SIM -> {
+        intake = new Intake(new IntakeIOSim());
+        shooter = new Shooter(new ShooterIOSim());
+        turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+      }
+      case REPLAY -> {
+        intake = new Intake(null);
+        shooter = new Shooter(null);
+        turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+      }
+    }
+
+    autos = new Autos(drivetrain, turret);
+
     // Configure the trigger bindings
     intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
     configureBindings();

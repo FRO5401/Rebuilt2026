@@ -41,7 +41,7 @@ public class TunableNumber implements DoubleSupplier {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if(Constants.isTuningMode && !isTuningDisabled){
+            if(RobotMode.isTuningMode && !isTuningDisabled){
                 //tunableValue = defaultValue;
                 networkNumber = new LoggedNetworkNumber(key, defaultValue);
             }
@@ -53,7 +53,7 @@ public class TunableNumber implements DoubleSupplier {
         if(!hasDefault){
             return 0.0;
         } else {
-            return (Constants.isTuningMode && !isTuningDisabled) ? networkNumber.get() : defaultValue;
+            return (RobotMode.isTuningMode && !isTuningDisabled) ? networkNumber.get() : defaultValue;
         }
     }
 

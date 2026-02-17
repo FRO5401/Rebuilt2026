@@ -49,20 +49,6 @@ import frc.robot.generated.TunerConstants;
  */
 public final class Constants {
 
-  public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
-
-    /** Running a physics simulator. */
-    SIM,
-
-    /** Replaying from a log file. */
-    REPLAY
-  }
-  public static boolean isTuningMode = true;
   public static final class TurretConstants {
 
     public static final Current STATOR_LIMIT = Amps.of(120);

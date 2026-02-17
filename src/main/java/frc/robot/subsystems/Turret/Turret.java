@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -27,6 +30,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.MathHelp;
@@ -112,7 +116,7 @@ public class Turret extends SubsystemBase {
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));
 
-          Logger.recordOutput("Turret/Test Pose", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, -robotPose.get().getRotation().getRadians() + (Math.atan2(poseDifference.getY(), poseDifference.getX())) + Math.PI)));
+      Logger.recordOutput("Turret/Test Pose", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, -robotPose.get().getRotation().getRadians() + (Math.atan2(poseDifference.getY(), poseDifference.getX())) + Math.PI)));
 
 
     }
@@ -128,6 +132,8 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
 
+    Logger.recordOutput("Turret/Test Pose Clean", new Pose3d(-.11, 0, 0.345, new Rotation3d(0, 0, (-2 *robotPose.get().getRotation().getRadians()) + currentAngle + Math.PI)));
+
 
     io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
 
@@ -135,6 +141,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
     Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
+    
   }
 
   public void setTurretAngle(double angle) {
