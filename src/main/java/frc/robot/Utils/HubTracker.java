@@ -30,6 +30,7 @@ public class HubTracker {
 
     private Timer matchTimer = new Timer();
 
+    //TODO: test this on the real robot is this may crash if this doesnt return a value.
     public Optional<Alliance> getAutoWinner(){
         char gameData = DriverStation.getGameSpecificMessage().length() >= 1 ? DriverStation.getGameSpecificMessage().charAt(0) : ' ';
         switch(gameData){

@@ -13,7 +13,7 @@ public class RobotMode {
         REPLAY
     }
 
-    //  should tuning be on when not connected to FMS
+    //should tuning be on when not connected to FMS
     public static final boolean isTuningOff = false;
     public static final boolean isTuningMode = !(DriverStation.isFMSAttached() || isTuningOff);
 

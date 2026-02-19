@@ -23,9 +23,7 @@ public class Shooter extends SubsystemBase {
   private final ShooterIO io;
   ShooterIOInputs inputs = new ShooterIOInputs();
 
-  double num =0;
-
-  //SmartDashBoard Tuning
+  double desiredVel = 0;
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -37,14 +35,14 @@ public class Shooter extends SubsystemBase {
     io.updateInputs(inputs);
 
     Logger.recordOutput("Shooter/Shooter velocity", inputs.velocity);
-    Logger.recordOutput("Shooter/Shooter Desired Velocity", num);
+    Logger.recordOutput("Shooter/Shooter Desired Velocity", desiredVel);
 
   }
 
   public Command setVelocity(Supplier<AngularVelocity> vel){
     return run(()->{
       io.setVelocity(vel.get().in(RotationsPerSecond)*60, inputs);
-      num = vel.get().in(RotationsPerSecond)*60;
+      desiredVel = vel.get().in(RotationsPerSecond)*60;
     });
   }
 
