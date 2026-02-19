@@ -37,8 +37,6 @@ import frc.robot.subsystems.Turret.Turret;
 public class Visulization extends SubsystemBase {
 
   private FuelSim fuelSim;
-  private Supplier<LinearVelocity> velocity;
-  private Supplier<Angle> turretAngle;
   private Turret turret;
   private Shooter shooter;
   private Intake intake;
@@ -67,15 +65,15 @@ public class Visulization extends SubsystemBase {
     this.intake = intake;
     shootTimer.start();
 
-    turretPose = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, Radians.of(2* robotPose.get().getRotation().getRadians()).plus(turret.getTurretAngle()).in(Radians)));
+    turretPose = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
     intakePose = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, intake.getPivotPosition() - Degrees.of(70).in(Radians), 0));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    turretPose = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
-    intakePose = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, intake.getPivotPosition() - Degrees.of(70).in(Radians), 0));
+    turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
+    intakePose = new Pose3d(intakePoseTransform, new Rotation3d(0, intake.getPivotPosition() - Degrees.of(70).in(Radians), 0));
     Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
     Logger.recordOutput("Visulization/Intake", intakePose);
     Logger.recordOutput("Visulization/Turret", turretPose);

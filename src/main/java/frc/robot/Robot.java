@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
@@ -17,6 +18,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.RobotMode;
 
 /**
@@ -30,6 +32,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private HubTracker hubTracker = HubTracker.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -92,12 +95,17 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    Logger.recordOutput("Current Shift", hubTracker.getCurrentShift());
+    Logger.recordOutput("Is hub Active", hubTracker.isHubActive());
+    Logger.recordOutput("Match Time", hubTracker.getMatchTime());
+    Logger.recordOutput("Driver Station Time", DriverStation.getMatchTime());
 
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    HubTracker.getInstance().stopMatchTimer();
   }
 
   @Override
@@ -110,6 +118,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -125,6 +134,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
