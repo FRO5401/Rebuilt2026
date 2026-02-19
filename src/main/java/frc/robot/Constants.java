@@ -4,12 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -32,7 +26,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -120,6 +113,37 @@ public final class Constants {
 
   }
 
+  public static final class IntakeConstants {
+    public static final int PIVOT_MASTER_ID = 1;
+    public static final int PIVOT_FOLLOWER_ID = 2;
+    public static final int INFEED_ID = 3;
+
+    public static final double PIVOT_GEAR_RATIO = 1;
+    public static final double INFEED_GEAR_RATIO = 1;
+    
+    public static final double PIVOT_STATOR_LIMIT = 60;
+    public static final double PIVOT_SUPPLY_LIMIT = 120;
+
+    public static final double INFEED_SUPPLY_LIMIT = 60;
+    public static final double INFEED_STATOR_LIMIT = 120; 
+
+    public static final boolean PIVOT_MASTER_INVERT = false;
+    public static final boolean PIVOT_FOLLOWER_INVERT = true;
+
+    public static final boolean INFEED_INVERT = false;
+
+    public static final double kp = 1;
+    public static final double ki = 1;
+    public static final double kd = 1;
+    public static final double kg = 1;
+
+    public static final double sim_kp = 1;
+    public static final double sim_ki = 1;
+    public static final double sim_kd = 1;
+    public static final double sim_kg = 1;
+
+}
+
   public static final class MathConstants {
 
     public static final Distance HUB_HEIGHT = Meters.of(1.83-0.345); // Height of the hub - height of the turret
@@ -173,6 +197,7 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
+
     /*
      * Field dimensions:
      * Width: 317.6 Inches
@@ -248,3 +273,4 @@ public final class Constants {
 
   }
 }
+

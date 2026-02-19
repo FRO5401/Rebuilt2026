@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 
 import java.util.function.Supplier;
@@ -19,9 +17,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,7 +24,6 @@ import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
@@ -38,6 +32,8 @@ public class Visulization extends SubsystemBase {
 
   private FuelSim fuelSim;
   private Turret turret;
+
+  @SuppressWarnings("unused")
   private Shooter shooter;
   private Intake intake;
 

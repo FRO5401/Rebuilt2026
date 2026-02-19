@@ -4,13 +4,11 @@
 
 package frc.robot.subsystems.Intake;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
+
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.TunableNumber;
 

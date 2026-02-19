@@ -5,8 +5,6 @@ import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
-import frc.robot.Constants;
-
 public class TunableNumber implements DoubleSupplier {
     private static final String DIRECTORY = "/Tunable";
     private final String key;
