@@ -7,6 +7,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import frc.robot.Constants.IntakeConstants;
+
 public class IntakeIOTalonFX implements IntakeIO{
 
     private final TalonFX infeed = new TalonFX(0);

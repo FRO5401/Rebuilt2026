@@ -112,7 +112,6 @@ public class RobotContainer {
     autos = new Autos(drivetrain, turret);
 
     // Configure the trigger bindings
-    intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
     configureBindings();
   
   }
@@ -145,6 +144,9 @@ public class RobotContainer {
     controller.a().onTrue(Commands.runOnce(()->intake.setPivotPosition(90), intake));
     controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
     controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
+
+    intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
+
   }
 
   /**
