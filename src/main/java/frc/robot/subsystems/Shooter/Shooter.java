@@ -4,22 +4,18 @@
 
 package frc.robot.subsystems.Shooter;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.MathConstants;
-import frc.robot.Constants.ShooterConstants;
+
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
