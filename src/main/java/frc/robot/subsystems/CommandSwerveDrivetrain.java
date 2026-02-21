@@ -8,6 +8,7 @@ import org.opencv.photo.Photo;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -59,6 +61,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final PhotonCamera frontRightCamera;
     private final PhotonCamera frontLeftCamera;
     private final PhotonCamera backCamera;
+
+    public PhotonPoseEstimator frontRightPoseEstimator;
+    public PhotonPoseEstimator frontLeftPoseEstimator;
+    public PhotonPoseEstimator backPoseEstimator;
+
+    public List<PhotonPipelineResult> frontRightResults;
+    public List<PhotonPipelineResult> frontLeftResults;
+    public List<PhotonPipelineResult> backResults;
 
     private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
@@ -101,8 +111,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
-
-    
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
@@ -184,8 +192,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             PhotonCamera frontRightCamera,
             PhotonCamera frontLeftCamera,
             PhotonCamera backCamera,
-            SwerveModuleConstants<?, ?, ?>... modules
-            ) {
+            SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -195,10 +202,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this.frontRightCamera = frontRightCamera;
         this.frontLeftCamera = frontLeftCamera;
 
+        frontRightPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.FRONT_RIGHT_CAMERA_POSE);
+        frontLeftPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.FRONT_LEFT_CAMERA_POSE);
+        backPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.BACK_CAMERA_POSE);
+
         pigeon2 = new Pigeon2(0, "Drivebase");
         headingController.enableContinuousInput(-Math.PI, Math.PI);
-
-
 
     }
 
@@ -387,6 +399,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
+        frontRightResults = frontRightCamera.getAllUnreadResults();
+        frontLeftResults = frontLeftCamera.getAllUnreadResults();
+        backResults = backCamera.getAllUnreadResults();
+
         if (getCurrentCommand() != null) {
             Logger.recordOutput("Commands/Drivebase Command", getCurrentCommand().getName());
         }
@@ -410,6 +426,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        getEstimatedGlobalPose(frontLeftPoseEstimator, frontLeftCamera, frontLeftResults);
+        getEstimatedGlobalPose(frontRightPoseEstimator, frontRightCamera, frontRightResults);
+        getEstimatedGlobalPose(backPoseEstimator, backCamera, backResults);
 
     }
 
@@ -492,15 +512,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
             if (targets.size() == 1) {
                 if (targets.get(0).poseAmbiguity < .2) {
-                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(), poseEstimator.update(results.get(0)).get().timestampSeconds);
+                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(),
+                            poseEstimator.update(results.get(0)).get().timestampSeconds);
                 }
             } else {
-                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(), poseEstimator.update(results.get(0)).get().timestampSeconds);
+                addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(),
+                        poseEstimator.update(results.get(0)).get().timestampSeconds);
             }
         }
     }
 
-
 }
-
-

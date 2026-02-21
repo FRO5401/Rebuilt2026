@@ -37,7 +37,7 @@ import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
 public class Turret extends SubsystemBase {
 
   private final TurretIO io;
-  TurretIOInputs inputs = new TurretIOInputs();
+  TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
   private Translation3d[] trajectory = new Translation3d[50];
 
   // Checks if the robot is real or fake, and uses the correct PID controller
