@@ -331,6 +331,17 @@ public final class Constants {
         .withMotorOutput(OUTPUT_CONFIG)
         .withFeedback(KICKER_FEEDBACK_CONFIG);
   }
+
+    public static final class VisionConstants {
+    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+    public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+
+    public static final Transform3d FRONT_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
+    public static final Transform3d FRONT_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
+    public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
+    
+  }
+
 }
 
 
