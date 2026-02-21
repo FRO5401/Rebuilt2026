@@ -11,9 +11,8 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOTalonFX implements IntakeIO{
 
-    private final TalonFX infeed = new TalonFX(0);
-    private final TalonFX pivotMaster = new TalonFX(0);
-    private final TalonFX pivotFollower = new TalonFX(0);
+    private final TalonFX infeed = new TalonFX(IntakeConstants.INFEED_CAN_ID);
+    private final TalonFX pivotMaster = new TalonFX(IntakeConstants.PIVOT_MASTER_CAN_ID);
 
     private final TalonFXConfiguration infeedConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
@@ -23,7 +22,6 @@ public class IntakeIOTalonFX implements IntakeIO{
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0.0);
 
     public IntakeIOTalonFX(){
-        pivotFollower.setControl(new Follower(pivotMaster.getDeviceID(), MotorAlignmentValue.Aligned));
 
         infeedConfig.Feedback.SensorToMechanismRatio = IntakeConstants.INFEED_GEAR_RATIO;
         infeedConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.INFEED_STATOR_LIMIT;
@@ -35,7 +33,6 @@ public class IntakeIOTalonFX implements IntakeIO{
 
         infeed.getConfigurator().apply(infeedConfig);
         pivotMaster.getConfigurator().apply(pivotConfig);
-        pivotFollower.getConfigurator().apply(pivotConfig);
 
     }
 
@@ -47,9 +44,6 @@ public class IntakeIOTalonFX implements IntakeIO{
         pivotInputs.voltage = pivotMaster.getMotorVoltage().getValueAsDouble();
         pivotInputs.current = pivotMaster.getSupplyCurrent().getValueAsDouble();
 
-        pivotInputs.followerTemperature = pivotFollower.getDeviceTemp().getValueAsDouble();
-        pivotInputs.followerVoltage = pivotFollower.getMotorVoltage().getValueAsDouble();
-        pivotInputs.followerCurrent = pivotFollower.getSupplyCurrent().getValueAsDouble();
 
         infeedInputs.velocity = infeed.getVelocity().getValueAsDouble();
         infeedInputs.temperature = infeed.getDeviceTemp().getValueAsDouble();

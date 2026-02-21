@@ -10,6 +10,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -110,17 +111,23 @@ public final class Constants {
     public static final double KP = 0.5;
     public static final double KI = 0.0;
     public static final double KD = 0.0;
+    
+    public static final double KS = 0;
+    public static final double KV = 0.0022;
+    public static final double KA = 0;
 
-    public static double KS_SIM = 0;
-    public static double KV_SIM = 0.0022;
-    public static double KA_SIM = 0;
+    public static final double KS_SIM = 0;
+    public static final double KV_SIM = 0.0022;
+    public static final double KA_SIM = 0;
 
-    public static double KP_SIM = 0.04093;
-    public static double KI_SIM = 0.0;
-    public static double KD_SIM = 0.0;
+    public static final double KP_SIM = 0.04093;
+    public static final double KI_SIM = 0.0;
+    public static final double KD_SIM = 0.0;
 
     public static final Current STATOR_LIMIT = Amps.of(120);
     public static final Current SUPPLY_LIMIT = Amps.of(60);
+
+
 
     public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
         .withInverted(InvertedValue.CounterClockwise_Positive)
@@ -133,13 +140,19 @@ public final class Constants {
         .withStatorCurrentLimit(STATOR_LIMIT)
         .withSupplyCurrentLimit(SUPPLY_LIMIT);
 
-        public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
-        .withKP(0)
-        .withKI(0)
-        .withKD(0)
-        .withKA(0)
-        .withKV(0)
-        .withKG(0);
+    public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+        .withKP(KP)
+        .withKI(KI)
+        .withKD(KD)
+        .withKA(KA)
+        .withKV(KV)
+        .withKG(KS);
+
+    public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+        .withSlot0(CLOSED_LOOP)
+        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+        .withMotorOutput(OUTPUT_CONFIG)
+        .withFeedback(FEEDBACK_CONFIG);
 
   }
 

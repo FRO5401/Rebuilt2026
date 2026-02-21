@@ -35,8 +35,10 @@ import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Indexer.IndexerIOTalon;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIOSim;
+import frc.robot.subsystems.Shooter.ShooterIOTalon;
 import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIOSim;
+import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
@@ -94,8 +96,8 @@ public class RobotContainer {
     switch(RobotMode.currentMode){
       case REAL: 
         intake = new Intake(new IntakeIOTalonFX());
-        shooter = new Shooter(null);
-        turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        shooter = new Shooter(new ShooterIOTalon());
+        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
         break;
 
