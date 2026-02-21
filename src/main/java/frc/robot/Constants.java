@@ -280,16 +280,57 @@ public final class Constants {
 
   }
 
-  public static final class VisionConstants {
-    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
-    public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+  public static final class IndexerConstants {
+    public static final int SPINDEXER_ID = 0;
+    public static final int KICKER_ID = 1;
 
-    public static final Transform3d FRONT_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
-    public static final Transform3d FRONT_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
-    public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
-    
+    public static final Current STATOR_LIMIT = Amps.of(120);
+    public static final Current SUPPLY_LIMIT = Amps.of(20);
+    public static final double SPINDEXER_GEAR_RATIO = 3;
+    public static final double KICKER_GEAR_RATIO = 3;
+
+    public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
+        .withInverted(InvertedValue.CounterClockwise_Positive)
+        .withNeutralMode(NeutralModeValue.Coast);
+
+    public static final FeedbackConfigs SPINDEXER_FEEDBACK_CONFIG = new FeedbackConfigs()
+        .withSensorToMechanismRatio(SPINDEXER_GEAR_RATIO);
+
+    public static final FeedbackConfigs KICKER_FEEDBACK_CONFIG = new FeedbackConfigs()
+        .withSensorToMechanismRatio(KICKER_GEAR_RATIO);
+
+    public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(STATOR_LIMIT)
+        .withSupplyCurrentLimit(SUPPLY_LIMIT);
+
+    public static final Slot0Configs SPINDEXER_CLOSED_LOOP = new Slot0Configs()
+        .withKP(0)
+        .withKI(0)
+        .withKD(0)
+        .withKA(0)
+        .withKV(0)
+        .withKG(0);
+
+    public static final Slot0Configs KICKER_CLOSED_LOOP = new Slot0Configs()
+        .withKP(0)
+        .withKI(0)
+        .withKD(0)
+        .withKA(0)
+        .withKV(0)
+        .withKG(0);
+
+    public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration()
+        .withSlot0(SPINDEXER_CLOSED_LOOP)
+        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+        .withMotorOutput(OUTPUT_CONFIG)
+        .withFeedback(SPINDEXER_FEEDBACK_CONFIG);
+
+    public static final TalonFXConfiguration KICKER_CONFIG = new TalonFXConfiguration()
+        .withSlot0(KICKER_CLOSED_LOOP)
+        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+        .withMotorOutput(OUTPUT_CONFIG)
+        .withFeedback(KICKER_FEEDBACK_CONFIG);
   }
-
 }
 
 
