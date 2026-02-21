@@ -52,7 +52,7 @@ public final class Constants {
   public static final class TurretConstants {
 
     public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(20);
+    public static final Current SUPPLY_LIMIT = Amps.of(40);
     public static final double GEAR_RATIO = 25;
 
     public static final double KP = 0.5;
@@ -93,6 +93,7 @@ public final class Constants {
      * This is used to calculate the required velocity of the shot
      */
     public static final Transform2d TURRET_TRANSFORM = new Transform2d(-0.15, 0, new Rotation2d(0));
+    public static final int CAN_ID = 10;
 
     /**
      * Used for number of iterations of the turret angle
@@ -102,7 +103,7 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int MOTOR_ID = 0;
+    public static final int MOTOR_ID = 4;
     public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
@@ -113,10 +114,32 @@ public final class Constants {
     public static double KS_SIM = 0;
     public static double KV_SIM = 0.0022;
     public static double KA_SIM = 0;
-    
+
     public static double KP_SIM = 0.04093;
     public static double KI_SIM = 0.0;
     public static double KD_SIM = 0.0;
+
+    public static final Current STATOR_LIMIT = Amps.of(120);
+    public static final Current SUPPLY_LIMIT = Amps.of(60);
+
+    public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
+        .withInverted(InvertedValue.CounterClockwise_Positive)
+        .withNeutralMode(NeutralModeValue.Brake);
+
+    public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
+        .withSensorToMechanismRatio(GEAR_RATIO);
+
+    public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(STATOR_LIMIT)
+        .withSupplyCurrentLimit(SUPPLY_LIMIT);
+
+        public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+        .withKP(0)
+        .withKI(0)
+        .withKD(0)
+        .withKA(0)
+        .withKV(0)
+        .withKG(0);
 
   }
 
@@ -127,12 +150,12 @@ public final class Constants {
 
     public static final double PIVOT_GEAR_RATIO = 1;
     public static final double INFEED_GEAR_RATIO = 1;
-    
+
     public static final double PIVOT_STATOR_LIMIT = 60;
     public static final double PIVOT_SUPPLY_LIMIT = 120;
 
     public static final double INFEED_SUPPLY_LIMIT = 60;
-    public static final double INFEED_STATOR_LIMIT = 120; 
+    public static final double INFEED_STATOR_LIMIT = 120;
 
     public static final boolean PIVOT_MASTER_INVERT = false;
     public static final boolean PIVOT_FOLLOWER_INVERT = true;
@@ -149,11 +172,14 @@ public final class Constants {
     public static final double sim_kd = 1;
     public static final double sim_kg = 1;
 
-}
+    public static final int INFEED_CAN_ID = 6;
+    public static final int PIVOT_MASTER_CAN_ID = 8;
+
+  }
 
   public static final class MathConstants {
 
-    public static final Distance HUB_HEIGHT = Meters.of(1.83-0.345); // Height of the hub - height of the turret
+    public static final Distance HUB_HEIGHT = Meters.of(1.83 - 0.345); // Height of the hub - height of the turret
     public static final Angle LAUNCH_ANGLE = Degrees.of(65);
     public static final Distance FLY_WHEEL_DIAMETER = Inches.of(4);
 
@@ -212,49 +238,39 @@ public final class Constants {
      * Zones: 158.6 Inches from each wall
      */
     public static final Rectangle2d fieldZone = new Rectangle2d(
-      new Translation2d(), 
-      new Translation2d(Inches.of(651.2), Inches.of(317.7))
-    );
+        new Translation2d(),
+        new Translation2d(Inches.of(651.2), Inches.of(317.7)));
     public static final Rectangle2d blueZone = new Rectangle2d(
-      new Translation2d(), 
-      new Translation2d(Inches.of(158.6), Inches.of(317.7))
-    );
+        new Translation2d(),
+        new Translation2d(Inches.of(158.6), Inches.of(317.7)));
     public static final Rectangle2d blueTrench = new Rectangle2d(
-      new Translation2d(Inches.of(158.6), Inches.of(0)), 
-      new Translation2d(Inches.of(205.6), Inches.of(317.7)) //  65.65 - 50.34 = 15.31 
+        new Translation2d(Inches.of(158.6), Inches.of(0)),
+        new Translation2d(Inches.of(205.6), Inches.of(317.7)) // 65.65 - 50.34 = 15.31
     );
     public static final Rectangle2d blueTrenchBlock = new Rectangle2d(
-      new Translation2d(Inches.of(158.6), Inches.of(50.34)), 
-      new Translation2d(Inches.of(205.6), Inches.of(267.36))
-    ); 
+        new Translation2d(Inches.of(158.6), Inches.of(50.34)),
+        new Translation2d(Inches.of(205.6), Inches.of(267.36)));
     public static final Rectangle2d blueBump = new Rectangle2d(
-      new Translation2d(Inches.of(158.6), Inches.of(65.65)), 
-      new Translation2d(Inches.of(205.6), Inches.of(251.05))
-    );
+        new Translation2d(Inches.of(158.6), Inches.of(65.65)),
+        new Translation2d(Inches.of(205.6), Inches.of(251.05)));
     public static final Rectangle2d blueHub = new Rectangle2d(
-      new Translation2d(Inches.of(158.6), Inches.of(135.35)), 
-      new Translation2d(Inches.of(205.6), Inches.of(182.1)) 
-    );
+        new Translation2d(Inches.of(158.6), Inches.of(135.35)),
+        new Translation2d(Inches.of(205.6), Inches.of(182.1)));
     public static final Rectangle2d redZone = new Rectangle2d(
-      new Translation2d(Inches.of(492.6), Inches.of(0)), 
-      new Translation2d(Inches.of(651.2), Inches.of(317.7))
-    );
+        new Translation2d(Inches.of(492.6), Inches.of(0)),
+        new Translation2d(Inches.of(651.2), Inches.of(317.7)));
     public static final Rectangle2d redTrench = new Rectangle2d(
-      new Translation2d(Inches.of(492.6), Inches.of(0)), 
-      new Translation2d(Inches.of(445.6), Inches.of(317.7)) 
-    );
+        new Translation2d(Inches.of(492.6), Inches.of(0)),
+        new Translation2d(Inches.of(445.6), Inches.of(317.7)));
     public static final Rectangle2d redTrenchBlock = new Rectangle2d(
-      new Translation2d(Inches.of(492.6), Inches.of(50.34)), 
-      new Translation2d(Inches.of(445.6), Inches.of(267.36)) 
-    );
+        new Translation2d(Inches.of(492.6), Inches.of(50.34)),
+        new Translation2d(Inches.of(445.6), Inches.of(267.36)));
     public static final Rectangle2d redBump = new Rectangle2d(
-      new Translation2d(Inches.of(492.6), Inches.of(65.65)), 
-      new Translation2d(Inches.of(445.6), Inches.of(251.05)) 
-    );
+        new Translation2d(Inches.of(492.6), Inches.of(65.65)),
+        new Translation2d(Inches.of(445.6), Inches.of(251.05)));
     public static final Rectangle2d redHub = new Rectangle2d(
-      new Translation2d(Inches.of(492.6), Inches.of(135.35)), 
-      new Translation2d(Inches.of(445.6), Inches.of(182.1)) 
-    );
+        new Translation2d(Inches.of(492.6), Inches.of(135.35)),
+        new Translation2d(Inches.of(445.6), Inches.of(182.1)));
 
     public static final Pose2d BLUE_HUB_TARGET = new Pose2d(4.5, 4, new Rotation2d());
 
@@ -263,7 +279,6 @@ public final class Constants {
     public static final Pose2d BLUE_PASSING_TARGET = new Pose2d(2, 2, new Rotation2d());
 
     public static final Pose2d RED_PASSING_TARGET = new Pose2d(14, 7, new Rotation2d());
-    
 
     public enum CurrentZone {
       RED,
@@ -276,7 +291,6 @@ public final class Constants {
       PHASING,
       OUTSIDE_BOUNDS
     }
-
 
   }
 
@@ -332,16 +346,17 @@ public final class Constants {
         .withFeedback(KICKER_FEEDBACK_CONFIG);
   }
 
-    public static final class VisionConstants {
-    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+  public static final class VisionConstants {
+    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout
+        .loadField(AprilTagFields.k2026RebuiltWelded);
     public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    public static final Transform3d FRONT_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
-    public static final Transform3d FRONT_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
+    public static final Transform3d FRONT_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
+        new Rotation3d());
+    public static final Transform3d FRONT_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
+        new Rotation3d());
     public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
-    
+
   }
 
 }
-
-
