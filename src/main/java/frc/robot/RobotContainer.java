@@ -13,6 +13,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,8 +45,11 @@ import frc.robot.Utils.RobotMode;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  public static PhotonCamera frontRightCamera = new PhotonCamera("frontRightCamera");
+  public static PhotonCamera frontLeftCamera = new PhotonCamera("frontLeftCamera");
+  public static PhotonCamera backCamera = new PhotonCamera("backCamera");
 
-  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontRightCamera, frontLeftCamera, backCamera);
 
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
@@ -103,7 +108,7 @@ public class RobotContainer {
         break;
     }
 
-    autos = new Autos(drivetrain, turret);
+    autos = new Autos(drivetrain, turret, intake, shooter);
 
     // Configure the trigger bindings
     configureBindings();
@@ -154,7 +159,7 @@ public class RobotContainer {
   }
 
   private void configureFuelSim() {
-    fuelSim = new FuelSim("Fuel Pose");
+    fuelSim = new FuelSim("Fuel-Pose");
     fuelSim.spawnStartingFuel();
     fuelSim.enableAirResistance();
 

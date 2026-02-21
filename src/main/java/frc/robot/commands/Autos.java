@@ -7,14 +7,20 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
 
 public class Autos {
     AutoFactory autoFactory;
     Turret turret;
+    Intake intake;
+    Shooter shooter;
 
-    public Autos(CommandSwerveDrivetrain drivetrain, Turret turret) {
+    public Autos(CommandSwerveDrivetrain drivetrain, Turret turret, Intake intake, Shooter shooter){
         this.turret = turret;
+        this.intake = intake;
+        this.shooter = shooter;
         autoFactory = new AutoFactory(
             drivetrain::getPose,
             drivetrain::resetPose,
@@ -22,6 +28,7 @@ public class Autos {
             true,
             drivetrain
             );
+        autoFactory.bind("intake", Commands.runOnce(()-> intake.setIntake(90, 80), intake));
     }
 
     public AutoRoutine testAuto(){
@@ -37,6 +44,7 @@ public class Autos {
         );
 
         testTraj.atTime("target").onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))).withName("target"));
+
 
         return routine;
     }

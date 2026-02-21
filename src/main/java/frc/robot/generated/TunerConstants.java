@@ -28,6 +28,9 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
+
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
@@ -216,10 +219,11 @@ public class TunerConstants {
      * Creates a CommandSwerveDrivetrain instance.
      * This should only be called once in your robot program,.
      */
-    public static CommandSwerveDrivetrain createDrivetrain() {
+    public static CommandSwerveDrivetrain createDrivetrain(PhotonCamera frontRightCamera,
+            PhotonCamera frontLeftCamera,
+            PhotonCamera backCamera) {
         return new CommandSwerveDrivetrain(
-            DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
-        );
+            DrivetrainConstants, frontRightCamera, frontLeftCamera, backCamera, FrontLeft, FrontRight, BackLeft, BackRight);
     }
 
 

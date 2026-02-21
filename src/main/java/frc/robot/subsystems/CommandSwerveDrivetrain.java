@@ -1,9 +1,15 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
+import org.opencv.photo.Photo;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -18,6 +24,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -48,6 +55,10 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+
+    private final PhotonCamera frontRightCamera;
+    private final PhotonCamera frontLeftCamera;
+    private final PhotonCamera backCamera;
 
     private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
@@ -90,6 +101,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+
+    
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
@@ -168,14 +181,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public CommandSwerveDrivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
-            SwerveModuleConstants<?, ?, ?>... modules) {
+            PhotonCamera frontRightCamera,
+            PhotonCamera frontLeftCamera,
+            PhotonCamera backCamera,
+            SwerveModuleConstants<?, ?, ?>... modules
+            ) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
 
+        this.backCamera = backCamera;
+        this.frontRightCamera = frontRightCamera;
+        this.frontLeftCamera = frontLeftCamera;
+
         pigeon2 = new Pigeon2(0, "Drivebase");
         headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+
 
     }
 
@@ -197,11 +220,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public CommandSwerveDrivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
+            PhotonCamera frontRightCamera,
+            PhotonCamera frontLeftCamera,
+            PhotonCamera backCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        this.backCamera = backCamera;
+        this.frontRightCamera = frontRightCamera;
+        this.frontLeftCamera = frontLeftCamera;
+
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -237,12 +267,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             double odometryUpdateFrequency,
             Matrix<N3, N1> odometryStandardDeviation,
             Matrix<N3, N1> visionStandardDeviation,
+            PhotonCamera frontRightCamera,
+            PhotonCamera frontLeftCamera,
+            PhotonCamera backCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                 modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        this.backCamera = backCamera;
+        this.frontRightCamera = frontRightCamera;
+        this.frontLeftCamera = frontLeftCamera;
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -322,9 +358,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 sample.vx + xController.calculate(pose.getX(), sample.x),
                 sample.vy + yController.calculate(pose.getY(), sample.y),
                 sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
-        
+
         Logger.recordOutput("Chassis Speeds", speeds);
-        
+
         // Apply the generated speeds
         this.setControl(driveFieldRelative(speeds));
     }
@@ -351,7 +387,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
-        if (getCurrentCommand() != null){
+        if (getCurrentCommand() != null) {
             Logger.recordOutput("Commands/Drivebase Command", getCurrentCommand().getName());
         }
         /*
@@ -446,4 +482,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return pigeon2.getRotation2d().getDegrees();
     }
 
+    public void getEstimatedGlobalPose(PhotonPoseEstimator poseEstimator, PhotonCamera camera,
+            List<PhotonPipelineResult> results) {
+        camera.setPipelineIndex(0);
+
+        if (!results.isEmpty()) {
+            List<PhotonTrackedTarget> targets = results.get(0).targets;
+            // Logger.recordOutput("Vison/"+camera.getName() +
+            // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
+            if (targets.size() == 1) {
+                if (targets.get(0).poseAmbiguity < .2) {
+                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(), poseEstimator.update(results.get(0)).get().timestampSeconds);
+                }
+            } else {
+                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(), poseEstimator.update(results.get(0)).get().timestampSeconds);
+            }
+        }
+    }
+
+
 }
+
+
