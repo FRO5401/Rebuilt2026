@@ -30,6 +30,8 @@ import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Visulization;
+import frc.robot.subsystems.Indexer.Indexer;
+import frc.robot.subsystems.Indexer.IndexerIOTalon;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIOSim;
 import frc.robot.subsystems.Turret.Turret;
@@ -64,6 +66,7 @@ public class RobotContainer {
   private static Turret turret;
   private static Shooter shooter;
   private static Intake intake;
+  private static Indexer indexer;
   private static Visulization visulization = null;
 
   //  Command Declaration
@@ -90,6 +93,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(null);
         turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        indexer = new Indexer(new IndexerIOTalon());
         break;
 
       case SIM:
@@ -97,6 +101,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        indexer = new Indexer(null);
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         break;
@@ -105,6 +110,7 @@ public class RobotContainer {
         intake = new Intake(null);
         shooter = new Shooter(null);
         turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        indexer = new Indexer(null);
         break;
     }
 
