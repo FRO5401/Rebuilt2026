@@ -8,7 +8,7 @@ package frc.robot.subsystems.Intake;
 
 import org.littletonrobotics.junction.Logger;
 
-
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.TunableNumber;
 
@@ -60,5 +60,13 @@ public class Intake extends SubsystemBase {
 
    public double getPivotPosition(){
     return pivotInputs.angle;
+   }
+
+   public Command setPivotPositionCommand(double angle){
+    return runOnce(()->setPivotPosition(angle));
+   }
+
+   public Command setInfeedVelocityCommand(double percent){
+    return runOnce(()->setInfeedVelocity(percent));
    }
 }

@@ -31,9 +31,13 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -94,7 +98,7 @@ public final class Constants {
      * This is used to calculate the required velocity of the shot
      */
     public static final Transform2d TURRET_TRANSFORM = new Transform2d(-0.15, 0, new Rotation2d(0));
-    public static final int CAN_ID = 10;
+    public static final int CAN_ID = 4;
 
     /**
      * Used for number of iterations of the turret angle
@@ -104,7 +108,7 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int MOTOR_ID = 4;
+    public static final int MOTOR_ID = 10;
     public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
@@ -195,6 +199,19 @@ public final class Constants {
     public static final Distance HUB_HEIGHT = Meters.of(1.83 - 0.345); // Height of the hub - height of the turret
     public static final Angle LAUNCH_ANGLE = Degrees.of(65);
     public static final Distance FLY_WHEEL_DIAMETER = Inches.of(4);
+    public static final LinearAcceleration GRAVITY = MetersPerSecondPerSecond.of(9.81);
+    public static final Mass BALL_MASS = Pound.of(0.5);
+    public static final Distance BALL_DIAMETER = Inches.of(6);
+
+    public static final double BALL_VOLUME = Math.PI * Math.pow(BALL_DIAMETER.in(Meters) / 2.0, 2);
+
+    public static final double RHO = 1.2; // Air density kg/m^3
+
+    public static final double FLYWHEEL_EFFICIENCY = RobotBase.isReal() ? 0.9 : 1.0; // Percentage of the flywheel's velocity that is transferred to the ball
+
+    public static final double CD = 0.47; // Drag coefficient of a sphere
+
+    public static final double AIR_RESISTANCE = RHO * CD * 0.017671458676442587 * 0.5;
 
   }
 
@@ -309,7 +326,7 @@ public final class Constants {
 
   public static final class IndexerConstants {
     public static final int SPINDEXER_ID = 0;
-    public static final int KICKER_ID = 1;
+    public static final int KICKER_ID = 12;
 
     public static final Current STATOR_LIMIT = Amps.of(120);
     public static final Current SUPPLY_LIMIT = Amps.of(20);

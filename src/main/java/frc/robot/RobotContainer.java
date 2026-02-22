@@ -106,7 +106,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-        indexer = new Indexer(null);
+        indexer = new Indexer(new IndexerIOTalon());
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         break;
@@ -151,9 +151,9 @@ public class RobotContainer {
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
 
-    controller.a().onTrue(Commands.runOnce(()->intake.setPivotPosition(90), intake));
-    controller.b().onTrue(Commands.runOnce(()->intake.setPivotPosition(45), intake));
-    controller.x().onTrue(Commands.runOnce(()-> intake.setIntake(0, 0), intake));
+    controller.y().onTrue(intake.setPivotPositionCommand(90));
+    controller.x().onTrue(intake.setPivotPositionCommand(45));
+    controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
     intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
 

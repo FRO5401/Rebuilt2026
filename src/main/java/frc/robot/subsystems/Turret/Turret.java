@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.MathHelp;
+import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
 import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
 
@@ -89,12 +90,11 @@ public class Turret extends SubsystemBase {
 
       poseDifference = robotPose.get().minus(target);
       var robotVelocities = new Transform2d(
-          fieldSpeedsSupplier.get().vxMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds),
-          fieldSpeedsSupplier.get().vyMetersPerSecond * MathHelp.findTOF(poseDifference).in(Seconds), Rotation2d.kZero);
+          fieldSpeedsSupplier.get().vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+          fieldSpeedsSupplier.get().vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds), Rotation2d.kZero);
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-        tof = MathHelp.findTOF(poseDifference);
-
+        tof = PhysicsSolver.solveTimeOfFlight(poseDifference);
         poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM).minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
@@ -106,8 +106,6 @@ public class Turret extends SubsystemBase {
       Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
       Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
-
-      Logger.recordOutput("Turret/FlyWheel", MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(poseDifference)));
 
       setTurretAngle((Math.atan2(poseDifference.getY(), poseDifference.getX())
           + poseDifference.getRotation().getRadians() + Math.PI));

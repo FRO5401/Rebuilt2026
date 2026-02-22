@@ -22,12 +22,21 @@ public class MathHelp {
         Distance targetDistance = findDistance(poseDifference);
         double numerator = targetDistance.in(Meters)*Math.sqrt(9.8/(2*(Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians))*targetDistance.in(Meters)-MathConstants.HUB_HEIGHT.in(Meters))));
         double denominator = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians));
+        
+        LinearVelocity velocity = MetersPerSecond.of(numerator/denominator);
+
+
+        //remove this if we miss every shot 
+        velocity = MetersPerSecond.of(velocity.in(MetersPerSecond) * (1+MathConstants.AIR_RESISTANCE * targetDistance.in(Meters) / 2));
+        velocity = MetersPerSecond.of(velocity.in(MetersPerSecond) / MathConstants.FLYWHEEL_EFFICIENCY);
+
+
 
         Logger.recordOutput("MathHelp/Velocity", (numerator/denominator));
 
         
 
-        return MetersPerSecond.of(numerator/denominator);
+        return velocity;
     }
 
     public static AngularVelocity findFlyWheelRPM(LinearVelocity flywheelVelocity){
