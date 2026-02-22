@@ -42,6 +42,7 @@ import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Constants.ShooterConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -99,6 +100,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOTalon());
         turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
+        ShooterConstants.initializeTreeMap();
         break;
 
       case SIM:

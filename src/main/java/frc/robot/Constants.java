@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -157,6 +158,17 @@ public final class Constants {
         .withCurrentLimits(CURRENT_LIMITS_CONFIG)
         .withMotorOutput(OUTPUT_CONFIG)
         .withFeedback(FEEDBACK_CONFIG);
+
+    public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
+
+    public static void initializeTreeMap() {
+      TREE_MAP.put(1.5, 3000.0);
+      TREE_MAP.put(3.0, 4000.0);
+      TREE_MAP.put(4.5, 5000.0);
+      TREE_MAP.put(6.0, 5500.0);
+    }
+
+
 
   }
 
