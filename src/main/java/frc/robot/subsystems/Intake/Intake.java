@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.Intake;
 
-
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,8 +15,10 @@ public class Intake extends SubsystemBase {
     private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
     private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
     private final String key = "Intake/";
-    
-    //TODO: Finish tuning these, I ball parked it
+
+    private double desiredAngle = 0;
+
+    // TODO: Finish tuning these, I ball parked it
     private TunableNumber kp = new TunableNumber(key.concat("kp"), 40);
     private TunableNumber kd = new TunableNumber("Intake/kd", 0.936);
     private TunableNumber ki = new TunableNumber(key.concat("ki"), 0, true);
@@ -36,39 +36,40 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
 
-        if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged()){
+        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()) {
             io.setPivotPID(kp.get(), ki.get(), kd.get());
         }
 
     }
 
-   public void setPivotPosition(double angle){
+    public void setPivotPosition(double angle) {
         io.setPivotPosition(angle);
 
-   }
+    }
 
-   public void setInfeedVelocity(double percent){
+    public void setInfeedVelocity(double percent) {
         io.setInfeedVelocity(percent);
-   }
+    }
 
-   public void setIntake(double angle, double percent){
+    public void setIntake(double angle, double percent) {
         setPivotPosition(angle);
         setInfeedVelocity(percent);
-   }
-   
-   public boolean isIntakeDeployed(){
-    return pivotInputs.angle<10;
-   }
+    }
 
-   public double getPivotPosition(){
-    return pivotInputs.angle;
-   }
+    public boolean isIntakeDeployed() {
+        return pivotInputs.angle < 10;
+    }
 
-   public Command setPivotPositionCommand(double angle){
-    return runOnce(()->setPivotPosition(angle));
-   }
+    public double getPivotPosition() {
+        return pivotInputs.angle;
+    }
 
-   public Command setInfeedVelocityCommand(double percent){
-    return runOnce(()->setInfeedVelocity(percent));
-   }
+    public Command setPivotPositionCommand(double angle) {
+        desiredAngle = angle;
+        return runOnce(() -> setPivotPosition(angle));
+    }
+
+    public Command setInfeedVelocityCommand(double percent) {
+        return runOnce(() -> setInfeedVelocity(percent));
+    }
 }

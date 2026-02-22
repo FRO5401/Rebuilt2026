@@ -61,8 +61,12 @@ public class MathHelp {
 
     // *will find the hypotenuse/resultant of a pose */
     public static Distance findDistance(Transform2d vector) {
+        if (vector != null){
         Logger.recordOutput("Distance", Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
         return Meters.of(Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
+        } else {
+            return Meters.of(0);
+        }
 
     }
 

@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MathConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
@@ -139,13 +140,8 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+
   private void configureBindings() {
-    turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
-
-    shooter.setDefaultCommand(
-      shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
-    );
-
     drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
                 drivetrain.applyRequest(() -> drive
@@ -155,11 +151,23 @@ public class RobotContainer {
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
 
-    controller.y().onTrue(intake.setPivotPositionCommand(90));
-    controller.x().onTrue(intake.setPivotPositionCommand(45));
-    controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+    // turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
 
-    intake.setDefaultCommand(Commands.run(()->intake.setInfeedVelocity(controller.getRightTriggerAxis()), intake));
+    // shooter.setDefaultCommand(
+    //   shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
+    // );
+
+    // controller.y().onTrue(intake.setPivotPositionCommand(90));
+    // controller.x().onTrue(intake.setPivotPositionCommand(45));
+    // controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+
+    // controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
+    // controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
+
+
+    /* THESE ARE ALL FOR PID TUNING AND SHOULD NOT BE USED ON THE ROBOT */
+    //shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(120*controller.getRightTriggerAxis())));
+
 
   }
 

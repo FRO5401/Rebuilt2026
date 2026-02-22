@@ -34,6 +34,8 @@ public class IntakeIOTalonFX implements IntakeIO{
         infeed.getConfigurator().apply(infeedConfig);
         pivotMaster.getConfigurator().apply(pivotConfig);
 
+        pivotMaster.setPosition(0.0);
+
     }
 
     public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs){

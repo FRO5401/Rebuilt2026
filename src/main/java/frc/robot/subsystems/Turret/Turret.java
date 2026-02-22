@@ -29,11 +29,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
+import frc.robot.Utils.TunableNumber;
+
 
 public class Turret extends SubsystemBase {
+
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.CLOSED_LOOP.kP);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.CLOSED_LOOP.kI);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.CLOSED_LOOP.kD);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -133,6 +140,11 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
     Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
+    if(kP.hasChanged() || kI.hasChanged() || kD.hasChanged()){
+      setPID(kP.get(), kI.get(), kD.get());
+    }
+
+
     
   }
 
@@ -194,5 +206,9 @@ public class Turret extends SubsystemBase {
 
   public Angle getTurretAngle(){
     return Radians.of((-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position));
+  }
+
+  public void setPID(double P, double I, double D){
+    controller.setPID(P, I, D);
   }
 }

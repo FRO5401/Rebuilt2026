@@ -26,7 +26,9 @@ public class Shooter extends SubsystemBase {
 
   private double desiredVel = 0;
 
-  private TunableNumber kP = new TunableNumber("Shooter/kp", desiredVel); 
+  private TunableNumber kP = new TunableNumber("Shooter/kp", ShooterConstants.CLOSED_LOOP.kP);
+  private TunableNumber kI = new TunableNumber("Shooter/ki", ShooterConstants.CLOSED_LOOP.kI);
+  private TunableNumber kD = new TunableNumber("Shooter/kd", ShooterConstants.CLOSED_LOOP.kD);
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -39,24 +41,30 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
 
-    Logger.recordOutput("Shooter/Shooter velocity", inputs.velocity);
+    Logger.recordOutput("Shooter/Shooter velocity", getVelocity().in(RotationsPerSecond));
     Logger.recordOutput("Shooter/Shooter Desired Velocity", desiredVel);
+
+    if(kP.hasChanged() || kI.hasChanged() || kD.hasChanged()){
+      io.applyPID(kP.get(), kI.get(), kD.get());
+    }
 
   }
 
   public Command setVelocity(Supplier<AngularVelocity> vel){
     return run(()->{
-      io.setVelocity(vel.get().in(RotationsPerSecond)*60, inputs);
-      desiredVel = vel.get().in(RotationsPerSecond)*60;
+      io.setVelocity(vel.get().in(RotationsPerSecond), inputs);
+      desiredVel = vel.get().in(RotationsPerSecond);
     });
   }
 
   public AngularVelocity getVelocity(){
-    return RotationsPerSecond.of(inputs.velocity/60);
+    return RotationsPerSecond.of(inputs.velocity);
   }
 
    public void stop(){
      io.stop();
    }
+
+   
 
 }
