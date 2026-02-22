@@ -65,6 +65,8 @@ public class Turret extends SubsystemBase {
   // TOF used for transforming the target
   Time tof;
 
+  Pose2d turretPose;
+
   // Chassis speeds
   Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
@@ -80,15 +82,16 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    turretPose = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM);
     io.updateInputs(inputs);
 
     if (getCurrentCommand() != null) {
       Logger.recordOutput("Commands/Turret Command", getCurrentCommand().getName());
     }
 
-    if (robotPose != null && target != null) {
+    if (turretPose != null && target != null) {
 
-      poseDifference = robotPose.get().minus(target);
+      poseDifference = turretPose.minus(target);
       var robotVelocities = new Transform2d(
           fieldSpeedsSupplier.get().vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
           fieldSpeedsSupplier.get().vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds), Rotation2d.kZero);

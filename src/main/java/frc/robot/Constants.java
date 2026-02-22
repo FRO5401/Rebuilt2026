@@ -207,7 +207,7 @@ public final class Constants {
 
     public static final double RHO = 1.2; // Air density kg/m^3
 
-    public static final double FLYWHEEL_EFFICIENCY = RobotBase.isReal() ? 0.9 : 1.0; // Percentage of the flywheel's velocity that is transferred to the ball
+    public static final double FLYWHEEL_EFFICIENCY =  0.95; // Percentage of the flywheel's velocity that is transferred to the ball
 
     public static final double CD = 0.47; // Drag coefficient of a sphere
 
