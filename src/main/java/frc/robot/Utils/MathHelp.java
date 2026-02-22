@@ -13,21 +13,30 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants.MathConstants;
+import frc.robot.Constants.ShooterConstants;
+
 
 public class MathHelp {
     public static LinearVelocity findFlyWheelVelocity(Transform2d poseDifference) {
         // Im gonna slip up the math despite it not being optimal for memory its so much
         // better for readability
-        Distance targetDistance = findDistance(poseDifference);
-        double numerator = targetDistance.in(Meters)
-                * Math.sqrt(9.8 / (2 * (Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians)) * targetDistance.in(Meters)
-                        - MathConstants.HUB_HEIGHT.in(Meters))));
-        double denominator = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians));
+        LinearVelocity velocity;
 
-        LinearVelocity velocity = MetersPerSecond.of((numerator / denominator)/MathConstants.FLYWHEEL_EFFICIENCY);
+        if (RobotBase.isReal()) {
+            Distance targetDistance = findDistance(poseDifference);
+            double numerator = targetDistance.in(Meters)
+                    * Math.sqrt(9.8 / (2 * (Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians)) * targetDistance.in(Meters)
+                            - MathConstants.HUB_HEIGHT.in(Meters))));
+            double denominator = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians));
 
-        Logger.recordOutput("MathHelp/Velocity", (numerator / denominator));
+            velocity = MetersPerSecond.of((numerator / denominator) / MathConstants.FLYWHEEL_EFFICIENCY);
+        } else {
+            velocity = MetersPerSecond.of(ShooterConstants.TREE_MAP.get(findDistance(poseDifference).in(Meters)));
+        }
+
+        Logger.recordOutput("MathHelp/Flywheel Velocity", velocity.in(MetersPerSecond));
 
         return velocity;
     }
@@ -52,7 +61,9 @@ public class MathHelp {
 
     // *will find the hypotenuse/resultant of a pose */
     public static Distance findDistance(Transform2d vector) {
+        Logger.recordOutput("Distance", Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
         return Meters.of(Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
+
     }
 
 }
