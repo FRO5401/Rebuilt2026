@@ -31,17 +31,7 @@ public class Shooter extends SubsystemBase {
   public Shooter(ShooterIO io) {
     this.io = io;
 
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
-    ShooterConstants.TREE_MAP.put(null, null);
+
   }
 
   @Override

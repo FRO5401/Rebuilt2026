@@ -162,10 +162,34 @@ public final class Constants {
     public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
 
     public static void initializeTreeMap() {
-      TREE_MAP.put(1.5, 3000.0);
-      TREE_MAP.put(3.0, 4000.0);
-      TREE_MAP.put(4.5, 5000.0);
-      TREE_MAP.put(6.0, 5500.0);
+        TREE_MAP.put(1.7, 6.08);
+
+        TREE_MAP.put(2.0, 6.6803);
+        TREE_MAP.put(2.5, 6.9682);
+        TREE_MAP.put(3.0, 7.3236);
+        TREE_MAP.put(3.3, 7.545);
+        TREE_MAP.put(3.5, 7.6949);
+        TREE_MAP.put(4.0, 8.065);
+        TREE_MAP.put(4.2, 8.211);
+        TREE_MAP.put(4.5, 8.4285);
+        TREE_MAP.put(5.0, 8.7822);
+        TREE_MAP.put(5.5, 9.1259);
+        TREE_MAP.put(6.0, 9.4596);
+        TREE_MAP.put(6.5, 9.7837);
+        TREE_MAP.put(7.0, 10.0986);
+        TREE_MAP.put(7.5, 10.4050);
+        TREE_MAP.put(8.0, 10.7034);
+        TREE_MAP.put(8.5, 10.99);
+        TREE_MAP.put(9.0, 11.2781);
+        TREE_MAP.put(9.5, 11.555);
+        TREE_MAP.put(10.0, 11.8264);
+        TREE_MAP.put(10.5, 12.091);
+        TREE_MAP.put(11.0, 12.351);
+        TREE_MAP.put(11.5, 12.605);
+        TREE_MAP.put(12.0, 12.855);
+
+
+
     }
 
 
@@ -219,7 +243,7 @@ public final class Constants {
 
     public static final double RHO = 1.2; // Air density kg/m^3
 
-    public static final double FLYWHEEL_EFFICIENCY =  0.95; // Percentage of the flywheel's velocity that is transferred to the ball
+    public static final double FLYWHEEL_EFFICIENCY =  1; // Percentage of the flywheel's velocity that is transferred to the ball
 
     public static final double CD = 0.47; // Drag coefficient of a sphere
 

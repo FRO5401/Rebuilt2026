@@ -112,6 +112,7 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIOTalon());
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
+        ShooterConstants.initializeTreeMap();
         break;
 
       default:
