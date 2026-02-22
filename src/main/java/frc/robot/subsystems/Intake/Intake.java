@@ -16,6 +16,7 @@ public class Intake extends SubsystemBase {
     private final IntakeIO io;
     private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
     private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
+    
     //TODO: Finish tuning these, I ball parked it
     private TunableNumber kp = new TunableNumber("Intake/kp", 40);
     private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);

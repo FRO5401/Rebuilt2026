@@ -83,13 +83,14 @@ public class RobotContainer {
             .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
             .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    
     @SuppressWarnings("unused")
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  CommandXboxController controller = new CommandXboxController(0);
+    private CommandXboxController controller = new CommandXboxController(0);
 
-  // Simulation Visulization 
-  FuelSim fuelSim;
+    // Simulation Visulization 
+    FuelSim fuelSim;
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {

@@ -30,45 +30,43 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
-import frc.robot.subsystems.Turret.TurretIO.TurretIOInputs;
 
 public class Turret extends SubsystemBase {
 
   private final TurretIO io;
-  TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
+  private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
   private Translation3d[] trajectory = new Translation3d[50];
 
   // Checks if the robot is real or fake, and uses the correct PID controller
-  PIDController controller = RobotBase.isReal()
+  private PIDController controller = RobotBase.isReal()
       ? new PIDController(TurretConstants.KP, TurretConstants.KI, TurretConstants.KD)
       : new PIDController(TurretConstants.KP_SIM, TurretConstants.KI_SIM, TurretConstants.KD_SIM);
 
   // target on the field
-  Pose2d target;
+  private Pose2d target;
 
   // I like having a supplier as the function already exists for auto and it makes
   // the code cleaner.
-  Supplier<Pose2d> robotPose;
+  private Supplier<Pose2d> robotPose;
 
   // The difference of the turret post to the desired pose
-  Transform2d poseDifference;
+  private Transform2d poseDifference;
 
   // Robot Velocity that will affect the shot
-  Transform2d robotVelocities;
+  private Transform2d robotVelocities;
 
   // The current angle the turret is set too
-  double currentAngle = 0;
+  private double currentAngle = 0;
 
   // TOF used for transforming the target
-  Time tof;
+  private Time tof;
 
-  Pose2d turretPose;
+  private Pose2d turretPose;
 
   // Chassis speeds
-  Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+  private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
   public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
     controller.enableContinuousInput(0, 1);

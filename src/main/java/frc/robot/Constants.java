@@ -401,4 +401,18 @@ public final class Constants {
 
   }
 
+  public static final class RobotDimensionConstants{
+    public static final Distance WIDTH_WBUMPERS = Inches.of(34.56);
+    public static final Distance LENGTH_WBUMPERS = Inches.of(34.560082);
+    public static final Distance HEIGHT_OF_BUMPERS = Inches.of(5.858);
+    public static final Distance INTAKE_LENGTH = Inches.of(8.345);
+
+    public static final Distance INTAKE_XMIN = LENGTH_WBUMPERS.div(2);
+    public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
+    public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2);
+    public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
+    
+
+}
+
 }

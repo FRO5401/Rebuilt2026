@@ -61,8 +61,6 @@ public class Visulization extends SubsystemBase {
     this.intake = intake;
     shootTimer.start();
 
-    turretPose = new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
-    intakePose = new Pose3d(0.215, 0, 0.178, new Rotation3d(0, intake.getPivotPosition() - Degrees.of(70).in(Radians), 0));
   }
 
   @Override
