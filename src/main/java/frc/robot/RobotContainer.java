@@ -18,6 +18,8 @@ import org.photonvision.PhotonPoseEstimator;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -106,6 +108,7 @@ public class RobotContainer {
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         ShooterConstants.initializeTreeMap();
+        drivetrain.resetPose(new Pose2d(3, 3, Rotation2d.kZero));
         break;
 
       default:
