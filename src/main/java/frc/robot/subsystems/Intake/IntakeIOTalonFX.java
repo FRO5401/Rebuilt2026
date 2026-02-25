@@ -1,18 +1,16 @@
 package frc.robot.subsystems.Intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOTalonFX implements IntakeIO{
 
     private final TalonFX infeed = new TalonFX(IntakeConstants.INFEED_CAN_ID);
-    private final TalonFX pivotMaster = new TalonFX(IntakeConstants.PIVOT_MASTER_CAN_ID);
+    private final TalonFX pivot = new TalonFX(IntakeConstants.PIVOT_MASTER_CAN_ID);
 
     private final TalonFXConfiguration infeedConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
@@ -32,19 +30,19 @@ public class IntakeIOTalonFX implements IntakeIO{
         pivotConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.PIVOT_SUPPLY_LIMIT;
 
         infeed.getConfigurator().apply(infeedConfig);
-        pivotMaster.getConfigurator().apply(pivotConfig);
+        pivot.getConfigurator().apply(pivotConfig);
 
-        pivotMaster.setPosition(0.0);
+        pivot.setPosition(0.0);
 
     }
 
     public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs){
-        pivotInputs.angle = pivotMaster.getPosition().getValueAsDouble();
-        pivotInputs.velocity = pivotMaster.getVelocity().getValueAsDouble();
+        pivotInputs.angle = pivot.getPosition().getValueAsDouble();
+        pivotInputs.velocity = pivot.getVelocity().getValueAsDouble();
 
-        pivotInputs.temperature = pivotMaster.getDeviceTemp().getValueAsDouble();
-        pivotInputs.voltage = pivotMaster.getMotorVoltage().getValueAsDouble();
-        pivotInputs.current = pivotMaster.getSupplyCurrent().getValueAsDouble();
+        pivotInputs.temperature = pivot.getDeviceTemp().getValueAsDouble();
+        pivotInputs.voltage = pivot.getMotorVoltage().getValueAsDouble();
+        pivotInputs.current = pivot.getSupplyCurrent().getValueAsDouble();
 
 
         infeedInputs.velocity = infeed.getVelocity().getValueAsDouble();
@@ -55,7 +53,7 @@ public class IntakeIOTalonFX implements IntakeIO{
     
     @Override
     public void setPivotPosition(double angle){
-        pivotMaster.setControl(pivotPositionRequest.withPosition(angle));
+        pivot.setControl(pivotPositionRequest.withPosition(angle));
     }
 
     @Override
@@ -66,12 +64,12 @@ public class IntakeIOTalonFX implements IntakeIO{
     @Override
     public void stop(){
         infeed.stopMotor();
-        pivotMaster.stopMotor();
+        pivot.stopMotor();
     }
 
     @Override
     public void setPivotVoltage(double voltage){
-        pivotMaster.setControl(pivotVoltageRequest.withOutput(voltage));
+        pivot.setControl(pivotVoltageRequest.withOutput(voltage));
     }
     
     @Override
