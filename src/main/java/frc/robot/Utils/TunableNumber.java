@@ -60,6 +60,7 @@ public class TunableNumber implements DoubleSupplier {
         double currentValue = this.get();
         if(currentValue != defaultValue){
             networkNumber.set(currentValue);
+            defaultValue = currentValue;
             return true;
         }
         return false;
