@@ -110,12 +110,12 @@ public final class Constants {
     public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
-    public static final double KP = 0.04093;
+    public static final double KP = 40;
     public static final double KI = 0.0;
-    public static final double KD = 0.0;
+    public static final double KD = 0.4;
     
-    public static final double KS = 0;
-    public static final double KV = 0.0022;
+    public static final double KS = 10;
+    public static final double KV = 0.3;
     public static final double KA = 0;
 
     public static final double KS_SIM = 0;
