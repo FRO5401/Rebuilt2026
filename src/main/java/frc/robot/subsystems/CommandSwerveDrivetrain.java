@@ -58,17 +58,17 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
-    private final PhotonCamera frontRightCamera;
-    private final PhotonCamera frontLeftCamera;
-    private final PhotonCamera backCamera;
+    private final PhotonCamera backRightCamera;
+    private final PhotonCamera backLeftCamera;
+    private final PhotonCamera frontCamera;
 
-    public PhotonPoseEstimator frontRightPoseEstimator;
-    public PhotonPoseEstimator frontLeftPoseEstimator;
-    public PhotonPoseEstimator backPoseEstimator;
+    public PhotonPoseEstimator backRightPoseEstimator;
+    public PhotonPoseEstimator frontPoseEstimator;
+    public PhotonPoseEstimator backLeftPoseEstimator;
 
-    public List<PhotonPipelineResult> frontRightResults;
-    public List<PhotonPipelineResult> frontLeftResults;
-    public List<PhotonPipelineResult> backResults;
+    public List<PhotonPipelineResult> backRightResults;
+    public List<PhotonPipelineResult> backLeftResults;
+    public List<PhotonPipelineResult> frontResults;
 
     private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
@@ -104,8 +104,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withRotationalDeadband(.1)
             .withDesaturateWheelSpeeds(true);
 
-    public List<PhotonPipelineResult> frontResults;
-    public List<PhotonPipelineResult> rightResults;
 
     private final SwerveRequest.ApplyFieldSpeeds m_applyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
@@ -189,25 +187,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public CommandSwerveDrivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
-            PhotonCamera frontRightCamera,
-            PhotonCamera frontLeftCamera,
-            PhotonCamera backCamera,
+            PhotonCamera backRightCamera,
+            PhotonCamera backLeftCamera,
+            PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
 
-        this.backCamera = backCamera;
-        this.frontRightCamera = frontRightCamera;
-        this.frontLeftCamera = frontLeftCamera;
+        this.backRightCamera = backRightCamera;
+        this.backLeftCamera = backLeftCamera;
+        this.frontCamera = frontCamera;
 
-        frontRightPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
-                VisionConstants.FRONT_RIGHT_CAMERA_POSE);
-        frontLeftPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
-                VisionConstants.FRONT_LEFT_CAMERA_POSE);
-        backPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
-                VisionConstants.BACK_CAMERA_POSE);
+        backRightPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.BACK_RIGHT_CAMERA_POSE);
+        frontPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.Front_CAMERA_POSE);
+        backLeftPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
+                VisionConstants.BACK_LEFT_CAMERA_POSE);
 
         pigeon2 = new Pigeon2(0, "Drivebase");
         headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -232,17 +230,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public CommandSwerveDrivetrain(
             SwerveDrivetrainConstants drivetrainConstants,
             double odometryUpdateFrequency,
-            PhotonCamera frontRightCamera,
-            PhotonCamera frontLeftCamera,
-            PhotonCamera backCamera,
+            PhotonCamera backRightCamera,
+            PhotonCamera backLeftCamera,
+            PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        this.backCamera = backCamera;
-        this.frontRightCamera = frontRightCamera;
-        this.frontLeftCamera = frontLeftCamera;
+        this.frontCamera = frontCamera;
+        this.backRightCamera = backRightCamera;
+        this.backLeftCamera = backLeftCamera;
 
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -279,18 +277,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             double odometryUpdateFrequency,
             Matrix<N3, N1> odometryStandardDeviation,
             Matrix<N3, N1> visionStandardDeviation,
-            PhotonCamera frontRightCamera,
-            PhotonCamera frontLeftCamera,
-            PhotonCamera backCamera,
+            PhotonCamera backRightCamera,
+            PhotonCamera backLeftCamera,
+            PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                 modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        this.backCamera = backCamera;
-        this.frontRightCamera = frontRightCamera;
-        this.frontLeftCamera = frontLeftCamera;
+        this.backRightCamera = backRightCamera;
+        this.backLeftCamera = backLeftCamera;
+        this.frontCamera = frontCamera;
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -399,9 +397,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
-        frontRightResults = frontRightCamera.getAllUnreadResults();
-        frontLeftResults = frontLeftCamera.getAllUnreadResults();
-        backResults = backCamera.getAllUnreadResults();
+        backRightResults = backRightCamera.getAllUnreadResults();
+        backLeftResults = backLeftCamera.getAllUnreadResults();
+        frontResults = frontCamera.getAllUnreadResults();
 
         if (getCurrentCommand() != null) {
             Logger.recordOutput("Commands/Drivebase Command", getCurrentCommand().getName());
@@ -427,9 +425,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        getEstimatedGlobalPose(frontLeftPoseEstimator, frontLeftCamera, frontLeftResults);
-        getEstimatedGlobalPose(frontRightPoseEstimator, frontRightCamera, frontRightResults);
-        getEstimatedGlobalPose(backPoseEstimator, backCamera, backResults);
+        getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
+        getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
+        getEstimatedGlobalPose(backLeftPoseEstimator, backLeftCamera, backLeftResults);
 
     }
 

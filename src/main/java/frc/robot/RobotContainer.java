@@ -52,14 +52,13 @@ import frc.robot.Constants.ShooterConstants;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  public static PhotonCamera frontRightCamera = new PhotonCamera("frontRightCamera");
-  public static PhotonCamera frontLeftCamera = new PhotonCamera("frontLeftCamera");
-  public static PhotonCamera backCamera = new PhotonCamera("backCamera");
+  public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
+  public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
+  public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
 
   
 
-  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontRightCamera, frontLeftCamera, backCamera);
-
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
 

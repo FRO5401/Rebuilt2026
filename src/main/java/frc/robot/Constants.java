@@ -113,7 +113,7 @@ public final class Constants {
     public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
-    public static final double KP = 0.5;
+    public static final double KP = 0.04093;
     public static final double KI = 0.0;
     public static final double KD = 0.0;
     
@@ -198,8 +198,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int PIVOT_MASTER_ID = 1;
-    public static final int PIVOT_FOLLOWER_ID = 2;
-    public static final int INFEED_ID = 3;
+    public static final int INFEED_ID = 2;
 
     public static final double INTAKE_SPEED = 0.5;
 
@@ -419,11 +418,11 @@ public final class Constants {
         .loadField(AprilTagFields.k2026RebuiltWelded);
     public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    public static final Transform3d FRONT_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
-        new Rotation3d());
-    public static final Transform3d FRONT_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
-        new Rotation3d());
-    public static final Transform3d BACK_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d());
+    public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-9-(5.0/8.0)).in(Meters), Inches.of(-9.875-(1.0/32.0)).in(Meters), Inches.of(13.25).in(Meters)),
+        new Rotation3d(0,-5,180));
+    public static final Transform3d BACK_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-6.125).in(Meters), Inches.of(13.25).in(Meters), Inches.of(13.25).in(Meters)),
+        new Rotation3d(0,-5,270));
+    public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0,-5,0));
 
   }
 
