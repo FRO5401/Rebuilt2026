@@ -436,7 +436,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     }
 
-    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
+    public MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
     private void startSimThread() {
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
             Seconds.of(kSimLoopPeriod),
@@ -539,6 +539,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
         Timer.delay(0.05); // Wait for simulation to update
         super.resetPose(pose);
+    }
+
+    public Pose2d getSimPose(){
+        if (this.mapleSimSwerveDrivetrain != null)
+            return mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+        return getPose();
     }
 
 }

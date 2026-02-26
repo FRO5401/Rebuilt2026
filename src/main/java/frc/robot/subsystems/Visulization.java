@@ -40,8 +40,6 @@ public class Visulization extends SubsystemBase {
   private final double CAPACITY = 24;
   private double fuelStored = 8;
 
-  private Timer shootTimer = new Timer();
-
   private Transform3d turretTransform = new Transform3d(TurretConstants.TURRET_TRANSFORM.getMeasureX(), TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
   private Translation3d turretPoseTransform = new Translation3d(-0.11, 0, 0.345);
   private Translation3d intakePoseTransform = new Translation3d(0.215, 0, 0.178);
@@ -53,13 +51,11 @@ public class Visulization extends SubsystemBase {
 
 
   /** Creates a new Visulization. */
-  public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
-    this.fuelSim = fuelSim;
+  public Visulization(Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
     this.robotPose = robotPose;
     this.turret = turret;
     this.shooter = shooter;
     this.intake = intake;
-    shootTimer.start();
 
   }
 
@@ -74,9 +70,7 @@ public class Visulization extends SubsystemBase {
     Logger.recordOutput("Visulization/Robot Components", new Pose3d[] {intakePose, turretPose});
     Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] {new Pose3d(), new Pose3d()});
     Logger.recordOutput("Current Fuel Count", fuelStored);
-    if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
-      launchFuel();
-    }
+
   }
 
   public boolean canIntake() {
@@ -91,11 +85,5 @@ public class Visulization extends SubsystemBase {
         if (fuelStored == 0) return;
         fuelStored--;
 
-        fuelSim.launchFuel(
-                MathHelp.findFlyWheelVelocity(turret.getPoseDifference()),
-                MathConstants.LAUNCH_ANGLE,
-                turret.getTurretAngle(),
-                turretTransform.getMeasureZ()
-          );
     }
 }

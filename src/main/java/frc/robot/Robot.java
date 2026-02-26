@@ -102,7 +102,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    HubTracker.getInstance().stopMatchTimer();
   }
 
   @Override
@@ -163,13 +162,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    //m_robotContainer.fuelSim.updateSim();
-    SimulatedArena.getInstance().simulationPeriodic();
-    // Get the positions of the fuel (both on the field and in the air)
-      Pose3d[] fuelPoses = SimulatedArena.getInstance()
-            .getGamePiecesArrayByType("Fuel");
-      // Publish to telemetry using AdvantageKit
-      Logger.recordOutput("FieldSimulation/FuelPositions", fuelPoses);
+    m_robotContainer.updateSimulation();
   }
 
 }

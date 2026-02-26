@@ -13,6 +13,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 
@@ -46,6 +48,7 @@ import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.RobotMode.Mode;
 import frc.robot.Constants.ShooterConstants;
 
 /**
@@ -84,9 +87,6 @@ public class RobotContainer {
 
     private CommandXboxController controller = new CommandXboxController(0);
 
-    // Simulation Visulization 
-    FuelSim fuelSim;
-
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     // Instantiation 
@@ -100,15 +100,13 @@ public class RobotContainer {
         break;
 
       case SIM:
-        configureFuelSim();
+        resetSimulation();
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
-        turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        turret = new Turret(new TurretIOSim(), drivetrain::getSimPose, drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
-        visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
-        configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
+        visulization = new Visulization(drivetrain::getSimPose, turret, shooter, intake);
         ShooterConstants.initializeTreeMap();
-        drivetrain.resetPose(new Pose2d(3, 3, Rotation2d.kZero));
         break;
 
       default:
@@ -146,22 +144,22 @@ public class RobotContainer {
                                 -controller.getRightX() * Constants.Swerve.MaxAngularRate)
                 .withDesaturateWheelSpeeds(true)));
 
-    // turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
+    turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
 
-    // shooter.setDefaultCommand(
-    //   shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
-    // );
+    shooter.setDefaultCommand(
+    shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
+    );
 
-    // controller.y().onTrue(intake.setPivotPositionCommand(90));
-    // controller.x().onTrue(intake.setPivotPositionCommand(45));
-    // controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+    controller.y().onTrue(intake.setPivotPositionCommand(90));
+    controller.x().onTrue(intake.setPivotPositionCommand(45));
+    controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
-    // controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
-    // controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
+    controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
+    controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
 
 
     /* THESE ARE ALL FOR PID TUNING AND SHOULD NOT BE USED ON THE ROBOT */
-    //shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(120*controller.getRightTriggerAxis())));
+    shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(120*controller.getRightTriggerAxis())));
 
 
   }
@@ -176,36 +174,18 @@ public class RobotContainer {
     return autos.testAuto().cmd().withName("Auto");
   }
 
-  /* Team 5000 Fuel Sim Set up */
-  private void configureFuelSim() {
-    fuelSim = new FuelSim("Fuel-Pose");
-    fuelSim.spawnStartingFuel();
-    fuelSim.enableAirResistance();
-
-    fuelSim.start();
-    SmartDashboard.putData(Commands.runOnce(() -> {
-                fuelSim.clearFuel();
-                fuelSim.spawnStartingFuel();
-            })
-            .withName("Reset Fuel")
-            .ignoringDisable(true));
+  public void resetSimulation(){
+    if(RobotMode.currentMode != Mode.SIM) return;
+    drivetrain.resetPose(new Pose2d(2, 2, new Rotation2d()));
+    SimulatedArena.getInstance().resetFieldForAuto();
   }
 
-  private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
-    fuelSim.registerRobot(
-            RobotDimensionConstants.WIDTH_WBUMPERS,
-            RobotDimensionConstants.LENGTH_WBUMPERS,
-            RobotDimensionConstants.HEIGHT_OF_BUMPERS,
-            drivetrain::getPose,
-            drivetrain::getFieldRelativeChassisSpeeds
-    );
-    fuelSim.registerIntake(
-            RobotDimensionConstants.INTAKE_XMIN,
-            RobotDimensionConstants.INTAKE_XMAX,
-            RobotDimensionConstants.INTAKE_YMIN,
-            RobotDimensionConstants.INTAKE_YMAX,
-            ()-> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
-            intakeCallback
-    );
+  public void updateSimulation(){
+    if(RobotMode.currentMode != Mode.SIM) return;
+    SimulatedArena.getInstance().simulationPeriodic();
+    if(drivetrain.mapleSimSwerveDrivetrain != null) {
+      Logger.recordOutput("Visulization/Maple Sim Robot Pose", drivetrain.mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+    }
+    Logger.recordOutput("FieldSimulation/FuelPositions", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
   }
 }
