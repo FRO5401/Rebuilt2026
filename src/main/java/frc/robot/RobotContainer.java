@@ -105,7 +105,7 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getSimPose, drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
-        visulization = new Visulization(drivetrain::getSimPose, turret, shooter, intake);
+        visulization = new Visulization(drivetrain, turret, shooter, intake);
         ShooterConstants.initializeTreeMap();
         break;
 
@@ -152,10 +152,10 @@ public class RobotContainer {
 
     controller.y().onTrue(intake.setPivotPositionCommand(90));
     controller.x().onTrue(intake.setPivotPositionCommand(45));
-    controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+    controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(()->0)));
 
-    controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
-    controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
+    controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(()->IntakeConstants.INTAKE_SPEED));
+    controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(()->0));
 
 
     /* THESE ARE ALL FOR PID TUNING AND SHOULD NOT BE USED ON THE ROBOT */

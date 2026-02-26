@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Intake;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -61,12 +63,19 @@ public class Intake extends SubsystemBase {
         return pivotInputs.angle;
     }
 
+    public double getIntakeVelocity(){
+        return infeedInputs.velocity;
+    }
+    public boolean isIntakeRunning(){
+        return Math.abs(infeedInputs.velocity) > 0;
+    }
+
     // TODO: may change naming format
     public Command setPivotPositionCommand(double angle) {
         return runOnce(() -> setPivotPosition(angle));
     }
 
-    public Command setInfeedVelocityCommand(double percent) {
-        return runOnce(() -> setInfeedVelocity(percent));
+    public Command setInfeedVelocityCommand(DoubleSupplier percent) {
+        return runOnce(() -> setInfeedVelocity(percent.getAsDouble()));
     }
 }

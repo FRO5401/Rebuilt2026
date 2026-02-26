@@ -2,6 +2,8 @@ package frc.robot.subsystems.Intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.InchesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
@@ -64,8 +66,6 @@ public class IntakeIOSim implements IntakeIO {
 
     @Override
     public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs) {
-        Logger.recordOutput("Intake/Pivot Desired Angle", desiredAngle);
-
         pivotController.setPID(kp, ki, kd);
 
         if(isPositionControl){
@@ -86,7 +86,7 @@ public class IntakeIOSim implements IntakeIO {
         pivotInputs.current = pivotSim.getCurrentDrawAmps();
         pivotInputs.voltage = pivotVoltage;
 
-        infeedInputs.velocity = intakeSim.getAngularVelocityRPM();
+        infeedInputs.velocity = intakeSim.getAngularVelocityRadPerSec();
         infeedInputs.current = intakeSim.getCurrentDrawAmps();
         infeedInputs.voltage = intakeVoltage;
     }

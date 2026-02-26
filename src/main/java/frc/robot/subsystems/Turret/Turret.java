@@ -203,6 +203,9 @@ public class Turret extends SubsystemBase {
     return poseDifference;
   }
 
+  public Angle getTrueTurretAngle(){
+    return Radians.of(-Units.rotationsToRadians(inputs.position));
+  }
   public Angle getTurretAngle(){
     return Radians.of((-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position));
   }
