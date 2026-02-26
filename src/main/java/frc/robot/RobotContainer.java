@@ -28,6 +28,7 @@ import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.MathConstants;
+import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -58,6 +59,7 @@ public class RobotContainer {
 
   
 
+<<<<<<< HEAD
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
@@ -67,6 +69,9 @@ public class RobotContainer {
 
   //IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
   //Intake intake = new Intake(new IntakeIOSim());
+=======
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontRightCamera, frontLeftCamera, backCamera);
+>>>>>>> d31c7bb7d4e593f96c6d4245b152969267ae5884
 
   //  Subsystem Declaration
   private static Turret turret;
@@ -180,6 +185,7 @@ public class RobotContainer {
     return autos.testAuto().cmd().withName("Auto");
   }
 
+  /* Team 5000 Fuel Sim Set up */
   private void configureFuelSim() {
     fuelSim = new FuelSim("Fuel-Pose");
     fuelSim.spawnStartingFuel();
@@ -196,17 +202,17 @@ public class RobotContainer {
 
   private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
     fuelSim.registerRobot(
-            Inches.of(34.56),
-            Inches.of(34.560082),
-            Inches.of(5.858080),
+            RobotDimensionConstants.WIDTH_WBUMPERS,
+            RobotDimensionConstants.LENGTH_WBUMPERS,
+            RobotDimensionConstants.HEIGHT_OF_BUMPERS,
             drivetrain::getPose,
             drivetrain::getFieldRelativeChassisSpeeds
     );
     fuelSim.registerIntake(
-            Inches.of(34.560082).div(2).in(Meters),
-            Inches.of(34.560082).div(2).plus(Inches.of(8.345)).in(Meters),
-            -Inches.of(34.56).div(2).in(Meters),
-            Inches.of(34.56).div(2).in(Meters),
+            RobotDimensionConstants.INTAKE_XMIN,
+            RobotDimensionConstants.INTAKE_XMAX,
+            RobotDimensionConstants.INTAKE_YMIN,
+            RobotDimensionConstants.INTAKE_YMAX,
             ()-> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
             intakeCallback
     );

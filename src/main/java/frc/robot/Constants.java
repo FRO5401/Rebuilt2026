@@ -10,7 +10,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -32,13 +31,11 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -187,8 +184,6 @@ public final class Constants {
         TREE_MAP.put(11.0, 12.351);
         TREE_MAP.put(11.5, 12.605);
         TREE_MAP.put(12.0, 12.855);
-
-
 
     }
 
@@ -434,7 +429,7 @@ public final class Constants {
 
     public static final Distance INTAKE_XMIN = LENGTH_WBUMPERS.div(2);
     public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
-    public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2);
+    public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
     public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
     
 

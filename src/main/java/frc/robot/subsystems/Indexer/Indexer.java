@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.Indexer;
 
-import frc.robot.subsystems.Indexer.IndexerIO;
 import frc.robot.subsystems.Indexer.IndexerIO.IndexerIOInputs;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
