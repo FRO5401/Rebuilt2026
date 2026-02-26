@@ -52,8 +52,10 @@ public class ShooterIOSim implements ShooterIO {
         driveSim.setInputVoltage(0);
     }
 
-    public void applyPID(double P, double I, double D){
+    public void applyPID(double P, double I, double D, double S, double V){
         controller.setPID(P, I, D);
+        feedforward.setKs(S);
+        feedforward.setKv(V);
     }
 
 }

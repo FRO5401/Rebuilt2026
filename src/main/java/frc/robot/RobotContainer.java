@@ -59,7 +59,6 @@ public class RobotContainer {
 
   
 
-<<<<<<< HEAD
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
@@ -69,9 +68,6 @@ public class RobotContainer {
 
   //IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
   //Intake intake = new Intake(new IntakeIOSim());
-=======
-  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontRightCamera, frontLeftCamera, backCamera);
->>>>>>> d31c7bb7d4e593f96c6d4245b152969267ae5884
 
   //  Subsystem Declaration
   private static Turret turret;
@@ -102,10 +98,10 @@ public class RobotContainer {
     // Instantiation 
     switch(RobotMode.currentMode){
       case REAL: 
-        intake = new Intake(new IntakeIOTalonFX());
+        //intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(new ShooterIOTalon());
-        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-        indexer = new Indexer(new IndexerIOTalon());
+        //turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        //indexer = new Indexer(new IndexerIOTalon());
         ShooterConstants.initializeTreeMap();
         break;
 
@@ -128,7 +124,7 @@ public class RobotContainer {
         break;
     }
 
-    autos = new Autos(drivetrain, turret, intake, shooter);
+    //autos = new Autos(drivetrain, turret, intake, shooter);
 
     // Configure the trigger bindings
     configureBindings();
@@ -157,9 +153,9 @@ public class RobotContainer {
 
     // turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
 
-    // shooter.setDefaultCommand(
-    //   shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
-    // );
+    shooter.setDefaultCommand(
+      shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
+    );
 
     // controller.y().onTrue(intake.setPivotPositionCommand(90));
     // controller.x().onTrue(intake.setPivotPositionCommand(45));
@@ -181,8 +177,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    return autos.testAuto().cmd().withName("Auto");
+    return Commands.none();
+    //return autos.testAuto().cmd().withName("Auto");
   }
 
   /* Team 5000 Fuel Sim Set up */

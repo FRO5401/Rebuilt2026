@@ -41,10 +41,13 @@ public class ShooterIOTalon implements ShooterIO {
     
     public void stop(){};
 
-    public void applyPID(double P, double I, double D){
+    public void applyPID(double P, double I, double D, double S, double V){
         ShooterConstants.CLOSED_LOOP.kP = P;
         ShooterConstants.CLOSED_LOOP.kI = I;
         ShooterConstants.CLOSED_LOOP.kD = D;
+        ShooterConstants.CLOSED_LOOP.kS = S;
+        ShooterConstants.CLOSED_LOOP.kV = V;
+        
         shooterMotor.getConfigurator().apply(ShooterConstants.CONFIG);
     }
 
