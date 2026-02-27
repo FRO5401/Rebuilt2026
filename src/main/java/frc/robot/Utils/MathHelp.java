@@ -24,7 +24,8 @@ public class MathHelp {
         // better for readability
         LinearVelocity velocity;
 
-        if (RobotBase.isReal()) {
+        if (false
+        ) {
             Distance targetDistance = findDistance(poseDifference);
             double numerator = targetDistance.in(Meters)
                     * Math.sqrt(9.8 / (2 * (Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians)) * targetDistance.in(Meters)
@@ -46,7 +47,7 @@ public class MathHelp {
         Logger.recordOutput("MathHelp/Flywheel RPM",
                 (flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 60);
         return RotationsPerSecond
-                .of((flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
+                .of(-1.7*(flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
     }
 
     // Once again splitting up the math, this is the quadatric equation of height

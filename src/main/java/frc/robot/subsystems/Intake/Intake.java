@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Utils.TunableNumber;
 
 public class Intake extends SubsystemBase {
@@ -15,15 +16,20 @@ public class Intake extends SubsystemBase {
     private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
     private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
 
-    // TODO: Finish tuning these, I ball parked it
-    private TunableNumber kp = new TunableNumber("Intake/kp", 40);
-    private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
-    private TunableNumber kd = new TunableNumber("Intake/kd", 0.936);
+    private double desiredAngle = 0;
+
+    // // TODO: Finish tuning these, I ball parked it
+    // private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp);
+    // private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
+    // private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd);
+
+    // private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv);
+    // private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
         this.io = m_io;
-        io.setPivotPID(kp.get(), ki.get(), kd.get());
+        io.setPivotPID(IntakeConstants.kp, 0, IntakeConstants.kd, IntakeConstants.kv, IntakeConstants.ks);
     }
 
     @Override
@@ -32,14 +38,16 @@ public class Intake extends SubsystemBase {
         io.updateIntakeInputs(pivotInputs, infeedInputs);
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
+        Logger.recordOutput("Intake/Desired Position", desiredAngle);
 
-        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()) {
-            io.setPivotPID(kp.get(), ki.get(), kd.get());
-        }
+        // if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
+        //     io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
+        // }
 
     }
 
     public void setPivotPosition(double angle) {
+        desiredAngle = angle;
         io.setPivotPosition(angle);
 
     }

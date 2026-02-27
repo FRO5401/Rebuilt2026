@@ -42,6 +42,6 @@ public interface IntakeIO {
 
     public default void setInfeedVoltage(double voltage){}
 
-    public default void setPivotPID(double kp, double ki, double kd){}
+    public default void setPivotPID(double kp, double ki, double kd, double kv, double ks){}
     
 } 

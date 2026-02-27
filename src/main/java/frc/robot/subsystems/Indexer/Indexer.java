@@ -5,6 +5,11 @@
 package frc.robot.subsystems.Indexer;
 
 import frc.robot.subsystems.Indexer.IndexerIO.IndexerIOInputs;
+
+import java.util.function.Supplier;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
@@ -20,9 +25,13 @@ public class Indexer extends SubsystemBase {
     io.updateInputs(inputs);
   }
 
-  public void setIndexer(double spindexerVelocity, double kickerVelocity) {
-    io.setSpindexerVelocity(spindexerVelocity);
-    io.setKickerVelocity(kickerVelocity);
+  public void setIndexer(double spindexerVoltage, double kickerVoltage) {
+    io.setSpindexerVoltage(spindexerVoltage);
+    io.setKickerVoltage(kickerVoltage);
+  }
+
+  public Command setIndexerCommand(Supplier<Double> spindexerVoltage, Supplier<Double> kickerVoltage) {
+    return Commands.runOnce(() -> setIndexer(spindexerVoltage.get(), kickerVoltage.get()));
   }
 
   

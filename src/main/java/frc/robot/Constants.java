@@ -110,12 +110,13 @@ public final class Constants {
     public static final double GEAR_RATIO = 1;
     public static final int MAX_VELOCITY = 5800;
 
-    public static final double KP = 40;
+    public static final double KP = 0.0415
+    ;
     public static final double KI = 0.0;
-    public static final double KD = 0.4;
+    public static final double KD = 0.001;
     
-    public static final double KS = 10;
-    public static final double KV = 0.3;
+    public static final double KS = 0;
+    public static final double KV = 0.125;
     public static final double KA = 0;
 
     public static final double KS_SIM = 0;
@@ -127,13 +128,13 @@ public final class Constants {
     public static final double KD_SIM = 0.0;
 
     public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(60);
+    public static final Current SUPPLY_LIMIT = Amps.of(80);
 
 
 
     public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
         .withInverted(InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
+        .withNeutralMode(NeutralModeValue.Coast);
 
     public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
         .withSensorToMechanismRatio(GEAR_RATIO);
@@ -192,18 +193,18 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int PIVOT_MASTER_ID = 1;
-    public static final int INFEED_ID = 2;
+    public static final int PIVOT_MASTER_ID = 20;
+    public static final int INFEED_ID = 21;
 
-    public static final double INTAKE_SPEED = 0.5;
+    public static final double INTAKE_SPEED = 0.45;
 
-    public static final double PIVOT_GEAR_RATIO = 1;
-    public static final double INFEED_GEAR_RATIO = 1;
+    public static final double PIVOT_GEAR_RATIO = 15;
+    public static final double INFEED_GEAR_RATIO = 3;
 
-    public static final double PIVOT_STATOR_LIMIT = 60;
+    public static final double PIVOT_STATOR_LIMIT = 80;
     public static final double PIVOT_SUPPLY_LIMIT = 120;
 
-    public static final double INFEED_SUPPLY_LIMIT = 60;
+    public static final double INFEED_SUPPLY_LIMIT = 80;
     public static final double INFEED_STATOR_LIMIT = 120;
 
     public static final boolean PIVOT_MASTER_INVERT = false;
@@ -211,18 +212,26 @@ public final class Constants {
 
     public static final boolean INFEED_INVERT = false;
 
-    public static final double kp = 1;
-    public static final double ki = 1;
-    public static final double kd = 1;
-    public static final double kg = 1;
+    public static final double kp = 10;
+    public static final double ki = 0;
+    public static final double kd = 0;
+    public static final double ks = 10;
+    public static final double kv = 10;
 
     public static final double sim_kp = 1;
     public static final double sim_ki = 1;
     public static final double sim_kd = 1;
-    public static final double sim_kg = 1;
+    public static final double sim_ks = 1;
 
-    public static final int INFEED_CAN_ID = 6;
-    public static final int PIVOT_MASTER_CAN_ID = 8;
+    
+    public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+        .withKP(kp)
+        .withKI(ki)
+        .withKD(kd)
+        .withKS(ks)
+        .withKV(kv);
+  
+
 
   }
 
@@ -369,11 +378,17 @@ public final class Constants {
         .withInverted(InvertedValue.CounterClockwise_Positive)
         .withNeutralMode(NeutralModeValue.Coast);
 
+    public static final MotorOutputConfigs LOADER_OUTPUT_CONFIG = new MotorOutputConfigs()
+        .withInverted(InvertedValue.Clockwise_Positive)
+        .withNeutralMode(NeutralModeValue.Coast);
+
     public static final FeedbackConfigs SPINDEXER_FEEDBACK_CONFIG = new FeedbackConfigs()
         .withSensorToMechanismRatio(SPINDEXER_GEAR_RATIO);
 
     public static final FeedbackConfigs KICKER_FEEDBACK_CONFIG = new FeedbackConfigs()
         .withSensorToMechanismRatio(KICKER_GEAR_RATIO);
+        
+
 
     public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
         .withStatorCurrentLimit(STATOR_LIMIT)
@@ -395,6 +410,7 @@ public final class Constants {
         .withKV(0)
         .withKG(0);
 
+
     public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration()
         .withSlot0(SPINDEXER_CLOSED_LOOP)
         .withCurrentLimits(CURRENT_LIMITS_CONFIG)
@@ -404,7 +420,7 @@ public final class Constants {
     public static final TalonFXConfiguration KICKER_CONFIG = new TalonFXConfiguration()
         .withSlot0(KICKER_CLOSED_LOOP)
         .withCurrentLimits(CURRENT_LIMITS_CONFIG)
-        .withMotorOutput(OUTPUT_CONFIG)
+        .withMotorOutput(LOADER_OUTPUT_CONFIG)
         .withFeedback(KICKER_FEEDBACK_CONFIG);
   }
 
@@ -413,10 +429,10 @@ public final class Constants {
         .loadField(AprilTagFields.k2026RebuiltWelded);
     public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
-    public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-9-(5.0/8.0)).in(Meters), Inches.of(-9.875-(1.0/32.0)).in(Meters), Inches.of(13.25).in(Meters)),
-        new Rotation3d(0,-5,180));
+    public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-(9+(5.0/8.0))).in(Meters), Inches.of(-(9.875+(1.0/32.0))).in(Meters), Inches.of(13.25).in(Meters)),
+        new Rotation3d(0,Math.toRadians(5), Math.toRadians(180)));
     public static final Transform3d BACK_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-6.125).in(Meters), Inches.of(13.25).in(Meters), Inches.of(13.25).in(Meters)),
-        new Rotation3d(0,-5,270));
+        new Rotation3d(0,Math.toRadians(5),Math.toRadians(90)));
     public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0,-5,0));
 
   }
@@ -432,7 +448,6 @@ public final class Constants {
     public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
     public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
     
-
 }
 
 }

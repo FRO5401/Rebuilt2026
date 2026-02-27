@@ -1,14 +1,15 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
-import org.opencv.photo.Photo;
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.proto.Photon;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -24,11 +25,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import choreo.trajectory.SwerveSample;
+import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -37,10 +39,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -242,6 +243,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this.backRightCamera = backRightCamera;
         this.backLeftCamera = backLeftCamera;
 
+        backRightPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+        backLeftPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+
+
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -338,7 +343,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // pulls the 2d state of the robot
     public Pose2d getPose() {
-        return getState().Pose;
+        return getStateCopy().Pose;
     }
 
     // factory for returning swerve auto commands
@@ -397,11 +402,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
+
         backRightResults = backRightCamera.getAllUnreadResults();
         backLeftResults = backLeftCamera.getAllUnreadResults();
-        frontResults = frontCamera.getAllUnreadResults();
+        //frontResults = frontCamera.getAllUnreadResults();
 
         if (getCurrentCommand() != null) {
+            Logger.recordOutput("Commands/RobotPose", getPose());
             Logger.recordOutput("Commands/Drivebase Command", getCurrentCommand().getName());
         }
         /*
@@ -425,9 +432,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
+       // getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
         getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
         getEstimatedGlobalPose(backLeftPoseEstimator, backLeftCamera, backLeftResults);
+
     }
 
     private void startSimThread() {
@@ -459,6 +467,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
     }
+
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the
@@ -509,12 +518,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
             if (targets.size() == 1) {
                 if (targets.get(0).poseAmbiguity < .2) {
-                    addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(),
-                            poseEstimator.update(results.get(0)).get().timestampSeconds);
+                    addVisionMeasurement(poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
+                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds);
                 }
-            } else {
-                addVisionMeasurement(poseEstimator.update(results.get(0)).get().estimatedPose.toPose2d(),
-                        poseEstimator.update(results.get(0)).get().timestampSeconds);
+            } else if (targets.size() > 1 && poseEstimator.estimateCoprocMultiTagPose(results.get(0)).isPresent()){
+                addVisionMeasurement(poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().estimatedPose.toPose2d(),
+                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds);
             }
         }
     }

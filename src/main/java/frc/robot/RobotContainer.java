@@ -47,9 +47,12 @@ import frc.robot.Utils.RobotMode;
 import frc.robot.Constants.ShooterConstants;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
@@ -57,51 +60,56 @@ public class RobotContainer {
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
   public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
 
-  
+  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera,
+      backLeftCamera, frontCamera);
+  // TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
+  // Turret turret = new Turret(turretIO, drivetrain::getPose,
+  // drivetrain::getFieldRelativeChassisSpeeds);
 
-  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
-  //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
-  //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+  // ShooterIO shooterIO = RobotBase.isReal() ? null : new ShooterIOSim();
+  // Shooter shooter = new Shooter(shooterIO);
 
-  //ShooterIO shooterIO = RobotBase.isReal() ? null : new ShooterIOSim();
-  //Shooter shooter = new Shooter(shooterIO);
+  // IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
+  // Intake intake = new Intake(new IntakeIOSim());
 
-  //IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
-  //Intake intake = new Intake(new IntakeIOSim());
-
-  //  Subsystem Declaration
+  // Subsystem Declaration
   private static Turret turret;
   private static Shooter shooter;
   private static Intake intake;
   private static Indexer indexer;
   private static Visulization visulization = null;
 
-  //  Command Declaration
+  // Command Declaration
   private static Autos autos;
 
-      /* Setting up bindings for necessary control of the swerve drive platform */
-    public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    
-    @SuppressWarnings("unused")
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+      .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
-    private CommandXboxController controller = new CommandXboxController(0);
+  @SuppressWarnings("unused")
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    // Simulation Visulization 
-    FuelSim fuelSim;
+  private CommandXboxController driver = new CommandXboxController(0);
+  private CommandXboxController operator = new CommandXboxController(1);
 
-  /** The container for the robot. Contains subsystems, IO devices, and commands. */
+
+  // Simulation Visulization
+  FuelSim fuelSim;
+
+  /**
+   * The container for the robot. Contains subsystems, IO devices, and commands.
+   */
   public RobotContainer() {
-    // Instantiation 
-    switch(RobotMode.currentMode){
-      case REAL: 
-        //intake = new Intake(new IntakeIOTalonFX());
+    // Instantiation
+    switch (RobotMode.currentMode) {
+      case REAL:
+        intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(new ShooterIOTalon());
-        //turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
-        //indexer = new Indexer(new IndexerIOTalon());
+        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        // drivetrain::getFieldRelativeChassisSpeeds);
+        indexer = new Indexer(new IndexerIOTalon());
         ShooterConstants.initializeTreeMap();
         break;
 
@@ -109,8 +117,10 @@ public class RobotContainer {
         configureFuelSim();
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
-        turret = new Turret(new TurretIOSim(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        turret = new Turret(new TurretIOSim(), drivetrain::getPose,
+        drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
+
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         ShooterConstants.initializeTreeMap();
@@ -124,50 +134,62 @@ public class RobotContainer {
         break;
     }
 
-    //autos = new Autos(drivetrain, turret, intake, shooter);
+    // autos = new Autos(drivetrain, turret, intake, shooter);
 
     // Configure the trigger bindings
     configureBindings();
-  
+
   }
 
   /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
+   * Use this method to define your trigger->command mappings. Triggers can be
+   * created via the
+   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+   * an arbitrary
    * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+   * {@link
+   * CommandXboxController
+   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * PS4} controllers or
+   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
 
   private void configureBindings() {
+    turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
+
+
     drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive
-                        .withVelocityX(-controller.getLeftY() * Constants.Swerve.MaxSpeed) 
-                        .withVelocityY(-controller.getLeftX() * Constants.Swerve.MaxSpeed)                                                                          
-                        .withRotationalRate(
-                                -controller.getRightX() * Constants.Swerve.MaxAngularRate)
-                .withDesaturateWheelSpeeds(true)));
+        // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(() -> drive
+            .withVelocityX(-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+            .withVelocityY(-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+            .withRotationalRate(
+                -driver.getRightX() * Constants.Swerve.MaxAngularRate)
+            .withDesaturateWheelSpeeds(true)));
 
-    // turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
+    driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    shooter.setDefaultCommand(
-      shooter.setVelocity(() -> MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))
-    );
 
-    // controller.y().onTrue(intake.setPivotPositionCommand(90));
-    // controller.x().onTrue(intake.setPivotPositionCommand(45));
-    // controller.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+    // shooter.setDefaultCommand(
+    operator.b().whileTrue(shooter.setVelocity(() -> (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
+    operator.b().whileFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0)));
 
-    // controller.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
-    // controller.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
 
+    operator.y().onTrue(intake.setPivotPositionCommand(.45));
+    operator.x().onTrue(intake.setPivotPositionCommand(.45 / 2.0));
+    operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+
+    operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
+    operator.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
+
+    operator.rightBumper().whileTrue(indexer.setIndexerCommand(() -> 4.0, () -> 11.0));
+    operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
     /* THESE ARE ALL FOR PID TUNING AND SHOULD NOT BE USED ON THE ROBOT */
-    //shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(120*controller.getRightTriggerAxis())));
-
+    // shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(80
+    // * -operator.getRightTriggerAxis())));
 
   }
 
@@ -178,7 +200,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return Commands.none();
-    //return autos.testAuto().cmd().withName("Auto");
+    // return autos.testAuto().cmd().withName("Auto");
   }
 
   /* Team 5000 Fuel Sim Set up */
@@ -189,28 +211,26 @@ public class RobotContainer {
 
     fuelSim.start();
     SmartDashboard.putData(Commands.runOnce(() -> {
-                fuelSim.clearFuel();
-                fuelSim.spawnStartingFuel();
-            })
-            .withName("Reset Fuel")
-            .ignoringDisable(true));
+      fuelSim.clearFuel();
+      fuelSim.spawnStartingFuel();
+    })
+        .withName("Reset Fuel")
+        .ignoringDisable(true));
   }
 
   private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
     fuelSim.registerRobot(
-            RobotDimensionConstants.WIDTH_WBUMPERS,
-            RobotDimensionConstants.LENGTH_WBUMPERS,
-            RobotDimensionConstants.HEIGHT_OF_BUMPERS,
-            drivetrain::getPose,
-            drivetrain::getFieldRelativeChassisSpeeds
-    );
+        RobotDimensionConstants.WIDTH_WBUMPERS,
+        RobotDimensionConstants.LENGTH_WBUMPERS,
+        RobotDimensionConstants.HEIGHT_OF_BUMPERS,
+        drivetrain::getPose,
+        drivetrain::getFieldRelativeChassisSpeeds);
     fuelSim.registerIntake(
-            RobotDimensionConstants.INTAKE_XMIN,
-            RobotDimensionConstants.INTAKE_XMAX,
-            RobotDimensionConstants.INTAKE_YMIN,
-            RobotDimensionConstants.INTAKE_YMAX,
-            ()-> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
-            intakeCallback
-    );
+        RobotDimensionConstants.INTAKE_XMIN,
+        RobotDimensionConstants.INTAKE_XMAX,
+        RobotDimensionConstants.INTAKE_YMIN,
+        RobotDimensionConstants.INTAKE_YMAX,
+        () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
+        intakeCallback);
   }
 }

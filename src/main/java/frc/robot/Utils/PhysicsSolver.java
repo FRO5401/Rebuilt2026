@@ -16,7 +16,7 @@ public class PhysicsSolver {
 
     public static Time solveTimeOfFlight(Transform2d targDistance) {
 
-        if (RobotMode.currentMode == Mode.SIM) {
+        if (RobotMode.currentMode == Mode.SIM || RobotMode.currentMode == Mode.REAL) {
             return MathHelp.findTOF(targDistance);
         }
 
