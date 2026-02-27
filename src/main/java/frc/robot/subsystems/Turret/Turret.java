@@ -37,9 +37,9 @@ import frc.robot.Utils.TunableNumber;
 
 public class Turret extends SubsystemBase {
 
-  // private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.CLOSED_LOOP.kP);
-  // private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.CLOSED_LOOP.kI);
-  // private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.CLOSED_LOOP.kD);
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.CLOSED_LOOP.kP);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.CLOSED_LOOP.kI);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.CLOSED_LOOP.kD);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -133,15 +133,15 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, (-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
 
 
-    //io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
+    io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
 
     Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
     Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
     Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
-    // if(kP.hasChanged() || kI.hasChanged() || kD.hasChanged()){
-    //   setPID(kP.get(), kI.get(), kD.get());
-    // }
+    if(kP.hasChanged() || kI.hasChanged() || kD.hasChanged()){
+      setPID(kP.get(), kI.get(), kD.get());
+    }
 
 
     
@@ -170,10 +170,9 @@ public class Turret extends SubsystemBase {
 
   private Translation3d launchVel(LinearVelocity vel) {
     ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
-    Logger.recordOutput("Vel", vel.in(MetersPerSecond));
 
-    double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond)*60;
-    double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond)*60;
+    double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
+    double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double xVel = horizontalVel * Math.cos(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
     double yVel = horizontalVel * Math.sin(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
 

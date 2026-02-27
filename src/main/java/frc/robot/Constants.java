@@ -67,7 +67,7 @@ public final class Constants {
     public static final double KD_SIM = 0;
 
     public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
-        .withInverted(InvertedValue.CounterClockwise_Positive)
+        .withInverted(InvertedValue.Clockwise_Positive)
         .withNeutralMode(NeutralModeValue.Brake);
 
     public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
@@ -231,6 +231,8 @@ public final class Constants {
         .withKS(ks)
         .withKV(kv);
   
+
+    public static final double INTAKE_OUT_POSE = 0.45;
 
 
   }

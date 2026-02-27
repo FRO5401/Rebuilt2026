@@ -77,4 +77,8 @@ public class Intake extends SubsystemBase {
     public Command setInfeedVelocityCommand(double percent) {
         return runOnce(() -> setInfeedVelocity(percent));
     }
+
+    public double getDesiredAngle(){
+        return desiredAngle;
+    }
 }

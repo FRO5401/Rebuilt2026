@@ -35,7 +35,7 @@ public class ShooterIOTalon implements ShooterIO {
         shooterMotor.setControl(voltageRequest.withOutput(voltage));
     };
 
-    public void setVelocity(double velocity){
+    public void setVelocity(double velocity, ShooterIOInputs inputs){
         shooterMotor.setControl(velocityRequest.withVelocity(velocity));
     };
     

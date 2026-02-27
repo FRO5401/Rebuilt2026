@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 
@@ -24,8 +25,7 @@ public class MathHelp {
         // better for readability
         LinearVelocity velocity;
 
-        if (false
-        ) {
+        if (Robot.isSimulation()) {
             Distance targetDistance = findDistance(poseDifference);
             double numerator = targetDistance.in(Meters)
                     * Math.sqrt(9.8 / (2 * (Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians)) * targetDistance.in(Meters)
@@ -47,7 +47,7 @@ public class MathHelp {
         Logger.recordOutput("MathHelp/Flywheel RPM",
                 (flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 60);
         return RotationsPerSecond
-                .of(-1.7*(flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
+                .of((flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
     }
 
     // Once again splitting up the math, this is the quadatric equation of height

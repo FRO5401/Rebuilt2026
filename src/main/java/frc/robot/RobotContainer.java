@@ -94,7 +94,6 @@ public class RobotContainer {
   private CommandXboxController driver = new CommandXboxController(0);
   private CommandXboxController operator = new CommandXboxController(1);
 
-
   // Simulation Visulization
   FuelSim fuelSim;
 
@@ -118,7 +117,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getPose,
-        drivetrain::getFieldRelativeChassisSpeeds);
+            drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
 
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
@@ -157,8 +156,9 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    turret.setDefaultCommand(turret.setSmartTarget().andThen(Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of(shooter.getVelocity().in(RotationsPerSecond) * (Math.PI*MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
-
+    turret.setDefaultCommand(turret.setSmartTarget().andThen(
+        Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of((shooter.getVelocity().in(RotationsPerSecond))
+            * (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
 
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
@@ -171,14 +171,13 @@ public class RobotContainer {
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-
     // shooter.setDefaultCommand(
-    operator.b().whileTrue(shooter.setVelocity(() -> (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
-    operator.b().whileFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0)));
+    shooter.setDefaultCommand(
+        shooter.setVelocity(() -> (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))),
+            () -> intake.getDesiredAngle()));
 
-
-    operator.y().onTrue(intake.setPivotPositionCommand(.45));
-    operator.x().onTrue(intake.setPivotPositionCommand(.45 / 2.0));
+    operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
+    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2.0));
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));

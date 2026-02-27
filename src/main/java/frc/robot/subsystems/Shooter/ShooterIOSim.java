@@ -43,7 +43,7 @@ public class ShooterIOSim implements ShooterIO {
         if (Double.isNaN(velocity)) {
             return;
         }
-        double appliedPower = feedforward.calculate(velocity) + controller.calculate(inputs.velocity , velocity);
+        double appliedPower = feedforward.calculate(velocity) + controller.calculate(inputs.velocity, velocity);
         driveSim.setInputVoltage(appliedPower);
         Logger.recordOutput("Applied Power", appliedPower); //TODO remove
     }
