@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -86,9 +87,8 @@ public class Turret extends SubsystemBase {
     this.io = io;
     this.robotPose = robotPose;
 
-    controller.setTolerance(.001);
-    controller.setIZone(.05);
-    controller.enableContinuousInput(0, 1);
+
+    // controller.enableContinuousInput(0, 1);
   }
 
   @Override
@@ -125,11 +125,11 @@ public class Turret extends SubsystemBase {
       Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
 
       setTurretAngle(((Math.atan2(poseDifference.getY(), poseDifference.getX()))
-          + poseDifference.getRotation().getRadians()));
+          + poseDifference.getRotation().getRadians())+ Math.PI);
 
     }
 
-    Logger.recordOutput("Turret/Turret Angle", currentAngle);
+    Logger.recordOutput("Turret/Turret Angle", MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
@@ -144,11 +144,14 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0,
         (-2 * robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
 
-    if (!controller.atSetpoint()) {
-      io.applyDutyCycle(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle+Math.PI)));
-    } else {
-      io.applyDutyCycle(0);
-    }
+    io.applyDutyCycle(controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
+
+
+    // if (!controller.atSetpoint()) {
+    //   io.applyDutyCycle(controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
+    // } else {
+    //   io.applyDutyCycle(0);
+    // }
 
     Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
 
@@ -157,7 +160,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
     Logger.recordOutput("Turret/Applied",
-        controller.calculate(Units.rotationsToRadians(inputs.position), -Units.radiansToRotations(currentAngle)));
+        controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
 
     if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
       setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
