@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -69,7 +70,7 @@ public class Turret extends SubsystemBase {
   private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
   public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
-    controller.enableContinuousInput(0, 1);
+   // controller.enableContinuousInput(0, 1);
     
     this.fieldSpeedsSupplier = fieldSpeedsSupplier;
 
@@ -113,7 +114,7 @@ public class Turret extends SubsystemBase {
 
     }
 
-    Logger.recordOutput("Turret/Turret Angle", Units.radiansToRotations(currentAngle));
+    Logger.recordOutput("Turret/Turret Angle",  MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
@@ -127,7 +128,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0, (-2*robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
 
 
-    io.applyVoltage(controller.calculate(inputs.position, Units.radiansToRotations(currentAngle)));
+    io.applyVoltage(controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
 
     Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
     Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));

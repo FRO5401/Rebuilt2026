@@ -57,7 +57,6 @@ public class RobotContainer {
 
   
 
-<<<<<<< HEAD
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
@@ -67,9 +66,6 @@ public class RobotContainer {
 
   //IntakeIO intakeIO = RobotBase.isReal() ? null : new IntakeIOSim();
   //Intake intake = new Intake(new IntakeIOSim());
-=======
-  public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(frontRightCamera, frontLeftCamera, backCamera);
->>>>>>> d31c7bb7d4e593f96c6d4245b152969267ae5884
 
   //TurretIO turretIO = RobotBase.isReal() ? null : new TurretIOSim();
   //Turret turret = new Turret(turretIO, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);

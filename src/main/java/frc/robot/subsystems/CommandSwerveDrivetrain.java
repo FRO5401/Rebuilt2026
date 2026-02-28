@@ -203,7 +203,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         backRightPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
                 VisionConstants.BACK_RIGHT_CAMERA_POSE);
         frontPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
-                VisionConstants.Front_CAMERA_POSE);
+                VisionConstants.FRONT_CAMERA_POSE);
         backLeftPoseEstimator = new PhotonPoseEstimator(VisionConstants.APRIL_TAG_FIELD_LAYOUT,
                 VisionConstants.BACK_LEFT_CAMERA_POSE);
 
