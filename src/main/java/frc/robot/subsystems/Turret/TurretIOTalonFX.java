@@ -23,7 +23,6 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        turretMotor.setPosition(0.0);
 
     }
 

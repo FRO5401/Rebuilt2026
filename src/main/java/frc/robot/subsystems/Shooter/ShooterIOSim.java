@@ -1,6 +1,5 @@
 package frc.robot.subsystems.Shooter;
 
-import org.ejml.sparse.csc.misc.ApplyFillReductionPermutation_DSCC;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
@@ -44,17 +43,13 @@ public class ShooterIOSim implements ShooterIO {
         if (Double.isNaN(velocity)) {
             return;
         }
-        double appliedPower = feedforward.calculate(velocity) + controller.calculate(inputs.velocity , velocity);
+        double appliedPower = feedforward.calculate(velocity) + controller.calculate(inputs.velocity, velocity);
         driveSim.setInputVoltage(appliedPower);
         Logger.recordOutput("Applied Power", appliedPower); //TODO remove
     }
 
     public void stop(){
         driveSim.setInputVoltage(0);
-    }
-
-    public void applyPID(double P, double I, double D){
-        controller.setPID(P, I, D);
     }
 
 }

@@ -16,8 +16,6 @@ public interface ShooterIO {
 
     public default void setVelocity(double velocity, ShooterIOInputs inputs){};
 
-    public default void applyPID(double P, double I, double D){};
-
     public default void stop(){};
 
 }

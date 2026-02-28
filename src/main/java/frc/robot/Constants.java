@@ -200,8 +200,6 @@ public final class Constants {
     public static final int PIVOT_MASTER_ID = 1;
     public static final int INFEED_ID = 2;
 
-    public static final double INTAKE_SPEED = 0.5;
-
     public static final double PIVOT_GEAR_RATIO = 1;
     public static final double INFEED_GEAR_RATIO = 1;
 
@@ -362,13 +360,13 @@ public final class Constants {
   }
 
   public static final class IndexerConstants {
-    public static final int SPINDEXER_ID = 18;
-    public static final int KICKER_ID = 16;
+    public static final int SPINDEXER_ID = 0;
+    public static final int KICKER_ID = 12;
 
     public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(60);
-    public static final double SPINDEXER_GEAR_RATIO = 1;
-    public static final double KICKER_GEAR_RATIO = 1;
+    public static final Current SUPPLY_LIMIT = Amps.of(20);
+    public static final double SPINDEXER_GEAR_RATIO = 3;
+    public static final double KICKER_GEAR_RATIO = 3;
 
     public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
         .withInverted(InvertedValue.CounterClockwise_Positive)
