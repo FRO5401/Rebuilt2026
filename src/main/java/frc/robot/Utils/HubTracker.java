@@ -2,15 +2,12 @@ package frc.robot.Utils;
 
 import java.util.Optional;
 
-import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class HubTracker {
     public static HubTracker instance;
-    private Timer matchTimer = new Timer();
-    private double driverStationMatchTime = 140 - DriverStationJNI.getMatchTime(); // DriverStation.getMatchTime();
 
     private HubTracker(){}
 
@@ -28,9 +25,10 @@ public class HubTracker {
     }
 
     public double getMatchTime(){
-        return driverStationMatchTime;
+        return matchTimer.get();
     }
 
+    private Timer matchTimer = new Timer();
 
     //TODO: test this on the real robot is this may crash if this doesnt return a value.
     public Optional<Alliance> getAutoWinner(){
@@ -51,20 +49,20 @@ public class HubTracker {
     }
 
     public Shift getCurrentShift(){
-        if(DriverStation.isAutonomous() && driverStationMatchTime <= Shift.AUTO.getEndTime()){
+        if(DriverStation.isAutonomous() && matchTimer.get() <= Shift.AUTO.getEndTime()){
             return Shift.AUTO;
         }
-        if(driverStationMatchTime <= Shift.TRANSITION.getEndTime()) {
+        if(matchTimer.get() <= Shift.TRANSITION.getEndTime()) {
             return Shift.TRANSITION;
-        } else if(driverStationMatchTime <= Shift.SHIFT_1.getEndTime()) {
+        } else if(matchTimer.get() <= Shift.SHIFT_1.getEndTime()) {
             return Shift.SHIFT_1;
-        } else if(driverStationMatchTime <= Shift.SHIFT_2.getEndTime()) {
+        } else if(matchTimer.get() <= Shift.SHIFT_2.getEndTime()) {
             return Shift.SHIFT_2;
-        } else if(driverStationMatchTime <= Shift.SHIFT_3.getEndTime()) {
+        } else if(matchTimer.get() <= Shift.SHIFT_3.getEndTime()) {
             return Shift.SHIFT_3;
-        } else if(driverStationMatchTime <= Shift.SHIFT_4.getEndTime()) {
+        } else if(matchTimer.get() <= Shift.SHIFT_4.getEndTime()) {
             return Shift.SHIFT_4;
-        } else if (driverStationMatchTime <= Shift.END_GAME.getEndTime()) {
+        } else if (matchTimer.get() <= Shift.END_GAME.getEndTime()) {
             return Shift.END_GAME;
         } else {
             return Shift.UNKNOWN;

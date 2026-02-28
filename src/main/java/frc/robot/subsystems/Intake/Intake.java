@@ -14,11 +14,14 @@ public class Intake extends SubsystemBase {
     private final IntakeIO io;
     private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
     private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
+    private final String key = "Intake/";
+
+    private double desiredAngle = 0;
 
     // TODO: Finish tuning these, I ball parked it
-    private TunableNumber kp = new TunableNumber("Intake/kp", 40);
-    private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
+    private TunableNumber kp = new TunableNumber(key.concat("kp"), 40);
     private TunableNumber kd = new TunableNumber("Intake/kd", 0.936);
+    private TunableNumber ki = new TunableNumber(key.concat("ki"), 0, true);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
@@ -61,8 +64,8 @@ public class Intake extends SubsystemBase {
         return pivotInputs.angle;
     }
 
-    // TODO: may change naming format
     public Command setPivotPositionCommand(double angle) {
+        desiredAngle = angle;
         return runOnce(() -> setPivotPosition(angle));
     }
 

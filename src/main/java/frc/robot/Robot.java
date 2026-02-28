@@ -8,6 +8,7 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -28,6 +29,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private HubTracker hubTracker = HubTracker.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -62,6 +64,7 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
+    Logger.start();
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.
@@ -89,12 +92,10 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    // TODO: Debugging purposes Remove at some point before comp
-
-    Logger.recordOutput("Current Shift", HubTracker.getInstance().getCurrentShift());
-    Logger.recordOutput("Is hub Active", HubTracker.getInstance().isHubActive());
-    Logger.recordOutput("Match Time", HubTracker.getInstance().getMatchTime());
+    Logger.recordOutput("Current Shift", hubTracker.getCurrentShift());
+    Logger.recordOutput("Is hub Active", hubTracker.isHubActive());
+    Logger.recordOutput("Match Time", hubTracker.getMatchTime());
+    Logger.recordOutput("Driver Station Time", DriverStation.getMatchTime());
 
   }
 
@@ -114,6 +115,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void autonomousInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -129,6 +131,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
