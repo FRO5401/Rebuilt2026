@@ -55,12 +55,15 @@ public final class Constants {
   public static final class TurretConstants {
 
     public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(40);
-    public static final double GEAR_RATIO = 25;
+    public static final Current SUPPLY_LIMIT = Amps.of(80);
+    public static final double GEAR_RATIO = 1.45;
 
-    public static final double KP = 0.5;
-    public static final double KI = 0.0;
-    public static final double KD = 0.0;
+    public static final double KP = 1.5;
+    public static final double KI = 0.1;
+    public static final double KD = 0.1;
+
+    public static final double KS = 0;
+    public static final double KV = 0;
 
     public static final double KP_SIM = 50;
     public static final double KI_SIM = 0.0;
@@ -127,8 +130,8 @@ public final class Constants {
     public static final double KI_SIM = 0.0;
     public static final double KD_SIM = 0.0;
 
-    public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(80);
+    public static final Current STATOR_LIMIT = Amps.of(80);
+    public static final Current SUPPLY_LIMIT = Amps.of(40);
 
 
 

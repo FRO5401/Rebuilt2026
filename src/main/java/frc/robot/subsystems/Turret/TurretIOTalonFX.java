@@ -23,7 +23,8 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        turretMotor.setPosition(0.0);
+        turretMotor.setPosition(0);
+        
 
     }
 
@@ -45,5 +46,10 @@ public class TurretIOTalonFX implements TurretIO {
     public void stop() {
         turretMotor.setControl(voltageRequest.withOutput(0.0));
 
+    }
+
+    @Override 
+    public void applyDutyCycle(double percent){
+        turretMotor.set(percent);
     }
 }

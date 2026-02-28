@@ -35,6 +35,11 @@ public class TurretIOSim implements TurretIO {
         driveSim.setInputVoltage(appliedVoltage);
     }
 
+    public void applyDutyCycle(double percent){
+        double appliedVoltage = MathUtil.clamp(percent, -12.0, 12.0);
+        driveSim.setInputVoltage(appliedVoltage);
+    }
+
     public void stop(){
         driveSim.setInputVoltage(0);
     }

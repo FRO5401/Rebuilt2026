@@ -17,5 +17,7 @@ public interface TurretIO {
     public default void applyVoltage(double voltage){};
 
     public default void stop(){};
+
+    public default void applyDutyCycle(double percent){};
     
 }
