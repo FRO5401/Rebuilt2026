@@ -16,17 +16,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Utils.TunableNumber;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
 
   private final ShooterIO io;
-  private ShooterIOInputs inputs = new ShooterIOInputs();
+  ShooterIOInputs inputs = new ShooterIOInputs();
 
-  private double desiredVel = 0;
-
-  private TunableNumber kP = new TunableNumber("Shooter/kp", desiredVel); 
+  double desiredVel = 0;
 
   public Shooter(ShooterIO io) {
     this.io = io;
