@@ -12,93 +12,107 @@ import frc.robot.Constants.FieldConstants.CurrentZone;
 
 /** Add your docs here. */
 public class ZoneGetter {
-    
-  public static CurrentZone getCurrentZone(Pose2d robotPose){
-    if(!FieldConstants.fieldZone.contains(robotPose.getTranslation())){
-        return CurrentZone.OUTSIDE_BOUNDS;
+
+  public static CurrentZone getCurrentZone(Pose2d robotPose) {
+    if (!FieldConstants.fieldZone.contains(robotPose.getTranslation())) {
+      return CurrentZone.OUTSIDE_BOUNDS;
     }
-    if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+    if (FieldConstants.redZone.contains(robotPose.getTranslation())) {
       return CurrentZone.RED;
 
-    } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueZone.contains(robotPose.getTranslation())) {
       return CurrentZone.BLUE;
 
     } else {
-      return CurrentZone.NUETRAL;
+      if (robotPose.getMeasureY().baseUnitMagnitude() < FieldConstants.HALF_WAY_LINE) {
+        return CurrentZone.NUETRAL_RIGHT;
+      } else {
+        return CurrentZone.NUETRAL_LEFT;
+      }
+
     }
   }
 
-  public static CurrentZone getCurrentZoneSpecific(Pose2d robotPose){
-    if(!FieldConstants.fieldZone.contains(robotPose.getTranslation())){
-        return CurrentZone.OUTSIDE_BOUNDS;
+  public static CurrentZone getCurrentZoneSpecific(Pose2d robotPose) {
+    if (!FieldConstants.fieldZone.contains(robotPose.getTranslation())) {
+      return CurrentZone.OUTSIDE_BOUNDS;
     }
-    if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+    if (FieldConstants.redZone.contains(robotPose.getTranslation())) {
       return CurrentZone.RED;
 
-    } else if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.redZone.contains(robotPose.getTranslation())) {
       return CurrentZone.RED;
 
-    } else if(FieldConstants.redHub.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.redHub.contains(robotPose.getTranslation())) {
       return CurrentZone.PHASING;
 
-    } else if(FieldConstants.redBump.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.redBump.contains(robotPose.getTranslation())) {
       return CurrentZone.RED_BUMP;
 
-    } else if(FieldConstants.redTrenchBlock.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.redTrenchBlock.contains(robotPose.getTranslation())) {
       return CurrentZone.PHASING;
 
-    } else if(FieldConstants.redTrench.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.redTrench.contains(robotPose.getTranslation())) {
       return CurrentZone.RED_TRENCH;
 
-    } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueZone.contains(robotPose.getTranslation())) {
       return CurrentZone.BLUE;
 
-    } else if(FieldConstants.blueHub.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueHub.contains(robotPose.getTranslation())) {
       return CurrentZone.PHASING;
 
-    } else if(FieldConstants.blueBump.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueBump.contains(robotPose.getTranslation())) {
       return CurrentZone.BLUE_BUMP;
 
-    }else if(FieldConstants.blueTrenchBlock.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueTrenchBlock.contains(robotPose.getTranslation())) {
       return CurrentZone.PHASING;
 
-    }else if(FieldConstants.blueTrench.contains(robotPose.getTranslation())){
+    } else if (FieldConstants.blueTrench.contains(robotPose.getTranslation())) {
       return CurrentZone.BLUE_TRENCH;
 
-    }else {
-      return CurrentZone.NUETRAL;
+    }
+    if (robotPose.getMeasureY().baseUnitMagnitude() < FieldConstants.HALF_WAY_LINE) {
+      return CurrentZone.NUETRAL_RIGHT;
+    } else {
+      return CurrentZone.NUETRAL_LEFT;
     }
   }
 
-  public static boolean isShootingZone(Pose2d robotPose){
-    // Prevents simulation without driver station from erroring 
-    if(DriverStation.getAlliance().isEmpty()){
+  public static boolean isShootingZone(Pose2d robotPose) {
+    // Prevents simulation without driver station from erroring
+    if (DriverStation.getAlliance().isEmpty()) {
       return getCurrentZone(robotPose).equals(CurrentZone.RED);
-    } 
-    if(DriverStation.getAlliance().get().equals(Alliance.Blue)){ 
+    }
+    if (DriverStation.getAlliance().get().equals(Alliance.Blue)) {
       return getCurrentZone(robotPose).equals(CurrentZone.BLUE);
     } else {
       return getCurrentZone(robotPose).equals(CurrentZone.RED);
     }
   }
 
-  public static Pose2d getShootingTarget(Pose2d robotPose){
-    if(DriverStation.getAlliance().isEmpty()){
+  public static Pose2d getShootingTarget(Pose2d robotPose) {
+    if (DriverStation.getAlliance().isEmpty()) {
       return FieldConstants.RED_HUB_TARGET;
-    } 
-    if(DriverStation.getAlliance().get().equals(Alliance.Blue) && isShootingZone(robotPose)){ 
+    }
+    if (DriverStation.getAlliance().get().equals(Alliance.Blue) && isShootingZone(robotPose)) {
       return FieldConstants.BLUE_HUB_TARGET;
-    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && isShootingZone(robotPose)){
+    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && isShootingZone(robotPose)) {
       return FieldConstants.RED_HUB_TARGET;
     }
 
-    if(DriverStation.getAlliance().get().equals(Alliance.Blue) && !isShootingZone(robotPose)){ 
-      return FieldConstants.BLUE_PASSING_TARGET;
-    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && !isShootingZone(robotPose)){
-      return FieldConstants.RED_PASSING_TARGET;
+    if (DriverStation.getAlliance().get().equals(Alliance.Blue) && !isShootingZone(robotPose)) {
+      if (getCurrentZone(robotPose).equals(CurrentZone.NUETRAL_LEFT)) {
+        return FieldConstants.BLUE_LEFT_PASSING_TARGET;
+      } else {
+        return FieldConstants.BLUE_RIGHT_PASSING_TARGET;
+      }
+    } else if (DriverStation.getAlliance().get().equals(Alliance.Red) && !isShootingZone(robotPose)) {
+      if (getCurrentZone(robotPose).equals(CurrentZone.NUETRAL_LEFT)) {
+        return FieldConstants.RED_LEFT_PASSING_TARGET;
+      } else {
+        return FieldConstants.RED_RIGHT_PASSING_TARGET;
+      }
     }
-
-    
 
     return null;
 

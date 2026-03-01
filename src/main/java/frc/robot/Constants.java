@@ -55,8 +55,8 @@ public final class Constants {
 
   public static final class TurretConstants {
 
-    public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(80);
+    public static final Current STATOR_LIMIT = Amps.of(40);
+    public static final Current SUPPLY_LIMIT = Amps.of(40);
     public static final double GEAR_RATIO = 1.45*3;
 
     public static final double KP = 100;
@@ -123,7 +123,7 @@ public final class Constants {
     public static final double KD = 0.001;
     
     public static final double KS = 0;
-    public static final double KV = 0.125;
+    public static final double KV = 0.15;
     public static final double KA = 0;
 
     public static final double KS_SIM = 0;
@@ -134,8 +134,8 @@ public final class Constants {
     public static final double KI_SIM = 0.0;
     public static final double KD_SIM = 0.0;
 
-    public static final Current STATOR_LIMIT = Amps.of(80);
-    public static final Current SUPPLY_LIMIT = Amps.of(40);
+    public static final Current STATOR_LIMIT = Amps.of(120);
+    public static final Current SUPPLY_LIMIT = Amps.of(80);
 
 
 
@@ -162,9 +162,11 @@ public final class Constants {
         .withSlot0(CLOSED_LOOP)
         .withCurrentLimits(CURRENT_LIMITS_CONFIG)
         .withMotorOutput(OUTPUT_CONFIG)
-        .withFeedback(FEEDBACK_CONFIG);
+        .withFeedback(FEEDBACK_CONFIG).withMotorOutput(OUTPUT_CONFIG);
 
     public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
+
+    public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
     public static void initializeTreeMap() {
         TREE_MAP.put(4.246960257410755, 80.0);
@@ -174,7 +176,20 @@ public final class Constants {
         TREE_MAP.put(1.644241041786167, 55.0);
         TREE_MAP.put(2.866559206035367, 67.0);
         TREE_MAP.put(3.5666656282506035, 73.0);
+        TREE_MAP.put(3.954384500001557, 76.0);
+        TREE_MAP.put(5.2373588192144345, 110.0);
+        TREE_MAP.put(5.955919454962589, 120.0);
         TREE_MAP.put(1.0, 48.0);
+
+        TOF_MAP.put(-65.77821998726256, 1.82-.69);
+        TOF_MAP.put(-75.12708264661396, 5.62-3.82);
+        TOF_MAP.put(-56.97400743187422, 6.83-5.92);
+        TOF_MAP.put(-71.03143563285168, 3.71-2.415);
+        TOF_MAP.put(-67.90900193703516, 8.51-7.32);
+        TOF_MAP.put(-101.92117744180253, 3.71-1.88);
+        TOF_MAP.put(-82.6137519849234, 5.805-3.18);
+        TOF_MAP.put(-73.3385983160441, 4.41-3.04);
+
     }
 
 
@@ -185,7 +200,7 @@ public final class Constants {
     public static final int PIVOT_MASTER_ID = 20;
     public static final int INFEED_ID = 21;
 
-    public static final double INTAKE_SPEED = 0.6;
+    public static final double INTAKE_SPEED = 0.4;
 
     public static final double PIVOT_GEAR_RATIO = 15;
     public static final double INFEED_GEAR_RATIO = 3;
@@ -299,6 +314,8 @@ public final class Constants {
      * Inches: 651.2 Inches
      * Zones: 158.6 Inches from each wall
      */
+
+    public static final double HALF_WAY_LINE = Units.inchesToMeters(317.7/2.0);
     public static final Rectangle2d fieldZone = new Rectangle2d(
         new Translation2d(),
         new Translation2d(Inches.of(651.2), Inches.of(317.7)));
@@ -338,9 +355,13 @@ public final class Constants {
 
     public static final Pose2d RED_HUB_TARGET = new Pose2d(11.9, 4, new Rotation2d());
 
-    public static final Pose2d BLUE_PASSING_TARGET = new Pose2d(2, 2, new Rotation2d());
+    public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
 
-    public static final Pose2d RED_PASSING_TARGET = new Pose2d(14, 7, new Rotation2d());
+    public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 7, new Rotation2d());
+
+    public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 7, new Rotation2d());
+
+    public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2, new Rotation2d());
 
     public enum CurrentZone {
       RED,
@@ -349,7 +370,8 @@ public final class Constants {
       BLUE,
       BLUE_TRENCH,
       BLUE_BUMP,
-      NUETRAL,
+      NUETRAL_LEFT,
+      NUETRAL_RIGHT,
       PHASING,
       OUTSIDE_BOUNDS
     }

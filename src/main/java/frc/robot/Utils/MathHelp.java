@@ -58,9 +58,10 @@ public class MathHelp {
     // displacement formula to find the time of flight
     public static Time findTOF(Transform2d targDistance) {
         double a = -4.9;
-        double b =  findFlyWheelVelocity(targDistance).baseUnitMagnitude()
+        double b =  findFlyWheelVelocity(targDistance).in(MetersPerSecond)
                 * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians));
         double c = -MathConstants.HUB_HEIGHT.in(Meters);
+        Logger.recordOutput("MathHelp/TOF", (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a));
         return Seconds.of((-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a));
     }
 

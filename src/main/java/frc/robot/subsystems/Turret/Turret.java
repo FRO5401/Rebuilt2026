@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Turret;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
@@ -31,9 +32,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
+import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.Utils.TunableNumber;
 
 public class Turret extends SubsystemBase {
@@ -73,7 +77,7 @@ public class Turret extends SubsystemBase {
   private double currentAngle = 0;
 
   // TOF used for transforming the target
-  private Time tof;
+  private Double tof;
 
   private Pose2d turretPose;
 
@@ -113,13 +117,13 @@ public class Turret extends SubsystemBase {
           Rotation2d.kZero);
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-        tof = PhysicsSolver.solveTimeOfFlight(poseDifference);
+        tof = ShooterConstants.TOF_MAP.get(-ShooterConstants.TREE_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
         poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM)
             .minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
-            fieldSpeedsSupplier.get().vxMetersPerSecond * tof.in(Seconds),
-            fieldSpeedsSupplier.get().vyMetersPerSecond * tof.in(Seconds),
+            fieldSpeedsSupplier.get().vxMetersPerSecond * tof,
+            fieldSpeedsSupplier.get().vyMetersPerSecond * tof,
             Rotation2d.kZero);
       }
 

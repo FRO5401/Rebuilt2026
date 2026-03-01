@@ -45,6 +45,7 @@ import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.TunableNumber;
 import frc.robot.Constants.ShooterConstants;
 
 /**
@@ -57,6 +58,9 @@ import frc.robot.Constants.ShooterConstants;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0);
+
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
   public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
@@ -74,13 +78,13 @@ public class RobotContainer {
   // Intake intake = new Intake(new IntakeIOSim());
 
   // Subsystem Declaration
+  private static double shootingSpeed = 1;
   private static Turret turret;
   private static Shooter shooter;
   private static Intake intake;
   private static Indexer indexer;
   private static Visulization visulization = null;
 
-  private static Trigger intakeTrigger;
   // Command Declaration
   private static Autos autos;
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -136,7 +140,7 @@ public class RobotContainer {
         break;
     }
 
-    // autos = new Autos(drivetrain, turret, intake, shooter);
+    autos = new Autos(drivetrain, turret, intake, shooter);
 
     // Configure the trigger bindings
     configureBindings();
@@ -159,37 +163,43 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    // This is for the real robot
+    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.15));
+    driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
+
+    // // This is for the real robot
     // turret.setDefaultCommand(turret.setSmartTarget());
 
     // this is for tuning
-    turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // this is for sim
-    // turret.setDefaultCommand(turret.setSmartTarget()
-    // .andThen(
-    // Commands.runOnce(() ->
-    // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
+    turret.setDefaultCommand(turret.setSmartTarget()
+    .andThen(
+    Commands.runOnce(() ->
+    turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
     drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-            .withVelocityX(-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-            .withVelocityY(-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+            .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+            .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
             .withRotationalRate(
                 -driver.getRightX() * Constants.Swerve.MaxAngularRate)
             .withDesaturateWheelSpeeds(true)));
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    // shooter.setDefaultCommand(
+    //This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
         () -> RotationsPerSecond
             .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
         intake::getDesiredAngle));
-    // shooter.setVelocity(() ->
-    // (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))),
-    // () -> intake.getDesiredAngle()));
+
+    //this is for sim
+      // shooter.setDefaultCommand(shooter.setVelocity(
+      //   () -> RotationsPerSecond
+      //       .of(ShooterRPM.get()),
+      //   intake::getDesiredAngle));
+ 
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2.0));
@@ -198,12 +208,12 @@ public class RobotContainer {
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
 
-    operator.rightBumper().whileTrue(indexer.setIndexerCommand(() -> 4.0, () -> 11.0));
+    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> 4.0, () -> 11.0));
+    operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
+    operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-4.0, ()->-4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
-    /* THESE ARE ALL FOR PID TUNING AND SHOULD NOT BE USED ON THE ROBOT */
-    // shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(80
-    // * -operator.getRightTriggerAxis())));
+
 
   }
 
