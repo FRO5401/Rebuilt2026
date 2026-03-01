@@ -136,14 +136,13 @@ public class Turret extends SubsystemBase {
 
     }
 
-    Logger.recordOutput("Turret/Turret Angle", MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+    Logger.recordOutput("Turret/Turret Desired Position", MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
     Logger.recordOutput("Turret Position", (inputs.position));
 
-    Logger.recordOutput("Turret/MotorRotation",
-        Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
+
 
     // Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345,
     // new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
