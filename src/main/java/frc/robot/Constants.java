@@ -66,9 +66,9 @@ public final class Constants {
     public static final double KS = 0;
     public static final double KV = 0;
 
-    public static final double KP_SIM = 5;
+    public static final double KP_SIM = 10;
     public static final double KI_SIM = 0.0;
-    public static final double KD_SIM = 0;
+    public static final double KD_SIM = 0.5;
 
     public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
         .withInverted(InvertedValue.Clockwise_Positive)
