@@ -223,6 +223,10 @@ public final class Constants {
 
     public static final double INTAKE_OUT_POSE = 0.366;
 
+    public static final double INTAKE_HOMING_CURRENT_UP = 100; //TODO find this
+    public static final double INTAKE_HOMING_CURRENT_DOWN = -100; //TODO find this
+
+    public static final double INTAKE_BALL_CURRENT = 100; //TODO find this too
 
   }
 

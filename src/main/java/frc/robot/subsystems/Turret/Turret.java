@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -90,8 +89,9 @@ public class Turret extends SubsystemBase {
     this.io = io;
     this.robotPose = robotPose;
 
-
-    // controller.enableContinuousInput(0, 1);
+    controller.setTolerance(.001);
+    controller.setIZone(.05);
+    controller.enableContinuousInput(0, 1);
   }
 
   @Override
@@ -132,7 +132,7 @@ public class Turret extends SubsystemBase {
 
     }
 
-    Logger.recordOutput("Turret/Turret Angle", MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+    Logger.recordOutput("Turret/Turret Angle", currentAngle);
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 

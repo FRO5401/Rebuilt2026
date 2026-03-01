@@ -63,7 +63,7 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     @Override
-    public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs) {
+    public void updateIntakeInputs(IntakeIOInputs intakeInputs) {
         Logger.recordOutput("Intake/Pivot Desired Angle", desiredAngle);
 
         pivotController.setPID(kp, ki, kd);
@@ -81,14 +81,14 @@ public class IntakeIOSim implements IntakeIO {
         pivotSim.update(0.02);
         intakeSim.update(0.02);
 
-        pivotInputs.angle = pivotSim.getAngleRads();
-        pivotInputs.velocity = pivotSim.getVelocityRadPerSec();
-        pivotInputs.current = pivotSim.getCurrentDrawAmps();
-        pivotInputs.voltage = pivotVoltage;
+        intakeInputs.pivotAngle = pivotSim.getAngleRads();
+        intakeInputs.pivotVelocity = pivotSim.getVelocityRadPerSec();
+        intakeInputs.pivotCurrent = pivotSim.getCurrentDrawAmps();
+        intakeInputs.pivotVoltage = pivotVoltage;
 
-        infeedInputs.velocity = intakeSim.getAngularVelocityRPM();
-        infeedInputs.current = intakeSim.getCurrentDrawAmps();
-        infeedInputs.voltage = intakeVoltage;
+        intakeInputs.infeedVelocity = intakeSim.getAngularVelocityRPM();
+        intakeInputs.infeedCurrent = intakeSim.getCurrentDrawAmps();
+        intakeInputs.infeedVoltage = intakeVoltage;
     }
 
     @Override

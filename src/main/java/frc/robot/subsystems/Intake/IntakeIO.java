@@ -5,32 +5,23 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
 
     @AutoLog
-    public static class PivotIOInputs{
-        public double angle = 0;
-        public double velocity = 0;
+    public static class IntakeIOInputs{
+        public double pivotAngle = 0;
+        public double pivotVelocity = 0;
 
-        public double temperature = 0;
+        public double pivotTemperature = 0;
 
-        public double voltage = 0;
-        public double current = 0;
+        public double pivotVoltage = 0;
+        public double pivotCurrent = 0;
 
-        public double followerTemperature = 0;
+        public double infeedVelocity = 0;
 
-        public double followerVoltage = 0;
-        public double followerCurrent = 0;
-
+        public double infeedTemperature = 0;
+        public double infeedVoltage = 0;
+        public double infeedCurrent = 0;
     }
-
-    @AutoLog
-    public static class InfeedIOInputs{        
-        public double velocity = 0;
-
-        public double temperature = 0;
-        public double voltage = 0;
-        public double current = 0;
-    }
-
-    public default void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs){}
+    
+    public default void updateIntakeInputs(IntakeIOInputs intakeInputs){}
 
     public default void setPivotPosition(double angle){}
 
@@ -42,6 +33,8 @@ public interface IntakeIO {
 
     public default void setInfeedVoltage(double voltage){}
 
+    public default void setEncoderPosition(double position){}
+    
     public default void setPivotPID(double kp, double ki, double kd, double kv, double ks){}
     
 } 

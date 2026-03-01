@@ -41,19 +41,19 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     }
 
-    public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs){
-        pivotInputs.angle = pivot.getPosition().getValueAsDouble();
-        pivotInputs.velocity = pivot.getVelocity().getValueAsDouble();
+    public void updateIntakeInputs(IntakeIOInputs intakeInputs){
+        intakeInputs.pivotAngle = pivot.getPosition().getValueAsDouble();
+        intakeInputs.pivotVelocity = pivot.getVelocity().getValueAsDouble();
 
-        pivotInputs.temperature = pivot.getDeviceTemp().getValueAsDouble();
-        pivotInputs.voltage = pivot.getMotorVoltage().getValueAsDouble();
-        pivotInputs.current = pivot.getSupplyCurrent().getValueAsDouble();
+        intakeInputs.pivotTemperature = pivot.getDeviceTemp().getValueAsDouble();
+        intakeInputs.pivotVoltage = pivot.getMotorVoltage().getValueAsDouble();
+        intakeInputs.pivotCurrent = pivot.getSupplyCurrent().getValueAsDouble();
 
 
-        infeedInputs.velocity = infeed.getVelocity().getValueAsDouble();
-        infeedInputs.temperature = infeed.getDeviceTemp().getValueAsDouble();
-        infeedInputs.voltage = infeed.getMotorVoltage().getValueAsDouble();
-        infeedInputs.current = infeed.getSupplyCurrent().getValueAsDouble();
+        intakeInputs.infeedVelocity = infeed.getVelocity().getValueAsDouble();
+        intakeInputs.infeedTemperature = infeed.getDeviceTemp().getValueAsDouble();
+        intakeInputs.infeedVoltage = infeed.getMotorVoltage().getValueAsDouble();
+        intakeInputs.infeedCurrent = infeed.getSupplyCurrent().getValueAsDouble();
     }
     
     @Override
@@ -88,6 +88,11 @@ public class IntakeIOTalonFX implements IntakeIO{
         pivotConfig.Slot0 = IntakeConstants.CLOSED_LOOP;
         pivot.getConfigurator().apply(pivotConfig);
         
+    }
+
+    @Override
+    public void setEncoderPosition(double position){
+        pivot.setPosition(position);
     }
     
 }

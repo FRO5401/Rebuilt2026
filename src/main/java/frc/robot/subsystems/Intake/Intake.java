@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -15,8 +16,7 @@ import frc.robot.Utils.TunableNumber;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO io;
-    private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
-    private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
+    private final IntakeIOInputsAutoLogged intakeInputs = new IntakeIOInputsAutoLogged();
 
     private double desiredAngle = 0;
 
@@ -28,6 +28,8 @@ public class Intake extends SubsystemBase {
     // private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv);
     // private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks);
 
+    private Debouncer homingCheck = new Debouncer(0.1);
+
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
         this.io = m_io;
@@ -37,9 +39,8 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        io.updateIntakeInputs(pivotInputs, infeedInputs);
-        Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
-        Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
+        io.updateIntakeInputs(intakeInputs);
+        Logger.processInputs("Intake/Intake Inputs", intakeInputs);
         Logger.recordOutput("Intake/Desired Position", desiredAngle);
 
         Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
@@ -47,6 +48,7 @@ public class Intake extends SubsystemBase {
         // if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
         //     io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
         // }
+        homingSequence();
 
     }
 
@@ -66,11 +68,11 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean isIntakeDeployed() {
-        return pivotInputs.angle < 10;
+        return intakeInputs.pivotAngle < 10;
     }
 
     public double getPivotPosition() {
-        return pivotInputs.angle;
+        return intakeInputs.pivotAngle;
     }
 
     // TODO: may change naming format
@@ -88,5 +90,21 @@ public class Intake extends SubsystemBase {
 
     public Boolean isNotStartingPose(){
         return (getDesiredAngle() != 0);
+    }
+    
+    public double getPivotCurrent(){
+        return intakeInputs.pivotCurrent;
+    }
+
+    public void homingSequence(){
+        if(isPivotCurrentSpiked(IntakeConstants.INTAKE_HOMING_CURRENT_UP)){
+            io.setEncoderPosition(0);
+        } else if(isPivotCurrentSpiked(IntakeConstants.INTAKE_HOMING_CURRENT_DOWN)){
+            io.setEncoderPosition(IntakeConstants.INTAKE_OUT_POSE);
+        }
+    }
+    
+    public boolean isPivotCurrentSpiked(double currentCheck){
+        return homingCheck.calculate(Math.abs(intakeInputs.pivotCurrent) > currentCheck);
     }
 }
