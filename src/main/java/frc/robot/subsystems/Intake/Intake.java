@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Intake;
 
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,6 +41,8 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
         Logger.recordOutput("Intake/Desired Position", desiredAngle);
+
+        Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
 
         // if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
         //     io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
@@ -80,5 +84,9 @@ public class Intake extends SubsystemBase {
 
     public double getDesiredAngle(){
         return desiredAngle;
+    }
+
+    public Boolean isNotStartingPose(){
+        return (getDesiredAngle() != 0);
     }
 }

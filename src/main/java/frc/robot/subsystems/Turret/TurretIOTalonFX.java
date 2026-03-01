@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Turret;
 
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants.TurretConstants;
@@ -15,6 +17,7 @@ import frc.robot.Constants.TurretConstants;
 public class TurretIOTalonFX implements TurretIO {
 
     VoltageOut voltageRequest = new VoltageOut(0.0);
+    PositionVoltage positionRequest = new PositionVoltage(0);
 
     TalonFX turretMotor = new TalonFX(TurretConstants.CAN_ID);
 
@@ -23,7 +26,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        turretMotor.setPosition(0);
+        turretMotor.setPosition(0.5);
         
 
     }
@@ -34,6 +37,7 @@ public class TurretIOTalonFX implements TurretIO {
         inputs.current = turretMotor.getSupplyCurrent().getValueAsDouble();
         inputs.position = turretMotor.getPosition().getValueAsDouble();
         inputs.velocity = turretMotor.getVelocity().getValueAsDouble();
+        inputs.applied = turretMotor.get();
     }
 
     @Override
@@ -51,5 +55,20 @@ public class TurretIOTalonFX implements TurretIO {
     @Override 
     public void applyDutyCycle(double percent){
         turretMotor.set(percent);
+    }
+
+    @Override 
+    public void setPosition(double position){
+        turretMotor.setControl(positionRequest.withPosition(position));
+    }
+
+    @Override
+    public void setPID(double p, double i, double d){
+        TurretConstants.CLOSED_LOOP.kP = p;
+        TurretConstants.CLOSED_LOOP.kI = i;
+        TurretConstants.CLOSED_LOOP.kD = d;
+        
+        turretMotor.getConfigurator().apply(TurretConstants.CONFIG.withSlot0(TurretConstants.CLOSED_LOOP));
+
     }
 }

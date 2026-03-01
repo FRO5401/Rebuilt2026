@@ -79,9 +79,9 @@ public class RobotContainer {
   private static Indexer indexer;
   private static Visulization visulization = null;
 
+  private static Trigger intakeTrigger;
   // Command Declaration
   private static Autos autos;
-
   /* Setting up bindings for necessary control of the swerve drive platform */
   public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
@@ -106,7 +106,7 @@ public class RobotContainer {
       case REAL:
         intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(new ShooterIOTalon());
-        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
         // drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
         ShooterConstants.initializeTreeMap();
@@ -117,7 +117,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         turret = new Turret(new TurretIOSim(), drivetrain::getPose,
-            drivetrain::getFieldRelativeChassisSpeeds);
+            drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
         indexer = new Indexer(new IndexerIOTalon());
 
         visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
@@ -128,10 +128,12 @@ public class RobotContainer {
       default:
         intake = new Intake(null);
         shooter = new Shooter(null);
-        turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds);
+        turret = new Turret(null, drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
         indexer = new Indexer(null);
         break;
     }
+
+
 
     // autos = new Autos(drivetrain, turret, intake, shooter);
 
@@ -156,9 +158,15 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    turret.setDefaultCommand(turret.setSmartTarget().andThen(
-        Commands.runOnce(() -> turret.updateFuel(MetersPerSecond.of((shooter.getVelocity().in(RotationsPerSecond))
-            * (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)))))));
+
+
+
+    // turret.setDefaultCommand(turret.setSmartTarget());
+    turret.setDefaultCommand(turret.setSmartTarget()
+    .andThen(
+        Commands.runOnce(() -> turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
+
+    
 
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
@@ -172,9 +180,9 @@ public class RobotContainer {
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     // shooter.setDefaultCommand(
-    shooter.setDefaultCommand(
-        shooter.setVelocity(() -> (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))),
-            () -> intake.getDesiredAngle()));
+    shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())), intake::getDesiredAngle));
+        // shooter.setVelocity(() -> (MathHelp.findFlyWheelRPM(MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))),
+        //     () -> intake.getDesiredAngle()));
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2.0));

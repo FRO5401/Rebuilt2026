@@ -38,12 +38,12 @@ import frc.robot.Utils.TunableNumber;
 
 public class Turret extends SubsystemBase {
 
-  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP);
-  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI);
-  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD);
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, true);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, true);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, true);
 
-  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS);
-  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV);
+  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, true);
+  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, true);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -80,9 +80,12 @@ public class Turret extends SubsystemBase {
   // Chassis speeds
   private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
-  public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
+  private Supplier<Boolean> isIntakeDeployed;
+
+  public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier, Supplier<Boolean> isIntakeDeployed) {
 
     this.fieldSpeedsSupplier = fieldSpeedsSupplier;
+    this.isIntakeDeployed = isIntakeDeployed;
 
     this.io = io;
     this.robotPose = robotPose;
@@ -125,7 +128,7 @@ public class Turret extends SubsystemBase {
       Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
 
       setTurretAngle(((Math.atan2(poseDifference.getY(), poseDifference.getX()))
-          + poseDifference.getRotation().getRadians())+ Math.PI);
+          - poseDifference.getRotation().getRadians())+ Math.PI);
 
     }
 
@@ -143,15 +146,13 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0,
         (-2 * robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
+      
+    
+    if (isIntakeDeployed.get()){
+    io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+    }
 
-    io.applyDutyCycle(controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
 
-
-    // if (!controller.atSetpoint()) {
-    //   io.applyDutyCycle(controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
-    // } else {
-    //   io.applyDutyCycle(0);
-    // }
 
     Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
 
@@ -160,7 +161,7 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
     Logger.recordOutput("Turret/Applied",
-        controller.calculate(inputs.position, MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1)));
+        inputs.applied);
 
     if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
       setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
@@ -183,7 +184,7 @@ public class Turret extends SubsystemBase {
   }
 
   public Command setSmartTarget() {
-    if (target != ZoneGetter.getShootingTarget(robotPose.get())) {
+    if (target != ZoneGetter.getShootingTarget(robotPose.get()) ) {
       return Commands.runOnce(() -> setTarget(ZoneGetter.getShootingTarget(robotPose.get())), this);
     } else {
       return Commands.none();
@@ -196,9 +197,9 @@ public class Turret extends SubsystemBase {
     double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double xVel = horizontalVel
-        * Math.cos(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
+        * Math.cos(Units.rotationsToRadians(inputs.position) + robotPose.get().getRotation().getRadians());
     double yVel = horizontalVel
-        * Math.sin(Units.rotationsToRadians(inputs.position) - robotPose.get().getRotation().getRadians());
+        * Math.sin(Units.rotationsToRadians(inputs.position) + robotPose.get().getRotation().getRadians());
 
     xVel += fieldSpeeds.vxMetersPerSecond;
     yVel += fieldSpeeds.vyMetersPerSecond;
@@ -231,8 +232,6 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPID(double P, double I, double D, double V, double S) {
-    controller.setPID(P, I, D);
-    feedforward.setKs(S);
-    feedforward.setKv(V);
+    io.setPID(P, I, D);
   }
 }

@@ -44,10 +44,10 @@ public class Shooter extends SubsystemBase {
 
     return runOnce(() -> {
       if (intakePose.get() != 0) {
-        io.setVelocity(vel.get().in(RotationsPerSecond),inputs);
-        desiredVel = vel.get().in(RotationsPerSecond);
+        io.setVelocity(-vel.get().in(RotationsPerSecond),inputs);
+        desiredVel = -vel.get().in(RotationsPerSecond);
       } else {
-        io.setVelocity(0);
+        io.stop();
         desiredVel = 0;
       }
     });

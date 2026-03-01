@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -56,16 +57,16 @@ public final class Constants {
 
     public static final Current STATOR_LIMIT = Amps.of(120);
     public static final Current SUPPLY_LIMIT = Amps.of(80);
-    public static final double GEAR_RATIO = 1.45;
+    public static final double GEAR_RATIO = 1.45*3;
 
-    public static final double KP = 1.5;
-    public static final double KI = 0.1;
-    public static final double KD = 0.1;
+    public static final double KP = 100;
+    public static final double KI = 0.0;
+    public static final double KD = 1;
 
     public static final double KS = 0;
     public static final double KV = 0;
 
-    public static final double KP_SIM = 50;
+    public static final double KP_SIM = 5;
     public static final double KI_SIM = 0.0;
     public static final double KD_SIM = 0;
 
@@ -80,10 +81,12 @@ public final class Constants {
         .withStatorCurrentLimit(STATOR_LIMIT)
         .withSupplyCurrentLimit(SUPPLY_LIMIT);
 
+    public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs().withContinuousWrap(false);
+
     public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
-        .withKP(0)
-        .withKI(0)
-        .withKD(0)
+        .withKP(KP)
+        .withKI(KI)
+        .withKD(KD)
         .withKA(0)
         .withKV(0)
         .withKG(0);
@@ -92,7 +95,8 @@ public final class Constants {
         .withSlot0(CLOSED_LOOP)
         .withCurrentLimits(CURRENT_LIMITS_CONFIG)
         .withMotorOutput(OUTPUT_CONFIG)
-        .withFeedback(FEEDBACK_CONFIG);
+        .withFeedback(FEEDBACK_CONFIG)
+        .withClosedLoopGeneral(CLOSED_LOOP_GENERAL_CONFIGS);
 
     /**
      * The transform of the center of the robot to the position of the turret
@@ -105,7 +109,7 @@ public final class Constants {
      * Used for number of iterations of the turret angle
      *
      */
-    public static int ITERATIONS = 20;
+    public static int ITERATIONS = 5;
   }
 
   public static final class ShooterConstants {
@@ -163,32 +167,14 @@ public final class Constants {
     public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
 
     public static void initializeTreeMap() {
-        TREE_MAP.put(1.7, 6.08);
-
-        TREE_MAP.put(2.0, 6.6803);
-        TREE_MAP.put(2.5, 6.9682);
-        TREE_MAP.put(3.0, 7.3236);
-        TREE_MAP.put(3.3, 7.545);
-        TREE_MAP.put(3.5, 7.6949);
-        TREE_MAP.put(4.0, 8.065);
-        TREE_MAP.put(4.2, 8.211);
-        TREE_MAP.put(4.5, 8.4285);
-        TREE_MAP.put(5.0, 8.7822);
-        TREE_MAP.put(5.5, 9.1259);
-        TREE_MAP.put(6.0, 9.4596);
-        TREE_MAP.put(6.5, 9.7837);
-        TREE_MAP.put(7.0, 10.0986);
-        TREE_MAP.put(7.5, 10.4050);
-        TREE_MAP.put(8.0, 10.7034);
-        TREE_MAP.put(8.5, 10.99);
-        TREE_MAP.put(9.0, 11.2781);
-        TREE_MAP.put(9.5, 11.555);
-        TREE_MAP.put(10.0, 11.8264);
-        TREE_MAP.put(10.5, 12.091);
-        TREE_MAP.put(11.0, 12.351);
-        TREE_MAP.put(11.5, 12.605);
-        TREE_MAP.put(12.0, 12.855);
-
+        TREE_MAP.put(4.246960257410755, 80.0);
+        TREE_MAP.put(3.005452887874429, 70.0);
+        TREE_MAP.put(2.22814460186529, 65.0);
+        TREE_MAP.put(2.666495230855936, 67.0);
+        TREE_MAP.put(1.644241041786167, 55.0);
+        TREE_MAP.put(2.866559206035367, 67.0);
+        TREE_MAP.put(3.5666656282506035, 73.0);
+        TREE_MAP.put(1.0, 48.0);
     }
 
 
@@ -199,7 +185,7 @@ public final class Constants {
     public static final int PIVOT_MASTER_ID = 20;
     public static final int INFEED_ID = 21;
 
-    public static final double INTAKE_SPEED = 0.45;
+    public static final double INTAKE_SPEED = 0.6;
 
     public static final double PIVOT_GEAR_RATIO = 15;
     public static final double INFEED_GEAR_RATIO = 3;
@@ -235,7 +221,7 @@ public final class Constants {
         .withKV(kv);
   
 
-    public static final double INTAKE_OUT_POSE = 0.45;
+    public static final double INTAKE_OUT_POSE = 0.366;
 
 
   }
@@ -244,7 +230,7 @@ public final class Constants {
 
     public static final Distance HUB_HEIGHT = Meters.of(1.83 - 0.345); // Height of the hub - height of the turret
     public static final Angle LAUNCH_ANGLE = Degrees.of(65);
-    public static final Distance FLY_WHEEL_DIAMETER = Inches.of(4);
+    public static final Distance FLY_WHEEL_DIAMETER = Inches.of(3);
     public static final LinearAcceleration GRAVITY = MetersPerSecondPerSecond.of(9.81);
     public static final Mass BALL_MASS = Pound.of(0.5);
     public static final Distance BALL_DIAMETER = Inches.of(6);

@@ -9,19 +9,21 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Utils.RobotMode.Mode;
 
 public class PhysicsSolver {
 
     public static Time solveTimeOfFlight(Transform2d targDistance) {
 
-        if (RobotMode.currentMode == Mode.SIM || RobotMode.currentMode == Mode.REAL) {
+        if (RobotMode.currentMode == Mode.SIM|| Robot.isReal()) {
             return MathHelp.findTOF(targDistance);
         }
 
-        double launchVelocity = MathHelp.findFlyWheelVelocity(targDistance).in(MetersPerSecond)
-                * MathConstants.FLYWHEEL_EFFICIENCY;
+        double launchVelocity = (ShooterConstants.TREE_MAP.get(MathHelp.findDistance(targDistance).baseUnitMagnitude())* ((Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters))))
+                * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * .8;
 
         double area = Math.PI * Math.pow(MathConstants.BALL_DIAMETER.in(Meters) / 2.0, 2);
         double mass = MathConstants.BALL_MASS.in(Kilograms);

@@ -10,6 +10,7 @@ public interface TurretIO {
         public double temperature = 0;
         public double voltage;
         public double current = 0;
+        public double applied =0;
     }
 
     public default void updateInputs(TurretIOInputs inputs){};
@@ -19,5 +20,9 @@ public interface TurretIO {
     public default void stop(){};
 
     public default void applyDutyCycle(double percent){};
+
+    public default void setPosition(double position){};
+
+    public default void setPID(double p, double i, double d){}
     
 }

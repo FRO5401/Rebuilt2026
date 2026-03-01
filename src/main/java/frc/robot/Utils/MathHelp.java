@@ -18,8 +18,9 @@ import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 
-
 public class MathHelp {
+    public static TunableNumber RPM = new TunableNumber("/Shooter/FlyWheel", 0);
+
     public static LinearVelocity findFlyWheelVelocity(Transform2d poseDifference) {
         // Im gonna slip up the math despite it not being optimal for memory its so much
         // better for readability
@@ -44,17 +45,20 @@ public class MathHelp {
 
     public static AngularVelocity findFlyWheelRPM(LinearVelocity flywheelVelocity) {
         // 60 is for the seconds to minute, 3.82
+        if(Robot.isSimulation()){
         Logger.recordOutput("MathHelp/Flywheel RPM",
                 (flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 60);
         return RotationsPerSecond
                 .of((flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
+        } else {return RotationsPerSecond.of(RPM.get());
     }
+}
 
     // Once again splitting up the math, this is the quadatric equation of height
     // displacement formula to find the time of flight
     public static Time findTOF(Transform2d targDistance) {
         double a = -4.9;
-        double b = findFlyWheelVelocity(targDistance).in(MetersPerSecond)
+        double b =  findFlyWheelVelocity(targDistance).baseUnitMagnitude()
                 * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians));
         double c = -MathConstants.HUB_HEIGHT.in(Meters);
         return Seconds.of((-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a));
@@ -62,13 +66,18 @@ public class MathHelp {
 
     // *will find the hypotenuse/resultant of a pose */
     public static Distance findDistance(Transform2d vector) {
-        if (vector != null){
-        Logger.recordOutput("Distance", Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
-        return Meters.of(Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
+        if (vector != null) {
+            Logger.recordOutput("Distance", Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
+            return Meters.of(Math.sqrt(Math.pow(vector.getX(), 2) + Math.pow(vector.getY(), 2)));
         } else {
             return Meters.of(0);
         }
 
+    }
+
+    public static double RPMtoVelocity(double RPM){
+        Logger.recordOutput("MathHelp/Ball Velocity", .43*(RPM*MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude()*Math.PI));
+        return .43*(RPM*MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude()*Math.PI);
     }
 
 }
