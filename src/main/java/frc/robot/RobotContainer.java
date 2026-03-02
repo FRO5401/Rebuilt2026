@@ -140,7 +140,7 @@ public class RobotContainer {
         break;
     }
 
-    autos = new Autos(drivetrain, turret, intake, shooter);
+    autos = new Autos(drivetrain, turret, intake, shooter, indexer);
 
     // Configure the trigger bindings
     configureBindings();
@@ -223,8 +223,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
-    // return autos.testAuto().cmd().withName("Auto");
+    //return Commands.none();
+    return autos.leftBumpAuto().cmd().withName("Auto");
   }
 
   /* Team 5000 Fuel Sim Set up */
