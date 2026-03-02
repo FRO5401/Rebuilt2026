@@ -142,8 +142,6 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret Position", (inputs.position));
 
-
-
     // Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345,
     // new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
 
@@ -152,7 +150,7 @@ public class Turret extends SubsystemBase {
       
     
     if (isIntakeDeployed.get()){
-    io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+      io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
     }
 
 
