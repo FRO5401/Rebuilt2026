@@ -24,58 +24,99 @@ public class Autos {
     Shooter shooter;
     Indexer indexer;
 
-    public Autos(CommandSwerveDrivetrain drivetrain, Turret turret, Intake intake, Shooter shooter, Indexer indexer){
+    public Autos(CommandSwerveDrivetrain drivetrain, Turret turret, Intake intake, Shooter shooter, Indexer indexer) {
         this.turret = turret;
         this.intake = intake;
         this.shooter = shooter;
         this.indexer = indexer;
         autoFactory = new AutoFactory(
-            drivetrain::getPose,
-            drivetrain::resetPose,
-            drivetrain::followTrajectory,
-            true,
-            drivetrain
-            );
-        autoFactory.bind("Intake", Commands.runOnce(()-> intake.setIntake(90, 80), intake));
+                drivetrain::getPose,
+                drivetrain::resetPose,
+                drivetrain::followTrajectory,
+                true,
+                drivetrain);
+        autoFactory.bind("Intake", Commands.runOnce(() -> intake.setIntake(90, 80), intake));
         autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(0));
         autoFactory.bind("Init", shooter.setVelocity(
-        () -> RotationsPerSecond
-            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-        intake::getDesiredAngle));
+                () -> RotationsPerSecond
+                        .of(ShooterConstants.TREE_MAP
+                                .get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+                intake::getDesiredAngle));
     }
 
-    public AutoRoutine testAuto(){
+    public AutoRoutine testAuto() {
         AutoRoutine routine = autoFactory.newRoutine("test");
 
         AutoTrajectory testTraj = routine.trajectory("PickupScore");
 
         routine.active().onTrue(
-            Commands.sequence(
-                testTraj.resetOdometry(),
-                testTraj.cmd()
-            )
-        );
+                Commands.sequence(
+                        testTraj.resetOdometry(),
+                        testTraj.cmd()));
 
-        testTraj.atTime("target").onTrue(Commands.runOnce(()->turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))).withName("target"));
-
+        testTraj.atTime("target").onTrue(
+                Commands.runOnce(() -> turret.setTarget(new Pose2d(4.5, 4, new Rotation2d()))).withName("target"));
 
         return routine;
     }
 
-    public AutoRoutine leftBumpAuto(){
+    public AutoRoutine leftBumpAuto() {
         AutoRoutine routine = autoFactory.newRoutine("leftBumpAuto");
 
-        AutoTrajectory testTraj = routine.trajectory("LeftBumpSweep");
+        AutoTrajectory traj = routine.trajectory("LeftBumpSweep");
 
         routine.active().onTrue(
-            Commands.sequence(
-                testTraj.resetOdometry(),
-                testTraj.cmd()
-            )
-        );
+                Commands.sequence(
+                        traj.resetOdometry(),
+                        traj.cmd()));
 
-        testTraj.atTime("Shoot").onTrue(turret.setSmartTarget().andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE/2)).andThen(indexer.setIndexerCommand(()->7.0, ()-> 11.0)));
+        traj.atTime("Shoot")
+                .onTrue(turret.setSmartTarget()
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2))
+                        .andThen(indexer.setIndexerCommand(() -> 7.0, () -> 11.0)));
 
+        return routine;
+    }
+
+    public AutoRoutine leftDoubleTrenchAuto() {
+        AutoRoutine routine = autoFactory.newRoutine("leftBumpAuto");
+
+        AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
+        AutoTrajectory secondGrab = routine.trajectory("LeftTrenchSweep2");
+
+        routine.active().onTrue(
+                Commands.sequence(
+                        firstGrab.resetOdometry(),
+                        firstGrab.cmd()));
+
+        firstGrab.atTime("Shoot1")
+                .onTrue(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> 7.0, () -> 11.0))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2)).andThen(Commands.waitSeconds(2)));
+
+        firstGrab.done().onTrue(Commands.waitSeconds(2).andThen(secondGrab.cmd()));
+
+        secondGrab.atTime("Shoot2")
+                .onTrue(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> 7.0, () -> 11.0))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2)));
+
+        return routine;
+    }
+
+    public AutoRoutine leftSingleTrenchAuto() {
+        AutoRoutine routine = autoFactory.newRoutine("leftBumpAuto");
+
+        AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
+
+        routine.active().onTrue(
+                Commands.sequence(
+                        firstGrab.resetOdometry(),
+                        firstGrab.cmd()));
+
+        firstGrab.atTime("Shoot1")
+                .onTrue(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> 7.0, () -> 11.0))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2)).andThen(Commands.waitSeconds(2)));
+
+        
 
 
         return routine;

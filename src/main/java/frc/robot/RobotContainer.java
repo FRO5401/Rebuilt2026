@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
+import choreo.auto.AutoChooser;
+
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -18,6 +20,7 @@ import org.photonvision.PhotonPoseEstimator;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -64,6 +67,8 @@ public class RobotContainer {
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
   public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
+
+  AutoChooser autoChooser = new AutoChooser("DoNothing");
 
   public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(backRightCamera,
       backLeftCamera, frontCamera);
@@ -141,6 +146,13 @@ public class RobotContainer {
     }
 
     autos = new Autos(drivetrain, turret, intake, shooter, indexer);
+    autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
+    autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
+    autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
+
+    SmartDashboard.putData("Chooser", autoChooser);
+    
+
 
     // Configure the trigger bindings
     configureBindings();
@@ -215,6 +227,7 @@ public class RobotContainer {
 
 
 
+
   }
 
   /**
@@ -224,7 +237,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     //return Commands.none();
-    return autos.leftBumpAuto().cmd().withName("Auto");
+    return autoChooser.selectedCommand();
   }
 
   /* Team 5000 Fuel Sim Set up */
