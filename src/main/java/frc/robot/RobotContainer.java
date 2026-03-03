@@ -6,15 +6,11 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -28,7 +24,6 @@ import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;

@@ -5,9 +5,11 @@
 package frc.robot.Utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.Constants.FieldConstants.CurrentZone;
 
 /** Add your docs here. */
@@ -17,10 +19,10 @@ public class ZoneGetter {
     if(!FieldConstants.fieldZone.contains(robotPose.getTranslation())){
         return CurrentZone.OUTSIDE_BOUNDS;
     }
-    if(FieldConstants.redZone.contains(robotPose.getTranslation())){
+    if(isTurretInZone(FieldConstants.redZone, robotPose)){
       return CurrentZone.RED;
 
-    } else if(FieldConstants.blueZone.contains(robotPose.getTranslation())){
+    } else if(isTurretInZone(FieldConstants.blueZone, robotPose)){
       return CurrentZone.BLUE;
 
     } else {
@@ -98,9 +100,22 @@ public class ZoneGetter {
       return FieldConstants.RED_PASSING_TARGET;
     }
 
-    
-
     return null;
+  }
 
+  /** Return true if any corner is within the given zone*/
+  public static boolean isDrivebaseInZone(Rectangle2d zone, Pose2d robotPose){
+    return 
+      zone.contains(robotPose.transformBy(RobotDimensionConstants.BACK_LEFT_CORNER).getTranslation()) ||
+      zone.contains(robotPose.transformBy(RobotDimensionConstants.BACK_RIGHT_CORNER).getTranslation()) || 
+      zone.contains(robotPose.transformBy(RobotDimensionConstants.FRONT_LEFT_CORNER).getTranslation()) ||
+      zone.contains(robotPose.transformBy(RobotDimensionConstants.FRONT_RIGHT_CORNER).getTranslation()) ||
+      zone.contains(robotPose.getTranslation());
+  }
+
+  public static boolean isTurretInZone(Rectangle2d zone, Pose2d robotPose){
+    return 
+      zone.contains(robotPose.transformBy(RobotDimensionConstants.BACK_SIDE).getTranslation()) ||
+      zone.contains(robotPose.getTranslation());
   }
 }
