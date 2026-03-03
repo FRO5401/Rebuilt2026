@@ -7,9 +7,11 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -40,6 +42,7 @@ import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.Zones.Zones;
 import frc.robot.Constants.ShooterConstants;
 
 /**
@@ -211,7 +214,7 @@ public class RobotContainer {
     return Commands.none();
     // return autos.testAuto().cmd().withName("Auto");
   }
-
+  
   /* Team 5000 Fuel Sim Set up */
   private void configureFuelSim() {
     fuelSim = new FuelSim("Fuel-Pose");
@@ -242,4 +245,5 @@ public class RobotContainer {
         () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
         intakeCallback);
   }
+  
 }
