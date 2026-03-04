@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.RobotMode;
-import frc.robot.Utils.Zones.Zones;
+import frc.robot.Utils.Zones.ZoneBases;
 
 /**
  * The methods in this class are called automatically corresponding to each

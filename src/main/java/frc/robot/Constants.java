@@ -37,7 +37,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import frc.robot.Utils.Zones.Zones.PredictiveRectangleX;
 import frc.robot.generated.TunerConstants;
 
 /**

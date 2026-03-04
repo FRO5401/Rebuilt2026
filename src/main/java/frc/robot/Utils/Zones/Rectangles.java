@@ -1,30 +1,21 @@
 package frc.robot.Utils.Zones;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Utils.Zones.ZoneBases.PredictiveZone;
+import frc.robot.Utils.Zones.ZoneBases.Zone;
 
-public class Zones {
-    // basic zones
-    public static interface Zone {
-        public Trigger contains(Supplier<Pose2d> robotPose);
-    }
-
-    // Predictive zones
-    public static interface PredictiveZone {
-        public Trigger willContain(Supplier<Pose2d> robotPose, ChassisSpeeds driveVelocity, Time time);
-    }
-
+public class Rectangles {
+    
     public static class RectangleBounds implements Zone{
         protected final double xMin, xMax, yMin, yMax;
 
