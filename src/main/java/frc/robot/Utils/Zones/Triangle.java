@@ -1,5 +1,6 @@
 package frc.robot.Utils.Zones;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import java.util.function.Supplier;
@@ -53,8 +54,20 @@ public class Triangle {
         public Trigger contains(Supplier<Pose2d> robotPose) {
             return new Trigger(()->isWithin(robotPose.get().getTranslation()));
         }
-        
+        public Translation2d[] getCorners(){
+            return new Translation2d[] {
+                new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
+                new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
+                new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
+            };
+        }
     }
+
+    public static final TriangleBound turtly = new TriangleBound(
+        new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
+        new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
+        new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
+    );
 
 
 }

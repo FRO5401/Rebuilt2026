@@ -42,6 +42,7 @@ import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.Zones.Triangle;
 import frc.robot.Utils.Zones.ZoneBases;
 import frc.robot.Constants.ShooterConstants;
 
@@ -205,6 +206,10 @@ public class RobotContainer {
 
   }
 
+  public void checking(){
+    Logger.recordOutput("RobotContainer/is in zone", Triangle.turtly.contains(drivetrain::getPose));
+    Logger.recordOutput("RobotContainer/corner?", Triangle.turtly.getCorners());
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
