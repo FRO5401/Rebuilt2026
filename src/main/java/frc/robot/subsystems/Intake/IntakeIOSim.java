@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -81,7 +82,7 @@ public class IntakeIOSim implements IntakeIO {
         pivotSim.update(0.02);
         intakeSim.update(0.02);
 
-        pivotInputs.angle = pivotSim.getAngleRads();
+        pivotInputs.angle = Radians.of(pivotSim.getAngleRads()).in(Rotations);
         pivotInputs.velocity = pivotSim.getVelocityRadPerSec();
         pivotInputs.current = pivotSim.getCurrentDrawAmps();
         pivotInputs.voltage = pivotVoltage;

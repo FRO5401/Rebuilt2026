@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Utils.Zones.ZoneBases.PredictiveZone;
 import frc.robot.Utils.Zones.ZoneBases.Zone;
 
-public class Rectangles {
+public class Rectangle {
     
     public static class RectangleBounds implements Zone{
         protected final double xMin, xMax, yMin, yMax;
