@@ -228,8 +228,6 @@ public class RobotContainer {
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
 
-
-
   }
 
   public void checking(){

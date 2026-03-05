@@ -95,7 +95,7 @@ public class IntakeIOSim implements IntakeIO {
     @Override
     public void setPivotPosition(double angle) {
         isPositionControl = true;
-        desiredAngle = Degrees.of(angle).in(Radians);
+        desiredAngle = Rotations.of(angle).in(Radians);
     }
 
     @Override
