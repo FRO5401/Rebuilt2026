@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.Zones.ZoneBases.Zone;
 
 public class Triangle {
@@ -43,11 +44,10 @@ public class Triangle {
         }
 
         protected boolean isWithin(Translation2d pose){
-            double A = getArea(x1, y1, x2, y2, x3, y3);
             double A1 = getArea(pose.getX(), pose.getY(), x2, y2, x3, y3);
             double A2 = getArea(x1, y1, pose.getX(), pose.getY(), x3, y3);
             double A3 = getArea(x1, y1, x2, y2, pose.getX(), pose.getY());
-            return (A == A1 + A2 + A3);
+            return MathHelp.epsilonEquals(area, A1 + A2 + A3);
         }
         
         @Override
