@@ -20,13 +20,13 @@ public class Intake extends SubsystemBase {
 
     private double desiredAngle = 0;
 
-    // // TODO: Finish tuning these, I ball parked it
-    // private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp);
-    // private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
-    // private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd);
+    // TODO: Finish tuning these, I ball parked it
+    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp);
+    private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
+    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd);
 
-    // private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv);
-    // private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks);
+    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv);
+    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
@@ -44,9 +44,9 @@ public class Intake extends SubsystemBase {
 
         Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
 
-        // if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
-        //     io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
-        // }
+        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
+            io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
+        }
 
     }
 
