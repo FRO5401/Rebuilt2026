@@ -12,11 +12,12 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.BooleanSupplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -31,7 +32,6 @@ import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
@@ -49,6 +49,8 @@ import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.Zones.Triangle;
+import frc.robot.Utils.Zones.ZoneBases;
 import frc.robot.Constants.ShooterConstants;
 
 /**
@@ -221,10 +223,12 @@ public class RobotContainer {
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
 
-
-
   }
 
+  public void checking(){
+    Logger.recordOutput("RobotContainer/is in zone", Triangle.turtly.contains(drivetrain::getPose));
+    Logger.recordOutput("RobotContainer/corner?", Triangle.turtly.getCorners());
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -276,4 +280,5 @@ public class RobotContainer {
         () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
         intakeCallback);
   }
+  
 }

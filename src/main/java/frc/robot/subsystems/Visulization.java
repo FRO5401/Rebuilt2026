@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
 
@@ -67,7 +68,7 @@ public class Visulization extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
-    intakePose = new Pose3d(intakePoseTransform, new Rotation3d(0, intake.getPivotPosition() - Degrees.of(70).in(Radians), 0));
+    intakePose = new Pose3d(intakePoseTransform, new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(70).in(Radians), 0));
     Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
     Logger.recordOutput("Visulization/Intake", intakePose);
     Logger.recordOutput("Visulization/Turret", turretPose);

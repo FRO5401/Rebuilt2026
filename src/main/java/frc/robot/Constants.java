@@ -460,6 +460,12 @@ public final class Constants {
     public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
     public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
     public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
+
+    public static final Transform2d FRONT_LEFT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX, Rotation2d.kZero);
+    public static final Transform2d FRONT_RIGHT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX.times(-1), Rotation2d.kZero);
+    public static final Transform2d BACK_LEFT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX, Rotation2d.kZero);
+    public static final Transform2d BACK_RIGHT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX.times(-1), Rotation2d.kZero);
+    public static final Transform2d BACK_SIDE = new Transform2d(INTAKE_XMAX.times(-1), Inches.of(0), Rotation2d.kZero);
     
 }
 
