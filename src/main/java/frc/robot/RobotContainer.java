@@ -145,13 +145,8 @@ public class RobotContainer {
         break;
     }
 
-    autos = new Autos(drivetrain, turret, intake, shooter, indexer);
-    autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
-    autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
-    autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
 
-    SmartDashboard.putData("Chooser", autoChooser);
-    
+    configureAutoChooser();
 
 
     // Configure the trigger bindings
@@ -238,6 +233,17 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //return Commands.none();
     return autoChooser.selectedCommand();
+  }
+
+  public void configureAutoChooser(){
+    autos = new Autos(drivetrain, turret, intake, shooter, indexer);
+    autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
+    autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
+    autoChooser.addRoutine("DepotBumpNoSweep", autos::DepotNoSwipe);
+    autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
+    
+
+    SmartDashboard.putData("Chooser", autoChooser);
   }
 
   /* Team 5000 Fuel Sim Set up */
