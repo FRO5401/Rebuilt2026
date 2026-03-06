@@ -20,23 +20,23 @@ public class ZoneBases {
 
 
     public static class ZoneGroup implements Zone{
-        protected final Zone[] bounds;
+        protected final Zone[] zones;
 
-        public ZoneGroup(Zone... bounds){
-            this.bounds = bounds;
+        public ZoneGroup(Zone... zones){
+            this.zones = zones;
         }
 
         @Override
         public Trigger contains(Supplier<Pose2d> robotPose) {
             Trigger groupTrigger = new Trigger(()-> false);
 
-            for (Zone bound: bounds){
-                groupTrigger = groupTrigger.or(bound.contains(robotPose));
+            for (Zone zone: zones){
+                groupTrigger = groupTrigger.or(zone.contains(robotPose));
             }
 
             return groupTrigger;
         }
-        
+
     }
 
     public static class PredictiveZoneGroup implements PredictiveZone{
