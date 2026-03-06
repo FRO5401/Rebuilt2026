@@ -121,4 +121,23 @@ public class Autos {
 
         return routine;
     }
+
+    public AutoRoutine DepotNoSwipe() {
+        AutoRoutine routine = autoFactory.newRoutine("DepotBumpNoSweep");
+
+        AutoTrajectory traj = routine.trajectory("DepotBumpNoSweep");
+
+        routine.active().onTrue(
+                Commands.sequence(
+                        traj.resetOdometry(),
+                        traj.cmd()));
+
+        traj.atTime("Shoot")
+                .onTrue(turret.setSmartTarget()
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2))
+                        .andThen(indexer.setIndexerCommand(() -> 7.0, () -> 11.0)));
+
+        return routine;
+    }
+    
 }
