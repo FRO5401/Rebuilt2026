@@ -37,6 +37,9 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
+import frc.robot.Utils.Zones.Triangle;
+import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
+import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
 import frc.robot.generated.TunerConstants;
 
 /**
@@ -467,6 +470,21 @@ public final class Constants {
     public static final Transform2d BACK_RIGHT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX.times(-1), Rotation2d.kZero);
     public static final Transform2d BACK_SIDE = new Transform2d(INTAKE_XMAX.times(-1), Inches.of(0), Rotation2d.kZero);
     
-}
+    }
+
+    public static final class FieldZones{
+        /*
+        * Field dimensions:
+        * Width: 317.6 Inches
+        * Length: 651.2 Inches
+        * Zones: 158.6 Inches from each wall
+        */
+        public static final Distance FIELD_LENGTH = Inches.of(651.2);
+        public static final Distance FIELD_WIDTH = Inches.of(317.6);
+        public static final Distance ALLIANCE_FROM_WALL = Inches.of(158.6);
+
+        public static final RectangleBounds FIELD_ZONE = new RectangleBounds(Inches.of(0), FIELD_LENGTH, Inches.of(0), FIELD_WIDTH);
+        public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
+    }
 
 }

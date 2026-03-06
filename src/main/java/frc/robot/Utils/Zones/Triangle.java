@@ -54,11 +54,13 @@ public class Triangle {
         public Trigger contains(Supplier<Pose2d> robotPose) {
             return new Trigger(()->isWithin(robotPose.get().getTranslation()));
         }
+        
         public Translation2d[] getCorners(){
             return new Translation2d[] {
-                new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
-                new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
-                new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
+                new Translation2d(x1, y1), 
+                new Translation2d(x2, y2), 
+                new Translation2d(x3, y3),
+                new Translation2d(x1, y1)
             };
         }
     }

@@ -31,6 +31,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldZones;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
@@ -225,10 +226,6 @@ public class RobotContainer {
 
   }
 
-  public void checking(){
-    Logger.recordOutput("RobotContainer/is in zone", Triangle.turtly.contains(drivetrain::getPose));
-    Logger.recordOutput("RobotContainer/corner?", Triangle.turtly.getCorners());
-  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

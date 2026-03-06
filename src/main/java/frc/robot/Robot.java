@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.RobotMode;
-import frc.robot.Utils.Zones.ZoneBases;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -163,7 +162,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    m_robotContainer.checking();
     m_robotContainer.fuelSim.updateSim();
   }
 

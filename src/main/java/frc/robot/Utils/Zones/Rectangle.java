@@ -50,6 +50,16 @@ public class Rectangle {
         protected boolean isWithinY(Translation2d pose){
             return (yMin <= pose.getY() && pose.getY() <= yMax);
         }
+
+        public Translation2d[] getCorners() {
+            return new Translation2d[]{
+                new Translation2d(xMin, yMin),
+                new Translation2d(xMin, yMax),
+                new Translation2d(xMax, yMax),
+                new Translation2d(xMax, yMin),
+                new Translation2d(xMin, yMin)
+            };
+        }
         
     }
 
