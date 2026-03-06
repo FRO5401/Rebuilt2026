@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Utils.TunableNumber;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
@@ -30,6 +32,11 @@ public class Shooter extends SubsystemBase {
 
   }
 
+  TunableNumber kP = new TunableNumber("Shooter/KP", ShooterConstants.KP);
+  TunableNumber kD = new TunableNumber("Shooter/KD", ShooterConstants.KD);
+  TunableNumber kV = new TunableNumber("Shooter/KV", ShooterConstants.KV);
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -38,6 +45,9 @@ public class Shooter extends SubsystemBase {
     Logger.recordOutput("Shooter/Shooter velocity", getVelocity().in(RotationsPerSecond));
     Logger.recordOutput("Shooter/Shooter Desired Velocity", desiredVel);
 
+    if (kP.hasChanged() || kD.hasChanged() || kV.hasChanged()) {
+            io.applyPID(kP.get(), 0, kD.get(), 0 ,kV.get());
+        }
   }
 
   public Command setVelocity(Supplier<AngularVelocity> vel, Supplier<Double> intakePose) {

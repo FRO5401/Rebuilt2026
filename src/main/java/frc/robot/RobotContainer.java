@@ -178,14 +178,14 @@ public class RobotContainer {
     // // This is for the real robot
     // turret.setDefaultCommand(turret.setSmartTarget());
 
-    // this is for tuning
-    // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    // // this is for tuning
+    turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
-    // this is for sim
-    turret.setDefaultCommand(turret.setSmartTarget()
-    .andThen(
-    Commands.runOnce(() ->
-    turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
+    // // this is for sim
+    // turret.setDefaultCommand(turret.setSmartTarget()
+    // .andThen(
+    // Commands.runOnce(() ->
+    // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
     drivetrain.setDefaultCommand(
         drivetrain.applyRequest(() -> drive
