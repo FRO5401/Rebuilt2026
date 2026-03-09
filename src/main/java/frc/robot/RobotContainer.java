@@ -65,7 +65,9 @@ import frc.robot.Constants.ShooterConstants;
  */
 public class RobotContainer {
 
-  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0);
+  
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
+  private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
@@ -179,7 +181,7 @@ public class RobotContainer {
     // // This is for the real robot
     // turret.setDefaultCommand(turret.setSmartTarget());
 
-    // // this is for tuning
+    // this is for tuning
     turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
@@ -198,17 +200,17 @@ public class RobotContainer {
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    //This is for real
+    // This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
         () -> RotationsPerSecond
             .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
         intake::getDesiredAngle));
 
-    //this is for sim
-      // shooter.setDefaultCommand(shooter.setVelocity(
-      //   () -> RotationsPerSecond
-      //       .of(ShooterRPM.get()),
-      //   intake::getDesiredAngle));
+    // //this is for tuning
+    //   shooter.setDefaultCommand(shooter.setVelocity(
+    //     () -> RotationsPerSecond
+    //         .of(ShooterRPM.get()),
+    //     intake::getDesiredAngle));
  
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
@@ -218,9 +220,9 @@ public class RobotContainer {
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
 
-    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> 4.0, () -> 11.0));
+    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> spindexerSpeed.get(), () -> 11.0));
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
-    operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-4.0, ()->-4.0));
+    operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
 

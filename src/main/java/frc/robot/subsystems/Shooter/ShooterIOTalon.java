@@ -4,15 +4,19 @@
 
 package frc.robot.subsystems.Shooter;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants.ShooterConstants;
 
 /** Add your docs here. */
 public class ShooterIOTalon implements ShooterIO {
     TalonFX shooterMotor = new TalonFX(ShooterConstants.MOTOR_ID);
+
+    TalonFX shooterFollowerMotor = new TalonFX(ShooterConstants.SHOOTER2_MOTOR_ID);
     
     VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
@@ -22,6 +26,10 @@ public class ShooterIOTalon implements ShooterIO {
     
     public ShooterIOTalon(){
         shooterMotor.getConfigurator().apply(ShooterConstants.CONFIG);
+
+        shooterFollowerMotor.getConfigurator().apply(ShooterConstants.CONFIG);
+
+        shooterFollowerMotor.setControl(new Follower(ShooterConstants.MOTOR_ID, MotorAlignmentValue.Aligned));
 
         
     }

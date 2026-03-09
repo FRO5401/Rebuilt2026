@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.TreeMap;
+
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -56,435 +58,461 @@ import frc.robot.generated.TunerConstants;
  */
 public final class Constants {
 
-  public static final class TurretConstants {
-
-    public static final Current STATOR_LIMIT = Amps.of(40);
-    public static final Current SUPPLY_LIMIT = Amps.of(40);
-    public static final double GEAR_RATIO = 1.45*3;
-
-    public static final double KP = 100;
-    public static final double KI = 0.0;
-    public static final double KD = 1;
-
-    public static final double KS = 0;
-    public static final double KV = 0;
-
-    public static final double KP_SIM = 10;
-    public static final double KI_SIM = 0.0;
-    public static final double KD_SIM = 0.5;
-
-    public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
-        .withSensorToMechanismRatio(GEAR_RATIO);
-
-    public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(STATOR_LIMIT)
-        .withSupplyCurrentLimit(SUPPLY_LIMIT);
-
-    public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs().withContinuousWrap(false);
-
-    public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
-        .withKP(KP)
-        .withKI(KI)
-        .withKD(KD)
-        .withKA(0)
-        .withKV(0)
-        .withKG(0);
-
-    public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
-        .withSlot0(CLOSED_LOOP)
-        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
-        .withMotorOutput(OUTPUT_CONFIG)
-        .withFeedback(FEEDBACK_CONFIG)
-        .withClosedLoopGeneral(CLOSED_LOOP_GENERAL_CONFIGS);
-
-    /**
-     * The transform of the center of the robot to the position of the turret
-     * This is used to calculate the required velocity of the shot
-     */
-    public static final Transform2d TURRET_TRANSFORM = new Transform2d(-0.15, 0, new Rotation2d(0));
-    public static final int CAN_ID = 4;
-
-    /**
-     * Used for number of iterations of the turret angle
-     *
-     */
-    public static int ITERATIONS = 5;
-  }
-
-  public static final class ShooterConstants {
-    public static final int MOTOR_ID = 10;
-    public static final double GEAR_RATIO = 1;
-    public static final int MAX_VELOCITY = 5800;
-
-    public static final double KP = 0.0415
-    ;
-    public static final double KI = 0.0;
-    public static final double KD = 0.001;
-    
-    public static final double KS = 0;
-    public static final double KV = 0.15;
-    public static final double KA = 0;
-
-    public static final double KS_SIM = 0;
-    public static final double KV_SIM = 0.0022;
-    public static final double KA_SIM = 0;
-
-    public static final double KP_SIM = 0.04093;
-    public static final double KI_SIM = 0.0;
-    public static final double KD_SIM = 0.0;
-
-    public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(80);
-
-
-
-    public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
-        .withInverted(InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
-
-    public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
-        .withSensorToMechanismRatio(GEAR_RATIO);
-
-    public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(STATOR_LIMIT)
-        .withSupplyCurrentLimit(SUPPLY_LIMIT);
-
-    public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
-        .withKP(KP)
-        .withKI(KI)
-        .withKD(KD)
-        .withKA(KA)
-        .withKV(KV)
-        .withKG(KS);
+        public static final class TurretConstants {
+
+                public static final Current STATOR_LIMIT = Amps.of(40);
+                public static final Current SUPPLY_LIMIT = Amps.of(40);
+                public static final double GEAR_RATIO = 1.45 * 3;
+
+                public static final double KP = 70;
+                public static final double KI = 0.0;
+                public static final double KD = 2;
+
+                public static final double KS = 0;
+                public static final double KV = 0;
+
+                public static final double KP_SIM = 10;
+                public static final double KI_SIM = 0.0;
+                public static final double KD_SIM = 0.5;
+
+                public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
+                                .withInverted(InvertedValue.Clockwise_Positive)
+                                .withNeutralMode(NeutralModeValue.Brake);
+
+                public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
+                                .withSensorToMechanismRatio(GEAR_RATIO);
+
+                public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
+                                .withStatorCurrentLimit(STATOR_LIMIT)
+                                .withSupplyCurrentLimit(SUPPLY_LIMIT);
+
+                public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs()
+                                .withContinuousWrap(false);
+
+                public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+                                .withKP(KP)
+                                .withKI(KI)
+                                .withKD(KD)
+                                .withKA(0)
+                                .withKV(0)
+                                .withKG(0);
+
+                public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+                                .withSlot0(CLOSED_LOOP)
+                                .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+                                .withMotorOutput(OUTPUT_CONFIG)
+                                .withFeedback(FEEDBACK_CONFIG)
+                                .withClosedLoopGeneral(CLOSED_LOOP_GENERAL_CONFIGS);
+
+                /**
+                 * The transform of the center of the robot to the position of the turret
+                 * This is used to calculate the required velocity of the shot
+                 */
+                public static final Transform2d TURRET_TRANSFORM = new Transform2d(-0.15, 0, new Rotation2d(0));
+                public static final int CAN_ID = 4;
 
-    public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
-        .withSlot0(CLOSED_LOOP)
-        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
-        .withMotorOutput(OUTPUT_CONFIG)
-        .withFeedback(FEEDBACK_CONFIG).withMotorOutput(OUTPUT_CONFIG);
+                /**
+                 * Used for number of iterations of the turret angle
+                 *
+                 */
+                public static int ITERATIONS = 5;
+        }
 
-    public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
+        public static final class ShooterConstants {
+                public static final int MOTOR_ID = 10;
+                public static final int SHOOTER2_MOTOR_ID = 25;
 
-    public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
+                public static final double GEAR_RATIO = 1;
+                public static final int MAX_VELOCITY = 5800;
 
-    public static void initializeTreeMap() {
-        TREE_MAP.put(4.246960257410755, 80.0);
-        TREE_MAP.put(3.005452887874429, 70.0);
-        TREE_MAP.put(2.22814460186529, 65.0);
-        TREE_MAP.put(2.666495230855936, 67.0);
-        TREE_MAP.put(1.644241041786167, 55.0);
-        TREE_MAP.put(2.866559206035367, 67.0);
-        TREE_MAP.put(3.5666656282506035, 73.0);
-        TREE_MAP.put(3.954384500001557, 76.0);
-        TREE_MAP.put(5.2373588192144345, 110.0);
-        TREE_MAP.put(5.955919454962589, 120.0);
-        TREE_MAP.put(1.0, 48.0);
+                public static final double KP = 0.0415;
+                public static final double KI = 0.0;
+                public static final double KD = 0.001;
 
-        TOF_MAP.put(-65.77821998726256, 1.82-.69);
-        TOF_MAP.put(-75.12708264661396, 5.62-3.82);
-        TOF_MAP.put(-56.97400743187422, 6.83-5.92);
-        TOF_MAP.put(-71.03143563285168, 3.71-2.415);
-        TOF_MAP.put(-67.90900193703516, 8.51-7.32);
-        TOF_MAP.put(-101.92117744180253, 3.71-1.88);
-        TOF_MAP.put(-82.6137519849234, 5.805-3.18);
-        TOF_MAP.put(-73.3385983160441, 4.41-3.04);
+                public static final double KS = 0;
+                public static final double KV = 0.15;
+                public static final double KA = 0;
 
-    }
+                public static final double KS_SIM = 0;
+                public static final double KV_SIM = 0.0022;
+                public static final double KA_SIM = 0;
 
+                public static final double KP_SIM = 0.04093;
+                public static final double KI_SIM = 0.0;
+                public static final double KD_SIM = 0.0;
 
+                public static final Current STATOR_LIMIT = Amps.of(120);
+                public static final Current SUPPLY_LIMIT = Amps.of(80);
 
-  }
+                public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
+                                .withInverted(InvertedValue.CounterClockwise_Positive)
+                                .withNeutralMode(NeutralModeValue.Coast);
 
-  public static final class IntakeConstants {
-    public static final int PIVOT_MASTER_ID = 20;
-    public static final int INFEED_ID = 21;
+                public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
+                                .withSensorToMechanismRatio(GEAR_RATIO);
 
-    public static final double INTAKE_SPEED = 0.4;
+                public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
+                                .withStatorCurrentLimit(STATOR_LIMIT)
+                                .withSupplyCurrentLimit(SUPPLY_LIMIT);
 
-    public static final double PIVOT_GEAR_RATIO = 15;
-    public static final double INFEED_GEAR_RATIO = 3;
+                public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+                                .withKP(KP)
+                                .withKI(KI)
+                                .withKD(KD)
+                                .withKA(KA)
+                                .withKV(KV)
+                                .withKG(KS);
 
-    public static final double PIVOT_STATOR_LIMIT = 80;
-    public static final double PIVOT_SUPPLY_LIMIT = 120;
+                public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
+                                .withSlot0(CLOSED_LOOP)
+                                .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+                                .withMotorOutput(OUTPUT_CONFIG)
+                                .withFeedback(FEEDBACK_CONFIG).withMotorOutput(OUTPUT_CONFIG);
 
-    public static final double INFEED_SUPPLY_LIMIT = 80;
-    public static final double INFEED_STATOR_LIMIT = 120;
+                public static final TalonFXConfiguration SHOOTER_CONFIG = new TalonFXConfiguration()
+                                .withSlot0(CLOSED_LOOP)
+                                .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+                                .withMotorOutput(OUTPUT_CONFIG)
+                                .withFeedback(FEEDBACK_CONFIG).withMotorOutput(OUTPUT_CONFIG);
 
-    public static final boolean PIVOT_MASTER_INVERT = false;
-    public static final boolean PIVOT_FOLLOWER_INVERT = true;
+                public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
 
-    public static final boolean INFEED_INVERT = false;
+                public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
-    public static final double kp = 10;
-    public static final double ki = 0;
-    public static final double kd = 0;
-    public static final double ks = 10;
-    public static final double kv = 10;
+        public static void initializeTreeMap() {
+                //TREE_MAP.put(, );
+                TREE_MAP.put(2.974249165939367,55.0);
+                TREE_MAP.put(2.747612404731888, 57.0);
+                TREE_MAP.put(3.809172382556807, 65.0);
+                TREE_MAP.put(4.323078087417264, 68.0);
+                TREE_MAP.put(5.3043601660939546, 75.0);
+                TREE_MAP.put(3.419481919864344, 61.0);
+                TREE_MAP.put(5.598174816390024, 80.0);
+                TREE_MAP.put(6.5, 105.0);
 
-    public static final double sim_kp = 1;
-    public static final double sim_ki = 1;
-    public static final double sim_kd = 1;
-    public static final double sim_ks = 1;
-
-    
-    public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
-        .withKP(kp)
-        .withKI(ki)
-        .withKD(kd)
-        .withKS(ks)
-        .withKV(kv);
-  
-
-    public static final double INTAKE_OUT_POSE = 0.366;
-
-
-  }
-
-  public static final class MathConstants {
-
-    public static final Distance HUB_HEIGHT = Meters.of(1.83 - 0.345); // Height of the hub - height of the turret
-    public static final Angle LAUNCH_ANGLE = Degrees.of(65);
-    public static final Distance FLY_WHEEL_DIAMETER = Inches.of(3);
-    public static final LinearAcceleration GRAVITY = MetersPerSecondPerSecond.of(9.81);
-    public static final Mass BALL_MASS = Pound.of(0.5);
-    public static final Distance BALL_DIAMETER = Inches.of(6);
-
-    public static final double BALL_VOLUME = Math.PI * Math.pow(BALL_DIAMETER.in(Meters) / 2.0, 2);
-
-    public static final double RHO = 1.2; // Air density kg/m^3
-
-    public static final double FLYWHEEL_EFFICIENCY =  1; // Percentage of the flywheel's velocity that is transferred to the ball
-
-    public static final double CD = 0.47; // Drag coefficient of a sphere
-
-    public static final double AIR_RESISTANCE = RHO * CD * 0.017671458676442587 * 0.5;
-
-  }
-
-  public class AutoConstants {
-
-    public static final double kMaxSpeedMetersPerSecond = 3.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-
-    public static final double kPXController = 1.687;
-    public static final double kPYController = 1.687;
-
-    public static final double kPThetaController = 1.687;
-    public static final double kDThetaController = kPThetaController / 2;
-
-    /* Constraint for kpx motion profilied robot angle controller */
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-
-    public static final ProfiledPIDController thetaController = new ProfiledPIDController(
-        Constants.AutoConstants.kPThetaController, 0, kDThetaController,
-        Constants.AutoConstants.kThetaControllerConstraints);
-
-  };
-
-  public static final class Swerve {
-    public static final double trackWidth = Units.inchesToMeters(22.75); // TODO: This must be tuned to specific robot
-    public static final double wheelBase = Units.inchesToMeters(26.75); // TODO: This must be tuned to specific robot
-    public static final double wheelCircumference = 4 * Math.PI;
-
-    /*
-     * Swerve Kinematics
-     * No need to ever change this unless you are not doing a traditional
-     * rectangular/square 4 module swerve
-     */
-    public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-        new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-        new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
-
-    public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
-                                                                                              // top speed
-    public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
-  }
-
-  public static final class FieldConstants {
-
-    /*
-     * Field dimensions:
-     * Width: 317.6 Inches
-     * Inches: 651.2 Inches
-     * Zones: 158.6 Inches from each wall
-     */
-
-    public static final double HALF_WAY_LINE = Units.inchesToMeters(317.7/2.0);
-    public static final Rectangle2d fieldZone = new Rectangle2d(
-        new Translation2d(),
-        new Translation2d(Inches.of(651.2), Inches.of(317.7)));
-    public static final Rectangle2d blueZone = new Rectangle2d(
-        new Translation2d(),
-        new Translation2d(Inches.of(158.6), Inches.of(317.7)));
-    public static final Rectangle2d blueTrench = new Rectangle2d(
-        new Translation2d(Inches.of(158.6), Inches.of(0)),
-        new Translation2d(Inches.of(205.6), Inches.of(317.7)) // 65.65 - 50.34 = 15.31
-    );
-    public static final Rectangle2d blueTrenchBlock = new Rectangle2d(
-        new Translation2d(Inches.of(158.6), Inches.of(50.34)),
-        new Translation2d(Inches.of(205.6), Inches.of(267.36)));
-    public static final Rectangle2d blueBump = new Rectangle2d(
-        new Translation2d(Inches.of(158.6), Inches.of(65.65)),
-        new Translation2d(Inches.of(205.6), Inches.of(251.05)));
-    public static final Rectangle2d blueHub = new Rectangle2d(
-        new Translation2d(Inches.of(158.6), Inches.of(135.35)),
-        new Translation2d(Inches.of(205.6), Inches.of(182.1)));
-    public static final Rectangle2d redZone = new Rectangle2d(
-        new Translation2d(Inches.of(492.6), Inches.of(0)),
-        new Translation2d(Inches.of(651.2), Inches.of(317.7)));
-    public static final Rectangle2d redTrench = new Rectangle2d(
-        new Translation2d(Inches.of(492.6), Inches.of(0)),
-        new Translation2d(Inches.of(445.6), Inches.of(317.7)));
-    public static final Rectangle2d redTrenchBlock = new Rectangle2d(
-        new Translation2d(Inches.of(492.6), Inches.of(50.34)),
-        new Translation2d(Inches.of(445.6), Inches.of(267.36)));
-    public static final Rectangle2d redBump = new Rectangle2d(
-        new Translation2d(Inches.of(492.6), Inches.of(65.65)),
-        new Translation2d(Inches.of(445.6), Inches.of(251.05)));
-    public static final Rectangle2d redHub = new Rectangle2d(
-        new Translation2d(Inches.of(492.6), Inches.of(135.35)),
-        new Translation2d(Inches.of(445.6), Inches.of(182.1)));
-
-    public static final Pose2d BLUE_HUB_TARGET = new Pose2d(4.5, 4, new Rotation2d());
-
-    public static final Pose2d RED_HUB_TARGET = new Pose2d(11.9, 4, new Rotation2d());
-
-    public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
-
-    public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 7, new Rotation2d());
-
-    public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 7, new Rotation2d());
-
-    public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2, new Rotation2d());
-
-    public enum CurrentZone {
-      RED,
-      RED_TRENCH,
-      RED_BUMP,
-      BLUE,
-      BLUE_TRENCH,
-      BLUE_BUMP,
-      NUETRAL_LEFT,
-      NUETRAL_RIGHT,
-      PHASING,
-      OUTSIDE_BOUNDS
-    }
-
-  }
-
-  public static final class IndexerConstants {
-    public static final int SPINDEXER_ID = 18;
-    public static final int KICKER_ID = 12;
-
-    public static final Current STATOR_LIMIT = Amps.of(120);
-    public static final Current SUPPLY_LIMIT = Amps.of(60);
-    public static final double SPINDEXER_GEAR_RATIO = 3;
-    public static final double KICKER_GEAR_RATIO = 1;
-
-    public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
-        .withInverted(InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
-
-    public static final MotorOutputConfigs LOADER_OUTPUT_CONFIG = new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Coast);
-
-    public static final FeedbackConfigs SPINDEXER_FEEDBACK_CONFIG = new FeedbackConfigs()
-        .withSensorToMechanismRatio(SPINDEXER_GEAR_RATIO);
-
-    public static final FeedbackConfigs KICKER_FEEDBACK_CONFIG = new FeedbackConfigs()
-        .withSensorToMechanismRatio(KICKER_GEAR_RATIO);
-        
-
-
-    public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(STATOR_LIMIT)
-        .withSupplyCurrentLimit(SUPPLY_LIMIT);
-
-    public static final Slot0Configs SPINDEXER_CLOSED_LOOP = new Slot0Configs()
-        .withKP(0)
-        .withKI(0)
-        .withKD(0)
-        .withKA(0)
-        .withKV(0)
-        .withKG(0);
-
-    public static final Slot0Configs KICKER_CLOSED_LOOP = new Slot0Configs()
-        .withKP(0)
-        .withKI(0)
-        .withKD(0)
-        .withKA(0)
-        .withKV(0)
-        .withKG(0);
-
-
-    public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration()
-        .withSlot0(SPINDEXER_CLOSED_LOOP)
-        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
-        .withMotorOutput(OUTPUT_CONFIG)
-        .withFeedback(SPINDEXER_FEEDBACK_CONFIG);
-
-    public static final TalonFXConfiguration KICKER_CONFIG = new TalonFXConfiguration()
-        .withSlot0(KICKER_CLOSED_LOOP)
-        .withCurrentLimits(CURRENT_LIMITS_CONFIG)
-        .withMotorOutput(LOADER_OUTPUT_CONFIG)
-        .withFeedback(KICKER_FEEDBACK_CONFIG);
-  }
-
-  public static final class VisionConstants {
-    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout
-        .loadField(AprilTagFields.k2026RebuiltWelded);
-    public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-
-    public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-(9+(5.0/8.0))).in(Meters), Inches.of(-(9.875+(1.0/32.0))).in(Meters), Inches.of(13.25).in(Meters)),
-        new Rotation3d(0,Math.toRadians(5), Math.toRadians(180)));
-    public static final Transform3d BACK_LEFT_CAMERA_POSE = new Transform3d(new Translation3d(Inches.of(-6.125).in(Meters), Inches.of(13.25).in(Meters), Inches.of(13.25).in(Meters)),
-        new Rotation3d(0,Math.toRadians(5),Math.toRadians(90)));
-    public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0,-5,0));
-
-  }
-
-  public static final class RobotDimensionConstants{
-    public static final Distance WIDTH_WBUMPERS = Inches.of(34.56);
-    public static final Distance LENGTH_WBUMPERS = Inches.of(34.560082);
-    public static final Distance HEIGHT_OF_BUMPERS = Inches.of(5.858);
-    public static final Distance INTAKE_LENGTH = Inches.of(8.345);
-
-    public static final Distance INTAKE_XMIN = LENGTH_WBUMPERS.div(2);
-    public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
-    public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
-    public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
-
-    public static final Transform2d FRONT_LEFT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX, Rotation2d.kZero);
-    public static final Transform2d FRONT_RIGHT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX.times(-1), Rotation2d.kZero);
-    public static final Transform2d BACK_LEFT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX, Rotation2d.kZero);
-    public static final Transform2d BACK_RIGHT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX.times(-1), Rotation2d.kZero);
-    public static final Transform2d BACK_SIDE = new Transform2d(INTAKE_XMAX.times(-1), Inches.of(0), Rotation2d.kZero);
-    
-    }
-
-    public static final class FieldZones{
-        /*
-        * Field dimensions:
-        * Width: 317.6 Inches
-        * Length: 651.2 Inches
-        * Zones: 158.6 Inches from each wall
-        */
-        public static final Distance FIELD_LENGTH = Inches.of(651.2);
-        public static final Distance FIELD_WIDTH = Inches.of(317.6);
-        public static final Distance ALLIANCE_FROM_WALL = Inches.of(158.6);
-
-        public static final RectangleBounds FIELD_ZONE = new RectangleBounds(Inches.of(0), FIELD_LENGTH, Inches.of(0), FIELD_WIDTH);
-        public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
-    }
+                TREE_MAP.put(1.7284305040682872, 51.0);
+
+
+                // TREE_MAP.put(, );
+
+
+
+            TOF_MAP.put(-55.37029871249218, 3.81- 2.7);
+            TOF_MAP.put(-62.047688968078134, 9.17-7.76);
+
+            TOF_MAP.put(-69.29962142071493, 2.59-1.1);
+            TOF_MAP.put(-71.60450484836369, 4.23-2.57);
+            TOF_MAP.put(-76.9365323598279, 4.4-2.62);
+            TOF_MAP.put(-65.48803377289674, 3.05-1.57);
+            TOF_MAP.put(-77.28934651220227, 11.43-9.71);
+
+
+        }
+
+        }
+
+        public static final class IntakeConstants {
+                public static final int PIVOT_MASTER_ID = 20;
+                public static final int INFEED_ID = 21;
+
+                public static final double INTAKE_SPEED = 0.5;
+
+                public static final double PIVOT_GEAR_RATIO = 45;
+                public static final double INFEED_GEAR_RATIO = 3;
+
+                public static final double PIVOT_STATOR_LIMIT = 80;
+                public static final double PIVOT_SUPPLY_LIMIT = 120;
+
+                public static final double INFEED_SUPPLY_LIMIT = 40;
+                public static final double INFEED_STATOR_LIMIT = 80;
+
+                public static final boolean PIVOT_MASTER_INVERT = false;
+                public static final boolean PIVOT_FOLLOWER_INVERT = true;
+
+                public static final boolean INFEED_INVERT = false;
+
+                public static final double kp = 10;
+                public static final double ki = 0;
+                public static final double kd = 2;
+                public static final double ks = 10;
+                public static final double kv = 10;
+
+                public static final double sim_kp = 1;
+                public static final double sim_ki = 1;
+                public static final double sim_kd = 1;
+                public static final double sim_ks = 1;
+
+                public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+                                .withKP(kp)
+                                .withKI(ki)
+                                .withKD(kd)
+                                .withKS(ks)
+                                .withKV(kv);
+
+                public static final double INTAKE_OUT_POSE = 0.25;
+
+        }
+
+        public static final class MathConstants {
+
+                public static final Distance HUB_HEIGHT = Meters.of(1.83 - 0.345); // Height of the hub - height of the
+                                                                                   // turret
+                public static final Angle LAUNCH_ANGLE = Degrees.of(65);
+                public static final Distance FLY_WHEEL_DIAMETER = Inches.of(3);
+                public static final LinearAcceleration GRAVITY = MetersPerSecondPerSecond.of(9.81);
+                public static final Mass BALL_MASS = Pound.of(0.5);
+                public static final Distance BALL_DIAMETER = Inches.of(6);
+
+                public static final double BALL_VOLUME = Math.PI * Math.pow(BALL_DIAMETER.in(Meters) / 2.0, 2);
+
+                public static final double RHO = 1.2; // Air density kg/m^3
+
+                public static final double FLYWHEEL_EFFICIENCY = 1; // Percentage of the flywheel's velocity that is
+                                                                    // transferred
+                                                                    // to the ball
+
+                public static final double CD = 0.47; // Drag coefficient of a sphere
+
+                public static final double AIR_RESISTANCE = RHO * CD * 0.017671458676442587 * 0.5;
+
+        }
+
+        public class AutoConstants {
+
+                public static final double kMaxSpeedMetersPerSecond = 3.5;
+                public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
+                public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+                public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+
+                public static final double kPXController = 1.687;
+                public static final double kPYController = 1.687;
+
+                public static final double kPThetaController = 1.687;
+                public static final double kDThetaController = kPThetaController / 2;
+
+                /* Constraint for kpx motion profilied robot angle controller */
+                public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+                                kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+                public static final ProfiledPIDController thetaController = new ProfiledPIDController(
+                                Constants.AutoConstants.kPThetaController, 0, kDThetaController,
+                                Constants.AutoConstants.kThetaControllerConstraints);
+
+        };
+
+        public static final class Swerve {
+                public static final double trackWidth = Units.inchesToMeters(22.75); // TODO: This must be tuned to
+                                                                                     // specific
+                                                                                     // robot
+                public static final double wheelBase = Units.inchesToMeters(26.75); // TODO: This must be tuned to
+                                                                                    // specific
+                                                                                    // robot
+                public static final double wheelCircumference = 4 * Math.PI;
+
+                /*
+                 * Swerve Kinematics
+                 * No need to ever change this unless you are not doing a traditional
+                 * rectangular/square 4 module swerve
+                 */
+                public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+                                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+
+                public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts
+                                                                                                          // desired
+                                                                                                          // top speed
+                public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
+        }
+
+        public static final class FieldConstants {
+
+                /*
+                 * Field dimensions:
+                 * Width: 317.6 Inches
+                 * Inches: 651.2 Inches
+                 * Zones: 158.6 Inches from each wall
+                 */
+
+                public static final double HALF_WAY_LINE = Units.inchesToMeters(317.7 / 2.0);
+                public static final Rectangle2d fieldZone = new Rectangle2d(
+                                new Translation2d(),
+                                new Translation2d(Inches.of(651.2), Inches.of(317.7)));
+                public static final Rectangle2d blueZone = new Rectangle2d(
+                                new Translation2d(),
+                                new Translation2d(Inches.of(158.6), Inches.of(317.7)));
+                public static final Rectangle2d blueTrench = new Rectangle2d(
+                                new Translation2d(Inches.of(158.6), Inches.of(0)),
+                                new Translation2d(Inches.of(205.6), Inches.of(317.7)) // 65.65 - 50.34 = 15.31
+                );
+                public static final Rectangle2d blueTrenchBlock = new Rectangle2d(
+                                new Translation2d(Inches.of(158.6), Inches.of(50.34)),
+                                new Translation2d(Inches.of(205.6), Inches.of(267.36)));
+                public static final Rectangle2d blueBump = new Rectangle2d(
+                                new Translation2d(Inches.of(158.6), Inches.of(65.65)),
+                                new Translation2d(Inches.of(205.6), Inches.of(251.05)));
+                public static final Rectangle2d blueHub = new Rectangle2d(
+                                new Translation2d(Inches.of(158.6), Inches.of(135.35)),
+                                new Translation2d(Inches.of(205.6), Inches.of(182.1)));
+                public static final Rectangle2d redZone = new Rectangle2d(
+                                new Translation2d(Inches.of(492.6), Inches.of(0)),
+                                new Translation2d(Inches.of(651.2), Inches.of(317.7)));
+                public static final Rectangle2d redTrench = new Rectangle2d(
+                                new Translation2d(Inches.of(492.6), Inches.of(0)),
+                                new Translation2d(Inches.of(445.6), Inches.of(317.7)));
+                public static final Rectangle2d redTrenchBlock = new Rectangle2d(
+                                new Translation2d(Inches.of(492.6), Inches.of(50.34)),
+                                new Translation2d(Inches.of(445.6), Inches.of(267.36)));
+                public static final Rectangle2d redBump = new Rectangle2d(
+                                new Translation2d(Inches.of(492.6), Inches.of(65.65)),
+                                new Translation2d(Inches.of(445.6), Inches.of(251.05)));
+                public static final Rectangle2d redHub = new Rectangle2d(
+                                new Translation2d(Inches.of(492.6), Inches.of(135.35)),
+                                new Translation2d(Inches.of(445.6), Inches.of(182.1)));
+
+                public static final Pose2d BLUE_HUB_TARGET = new Pose2d(4.5, 4, new Rotation2d());
+
+                public static final Pose2d RED_HUB_TARGET = new Pose2d(11.9, 4, new Rotation2d());
+
+                public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
+
+                public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 7, new Rotation2d());
+
+                public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 7, new Rotation2d());
+
+                public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2, new Rotation2d());
+
+                public enum CurrentZone {
+                        RED,
+                        RED_TRENCH,
+                        RED_BUMP,
+                        BLUE,
+                        BLUE_TRENCH,
+                        BLUE_BUMP,
+                        NUETRAL_LEFT,
+                        NUETRAL_RIGHT,
+                        PHASING,
+                        OUTSIDE_BOUNDS
+                }
+
+        }
+
+        public static final class IndexerConstants {
+                public static final int SPINDEXER_ID = 18;
+                public static final int KICKER_ID = 12;
+
+                public static final Current STATOR_LIMIT = Amps.of(120);
+                public static final Current SUPPLY_LIMIT = Amps.of(60);
+                public static final double SPINDEXER_GEAR_RATIO = 3;
+                public static final double KICKER_GEAR_RATIO = 1;
+
+                public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
+                                .withInverted(InvertedValue.CounterClockwise_Positive)
+                                .withNeutralMode(NeutralModeValue.Coast);
+
+                public static final MotorOutputConfigs LOADER_OUTPUT_CONFIG = new MotorOutputConfigs()
+                                .withInverted(InvertedValue.Clockwise_Positive)
+                                .withNeutralMode(NeutralModeValue.Coast);
+
+                public static final FeedbackConfigs SPINDEXER_FEEDBACK_CONFIG = new FeedbackConfigs()
+                                .withSensorToMechanismRatio(SPINDEXER_GEAR_RATIO);
+
+                public static final FeedbackConfigs KICKER_FEEDBACK_CONFIG = new FeedbackConfigs()
+                                .withSensorToMechanismRatio(KICKER_GEAR_RATIO);
+
+                public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
+                                .withStatorCurrentLimit(STATOR_LIMIT)
+                                .withSupplyCurrentLimit(SUPPLY_LIMIT);
+
+                public static final Slot0Configs SPINDEXER_CLOSED_LOOP = new Slot0Configs()
+                                .withKP(0)
+                                .withKI(0)
+                                .withKD(0)
+                                .withKA(0)
+                                .withKV(0)
+                                .withKG(0);
+
+                public static final Slot0Configs KICKER_CLOSED_LOOP = new Slot0Configs()
+                                .withKP(0)
+                                .withKI(0)
+                                .withKD(0)
+                                .withKA(0)
+                                .withKV(0)
+                                .withKG(0);
+
+                public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration()
+                                .withSlot0(SPINDEXER_CLOSED_LOOP)
+                                .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+                                .withMotorOutput(OUTPUT_CONFIG)
+                                .withFeedback(SPINDEXER_FEEDBACK_CONFIG);
+
+                public static final TalonFXConfiguration KICKER_CONFIG = new TalonFXConfiguration()
+                                .withSlot0(KICKER_CLOSED_LOOP)
+                                .withCurrentLimits(CURRENT_LIMITS_CONFIG)
+                                .withMotorOutput(LOADER_OUTPUT_CONFIG)
+                                .withFeedback(KICKER_FEEDBACK_CONFIG);
+        }
+
+        public static final class VisionConstants {
+                public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFieldLayout
+                                .loadField(AprilTagFields.k2026RebuiltWelded);
+                public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+
+                public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(
+                                new Translation3d(Inches.of(-6.625).in(Meters),
+                                                Inches.of(-11.5).in(Meters), Inches.of(13.25).in(Meters)),
+                                new Rotation3d(0, Math.toRadians(5), Math.toRadians(180)));
+
+                public static final Transform3d BACK_LEFT_CAMERA_POSE = new Transform3d(
+                                new Translation3d(Inches.of(-7.625).in(Meters), Inches.of(13.3125).in(Meters),
+                                                Inches.of(13.25).in(Meters)),
+                                new Rotation3d(0, Math.toRadians(5), Math.toRadians(90)));
+
+                public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
+                                new Rotation3d(0, -5, 0));
+
+        }
+
+        public static final class RobotDimensionConstants {
+                public static final Distance WIDTH_WBUMPERS = Inches.of(34.56);
+                public static final Distance LENGTH_WBUMPERS = Inches.of(34.560082);
+                public static final Distance HEIGHT_OF_BUMPERS = Inches.of(5.858);
+                public static final Distance INTAKE_LENGTH = Inches.of(8.345);
+
+                public static final Distance INTAKE_XMIN = LENGTH_WBUMPERS.div(2);
+                public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
+                public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
+                public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
+
+                public static final Transform2d FRONT_LEFT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX,
+                                Rotation2d.kZero);
+                public static final Transform2d FRONT_RIGHT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX.times(-1),
+                                Rotation2d.kZero);
+                public static final Transform2d BACK_LEFT_CORNER = new Transform2d(INTAKE_XMAX.times(-1), INTAKE_YMAX,
+                                Rotation2d.kZero);
+                public static final Transform2d BACK_RIGHT_CORNER = new Transform2d(INTAKE_XMAX.times(-1),
+                                INTAKE_YMAX.times(-1), Rotation2d.kZero);
+                public static final Transform2d BACK_SIDE = new Transform2d(INTAKE_XMAX.times(-1), Inches.of(0),
+                                Rotation2d.kZero);
+
+        }
+
+        public static final class FieldZones {
+                /*
+                 * Field dimensions:
+                 * Width: 317.6 Inches
+                 * Length: 651.2 Inches
+                 * Zones: 158.6 Inches from each wall
+                 */
+                public static final Distance FIELD_LENGTH = Inches.of(651.2);
+                public static final Distance FIELD_WIDTH = Inches.of(317.6);
+                public static final Distance ALLIANCE_FROM_WALL = Inches.of(158.6);
+
+                public static final RectangleBounds FIELD_ZONE = new RectangleBounds(Inches.of(0), FIELD_LENGTH,
+                                Inches.of(0),
+                                FIELD_WIDTH);
+                public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
+        }
 
 }

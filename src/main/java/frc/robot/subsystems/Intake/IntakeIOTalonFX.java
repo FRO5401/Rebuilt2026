@@ -1,10 +1,12 @@
 package frc.robot.subsystems.Intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Constants.IntakeConstants;
 
@@ -16,7 +18,7 @@ public class IntakeIOTalonFX implements IntakeIO{
     private final TalonFXConfiguration infeedConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
-    private final PositionVoltage pivotPositionRequest = new PositionVoltage(0.0);
+    private final MotionMagicExpoVoltage pivotPositionRequest = new MotionMagicExpoVoltage(0.0);
 
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0.0);
 
@@ -25,6 +27,8 @@ public class IntakeIOTalonFX implements IntakeIO{
         infeedConfig.Feedback.SensorToMechanismRatio = IntakeConstants.INFEED_GEAR_RATIO;
         infeedConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.INFEED_STATOR_LIMIT;
         infeedConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.INFEED_SUPPLY_LIMIT;
+
+        pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         pivotConfig.Feedback.SensorToMechanismRatio = IntakeConstants.PIVOT_GEAR_RATIO;
         pivotConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.PIVOT_STATOR_LIMIT;

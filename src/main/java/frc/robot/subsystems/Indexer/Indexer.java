@@ -26,12 +26,12 @@ public class Indexer extends SubsystemBase {
   }
 
   public void setIndexer(double spindexerVoltage, double kickerVoltage) {
-    io.setSpindexerVoltage(spindexerVoltage);
+    io.setSpindexerPercent(spindexerVoltage);
     io.setKickerVoltage(kickerVoltage);
   }
 
-  public Command setIndexerCommand(Supplier<Double> spindexerVoltage, Supplier<Double> kickerVoltage) {
-    return Commands.runOnce(() -> setIndexer(spindexerVoltage.get(), kickerVoltage.get()));
+  public Command setIndexerCommand(Supplier<Double> spindexerPercent, Supplier<Double> kickerVoltage) {
+    return Commands.runOnce(() -> setIndexer(spindexerPercent.get(), kickerVoltage.get()));
   }
 
   

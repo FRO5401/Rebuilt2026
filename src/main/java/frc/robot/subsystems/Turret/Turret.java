@@ -42,12 +42,12 @@ import frc.robot.Utils.TunableNumber;
 
 public class Turret extends SubsystemBase {
 
-  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, true);
-  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, true);
-  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, true);
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD );
 
-  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, true);
-  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, true);
+  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS);
+  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
