@@ -8,20 +8,15 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import choreo.auto.AutoChooser;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.BooleanSupplier;
 
-import org.littletonrobotics.junction.Logger;
 import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,7 +26,6 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.FieldZones;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
@@ -50,8 +44,7 @@ import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
-import frc.robot.Utils.Zones.Triangle;
-import frc.robot.Utils.Zones.ZoneBases;
+
 import frc.robot.Constants.ShooterConstants;
 
 /**
@@ -66,6 +59,7 @@ import frc.robot.Constants.ShooterConstants;
 public class RobotContainer {
 
   
+  @SuppressWarnings("unused")
   private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0);
 

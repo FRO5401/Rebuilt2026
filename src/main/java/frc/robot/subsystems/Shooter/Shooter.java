@@ -13,9 +13,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Utils.TunableNumber;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
@@ -32,9 +30,9 @@ public class Shooter extends SubsystemBase {
 
   }
 
-  TunableNumber kP = new TunableNumber("Shooter/KP", ShooterConstants.KP);
-  TunableNumber kD = new TunableNumber("Shooter/KD", ShooterConstants.KD);
-  TunableNumber kV = new TunableNumber("Shooter/KV", ShooterConstants.KV);
+  TunableNumber kP = new TunableNumber("Shooter/KP", ShooterConstants.KP, true);
+  TunableNumber kD = new TunableNumber("Shooter/KD", ShooterConstants.KD, true);
+  TunableNumber kV = new TunableNumber("Shooter/KV", ShooterConstants.KV, true);
 
 
   @Override

@@ -26,7 +26,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,17 +36,16 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
-import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.Utils.TunableNumber;
 
 public class Turret extends SubsystemBase {
 
-  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP);
-  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI);
-  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD );
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, true);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, true);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, true );
 
-  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS);
-  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV);
+  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, true);
+  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, true);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -58,7 +56,6 @@ public class Turret extends SubsystemBase {
       ? new PIDController(TurretConstants.KP, TurretConstants.KI, TurretConstants.KD)
       : new PIDController(TurretConstants.KP_SIM, TurretConstants.KI_SIM, TurretConstants.KD_SIM);
 
-  private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(kS.get(), kV.get());
 
   // target on the field
   private Pose2d target;

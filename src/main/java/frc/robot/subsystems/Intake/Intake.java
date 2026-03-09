@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.Intake;
 
-import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -21,12 +20,12 @@ public class Intake extends SubsystemBase {
     private double desiredAngle = 0;
 
     // TODO: Finish tuning these, I ball parked it
-    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp);
+    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true);
     private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
-    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd);
+    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
 
-    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv);
-    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks);
+    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
+    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
