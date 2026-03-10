@@ -59,8 +59,8 @@ public final class Constants {
 
         public static final class TurretConstants {
 
-                public static final Current STATOR_LIMIT = Amps.of(40);
-                public static final Current SUPPLY_LIMIT = Amps.of(40);
+                public static final Current STATOR_LIMIT = Amps.of(80);
+                public static final Current SUPPLY_LIMIT = Amps.of(80);
                 public static final double GEAR_RATIO = 1.45 * 3;
 
                 public static final double KP = 70;
@@ -181,6 +181,8 @@ public final class Constants {
         public static void initializeTreeMap() {
                 //TREE_MAP.put(, );
                 TREE_MAP.put(2.974249165939367,55.0);
+                TREE_MAP.put(2.494898698234213,50.0);
+
                 TREE_MAP.put(2.747612404731888, 57.0);
                 TREE_MAP.put(3.809172382556807, 65.0);
                 TREE_MAP.put(4.323078087417264, 68.0);
@@ -230,11 +232,11 @@ public final class Constants {
 
                 public static final boolean INFEED_INVERT = false;
 
-                public static final double kp = 10;
+                public static final double kp = 50;
                 public static final double ki = 0;
-                public static final double kd = 2;
-                public static final double ks = 10;
-                public static final double kv = 10;
+                public static final double kd = 5;
+                public static final double ks = 0;
+                public static final double kv = 0;
 
                 public static final double sim_kp = 1;
                 public static final double sim_ki = 1;
@@ -248,7 +250,7 @@ public final class Constants {
                                 .withKS(ks)
                                 .withKV(kv);
 
-                public static final double INTAKE_OUT_POSE = 0.25;
+                public static final double INTAKE_OUT_POSE = 0.265;
 
         }
 

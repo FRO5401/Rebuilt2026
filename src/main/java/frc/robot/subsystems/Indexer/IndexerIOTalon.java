@@ -3,12 +3,15 @@ package frc.robot.subsystems.Indexer;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerIOTalon implements IndexerIO {
     
     private TalonFX spindexer;
     private TalonFX kicker;
+
 
     public IndexerIOTalon() {
         spindexer = new TalonFX(IndexerConstants.SPINDEXER_ID);
@@ -49,7 +52,7 @@ public class IndexerIOTalon implements IndexerIO {
 
     @Override
     public void setSpindexerPercent(double percent) {
-        spindexer.set(percent);
+        spindexer.set((percent));
     }
 
     @Override

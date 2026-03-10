@@ -2,6 +2,7 @@ package frc.robot.subsystems.Intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,7 +18,7 @@ public class IntakeIOTalonFX implements IntakeIO{
     private final TalonFXConfiguration infeedConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
-    private final MotionMagicExpoVoltage pivotPositionRequest = new MotionMagicExpoVoltage(0.0);
+    private final PositionVoltage pivotPositionRequest = new PositionVoltage(0.0);
 
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0.0);
 

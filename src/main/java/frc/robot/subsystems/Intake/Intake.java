@@ -20,12 +20,12 @@ public class Intake extends SubsystemBase {
     private double desiredAngle = 0;
 
     // TODO: Finish tuning these, I ball parked it
-    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true);
-    private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
-    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
+    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, false );
+    private TunableNumber ki = new TunableNumber("Intake/ki", 0, false);
+    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, false);
 
-    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
-    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
+    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, false);
+    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, false);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {

@@ -61,7 +61,7 @@ public class RobotContainer {
   
   @SuppressWarnings("unused")
   private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
-  private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0);
+  private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
@@ -169,14 +169,14 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.15));
+    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.4));
     driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
-
+ 
     // // This is for the real robot
-    // turret.setDefaultCommand(turret.setSmartTarget());
+     turret.setDefaultCommand(turret.setSmartTarget());
 
     // this is for tuning
-    turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    //turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
     // turret.setDefaultCommand(turret.setSmartTarget()
@@ -208,13 +208,13 @@ public class RobotContainer {
  
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
-    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 2.0));
+    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .75));
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
 
-    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> spindexerSpeed.get(), () -> 11.0));
+    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> .8, () -> 11.0));
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
     operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
