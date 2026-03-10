@@ -8,7 +8,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
 import choreo.auto.AutoChooser;
 
-
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
@@ -17,6 +18,8 @@ import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -63,6 +66,8 @@ public class RobotContainer {
   private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
+
+  private PIDController thetaController = new PIDController(3, 0, 0);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
@@ -195,6 +200,22 @@ public class RobotContainer {
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
+    driver.y().whileTrue(drivetrain.applyRequest(
+      ()-> drive
+        .withRotationalRate(Radians.convertFrom(thetaController.calculate(drivetrain.getPose().getRotation().getDegrees(), getclosest45(drivetrain.getPose())), Degrees))
+        .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+        )
+    );
+    
+    driver.x().whileTrue(drivetrain.applyRequest(
+      ()-> drive
+        .withRotationalRate(Radians.convertFrom(thetaController.calculate(drivetrain.getPose().getRotation().getDegrees(), getclosest90(drivetrain.getPose())), Degrees))
+        .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+        )
+    );
+
     // This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
         () -> RotationsPerSecond
@@ -273,6 +294,13 @@ public class RobotContainer {
         RobotDimensionConstants.INTAKE_YMAX,
         () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
         intakeCallback);
+  }
+
+  private double getclosest90(Pose2d pose){
+    return MathHelp.nearest90(pose.getRotation().getDegrees());
+  }
+  private double getclosest45(Pose2d pose){
+    return MathHelp.nearest45(pose.getRotation().getDegrees());
   }
   
 }
