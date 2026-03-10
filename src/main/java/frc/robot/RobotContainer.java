@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
@@ -50,7 +51,8 @@ import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
 
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.FieldZones.TraversalZones;
+import frc.robot.Constants.Swerve;
+import frc.robot.Constants.Swerve.DriveType;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -192,19 +194,12 @@ public class RobotContainer {
     // Commands.runOnce(() ->
     // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
-    drivetrain.setDefaultCommand(
-        drivetrain.applyRequest(() -> drive
-            .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-            .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
-            .withRotationalRate(
-                -driver.getRightX() * Constants.Swerve.MaxAngularRate)
-            .withDesaturateWheelSpeeds(true)));
+    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.DEFAULT)));
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-
-    driver.y().whileTrue(drivetrain.applyRequest(getTraversalRotation(TraversalZones.TRENCH)));
-    driver.x().whileTrue(drivetrain.applyRequest(getTraversalRotation(TraversalZones.BUMP)));
+    driver.y().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
+    driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
 
     // This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
@@ -293,8 +288,8 @@ public class RobotContainer {
     return MathHelp.nearest45(pose.getRotation().getDegrees());
   }
 
-  private Supplier<SwerveRequest> getTraversalRotation(TraversalZones travel){
-    switch(travel){
+  private SwerveRequest getDriveRequest(DriveType driveType){
+    switch(driveType){
       case BUMP -> {
         drive.withRotationalRate(
           Radians.convertFrom(
@@ -313,12 +308,15 @@ public class RobotContainer {
             Degrees)
         );
       }
+      default ->{
+        drive.withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate);
+      }
     }
     drive
       .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
       .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
       .withDesaturateWheelSpeeds(true);
-    return ()->drive;
+    return drive;
 
   }
   
