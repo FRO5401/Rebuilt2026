@@ -15,7 +15,6 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -107,8 +106,9 @@ public class Turret extends SubsystemBase {
 
     if (turretPose != null && target != null) {
 
+      //SOTM!!!
       poseDifference = turretPose.minus(target);
-      var robotVelocities = new Transform2d(
+      robotVelocities = new Transform2d(
           fieldSpeedsSupplier.get().vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
           fieldSpeedsSupplier.get().vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
           Rotation2d.kZero);

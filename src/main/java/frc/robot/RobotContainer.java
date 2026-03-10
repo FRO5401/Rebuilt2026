@@ -58,9 +58,10 @@ import frc.robot.Constants.ShooterConstants;
  */
 public class RobotContainer {
 
-  
+  //Leave these here god forbid we have to retune
   @SuppressWarnings("unused")
   private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
+  @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
