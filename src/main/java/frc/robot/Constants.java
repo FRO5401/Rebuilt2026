@@ -514,6 +514,11 @@ public final class Constants {
                                 Inches.of(0),
                                 FIELD_WIDTH);
                 public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
+
+                public enum TraversalZones{
+                        TRENCH,
+                        BUMP
+                }
         }
 
 }

@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
 
@@ -49,6 +50,7 @@ import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
 
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.FieldZones.TraversalZones;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -200,21 +202,9 @@ public class RobotContainer {
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    driver.y().whileTrue(drivetrain.applyRequest(
-      ()-> drive
-        .withRotationalRate(Radians.convertFrom(thetaController.calculate(drivetrain.getPose().getRotation().getDegrees(), getclosest45(drivetrain.getPose())), Degrees))
-        .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-        .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
-        )
-    );
-    
-    driver.x().whileTrue(drivetrain.applyRequest(
-      ()-> drive
-        .withRotationalRate(Radians.convertFrom(thetaController.calculate(drivetrain.getPose().getRotation().getDegrees(), getclosest90(drivetrain.getPose())), Degrees))
-        .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-        .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
-        )
-    );
+
+    driver.y().whileTrue(drivetrain.applyRequest(getTraversalRotation(TraversalZones.TRENCH)));
+    driver.x().whileTrue(drivetrain.applyRequest(getTraversalRotation(TraversalZones.BUMP)));
 
     // This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
@@ -301,6 +291,35 @@ public class RobotContainer {
   }
   private double getclosest45(Pose2d pose){
     return MathHelp.nearest45(pose.getRotation().getDegrees());
+  }
+
+  private Supplier<SwerveRequest> getTraversalRotation(TraversalZones travel){
+    switch(travel){
+      case BUMP -> {
+        drive.withRotationalRate(
+          Radians.convertFrom(
+            thetaController.calculate(
+              drivetrain.getPose().getRotation().getDegrees(), 
+              getclosest90(drivetrain.getPose())), 
+            Degrees)
+        );
+      }
+      case TRENCH -> {
+        drive.withRotationalRate(
+          Radians.convertFrom(
+            thetaController.calculate(
+              drivetrain.getPose().getRotation().getDegrees(), 
+              getclosest45(drivetrain.getPose())), 
+            Degrees)
+        );
+      }
+    }
+    drive
+      .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+      .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+      .withDesaturateWheelSpeeds(true);
+    return ()->drive;
+
   }
   
 }
