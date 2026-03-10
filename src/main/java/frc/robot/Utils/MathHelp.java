@@ -13,7 +13,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
