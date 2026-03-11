@@ -325,6 +325,12 @@ public final class Constants {
                                                                                                           // desired
                                                                                                           // top speed
                 public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
+
+                public enum DriveType{
+                        BUMP,
+                        TRENCH,
+                        DEFAULT
+                }
         }
 
         public static final class FieldConstants {
@@ -514,6 +520,7 @@ public final class Constants {
                                 Inches.of(0),
                                 FIELD_WIDTH);
                 public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
+
         }
 
 }

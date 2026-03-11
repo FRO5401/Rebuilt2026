@@ -88,4 +88,11 @@ public class MathHelp {
         return epsilonEquals(a, b, 1e-3);
     }
 
+    public static double nearest90(double input){
+        return 90 * Math.rint(input/90);
+    }
+
+    public static double nearest45(double input){
+        return (90 * Math.rint((input+45)/90))-45;
+    }
 }
