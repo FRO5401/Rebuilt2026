@@ -413,7 +413,7 @@ public final class Constants {
                                 .withNeutralMode(NeutralModeValue.Coast);
 
                 public static final MotorOutputConfigs LOADER_OUTPUT_CONFIG = new MotorOutputConfigs()
-                                .withInverted(InvertedValue.Clockwise_Positive)
+                                .withInverted(InvertedValue.CounterClockwise_Positive)
                                 .withNeutralMode(NeutralModeValue.Coast);
 
                 public static final FeedbackConfigs SPINDEXER_FEEDBACK_CONFIG = new FeedbackConfigs()

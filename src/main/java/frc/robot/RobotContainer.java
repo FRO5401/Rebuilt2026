@@ -170,7 +170,7 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.4));
+    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.25));
     driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
  
     // // This is for the real robot
