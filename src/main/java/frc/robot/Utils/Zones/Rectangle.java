@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldZones;
 import frc.robot.Utils.Zones.ZoneBases.PredictiveZone;
 import frc.robot.Utils.Zones.ZoneBases.Zone;
 
@@ -60,7 +61,16 @@ public class Rectangle {
                 new Translation2d(xMin, yMin)
             };
         }
-        
+
+        public RectangleBounds getMirrorX(){
+            return new RectangleBounds(FieldZones.FIELD_LENGTH.in(Meters) - xMax, FieldZones.FIELD_LENGTH.in(Meters) - xMin, yMin, yMax);
+        }
+        public RectangleBounds getMirrorY(){
+            return new RectangleBounds(xMin, xMax, FieldZones.FIELD_WIDTH.in(Meters) - yMax, FieldZones.FIELD_WIDTH.in(Meters) - yMin);
+        }
+        public RectangleBounds getMirrorBounds(){
+            return new RectangleBounds(FieldZones.FIELD_LENGTH.in(Meters) - xMax, FieldZones.FIELD_LENGTH.in(Meters) - xMin, FieldZones.FIELD_WIDTH.in(Meters) - yMax, FieldZones.FIELD_WIDTH.in(Meters) - yMin);
+        }
     }
 
     public static class PredictiveRectangleX extends RectangleBounds implements PredictiveZone{

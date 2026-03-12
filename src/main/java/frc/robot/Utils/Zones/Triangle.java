@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldZones;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.Zones.ZoneBases.Zone;
 
@@ -62,6 +63,10 @@ public class Triangle {
                 new Translation2d(x3, y3),
                 new Translation2d(x1, y1)
             };
+        }
+
+        public TriangleBound getMirrorBound(){
+            return new TriangleBound(FieldZones.FIELD_LENGTH.in(Meters) - x3, FieldZones.FIELD_WIDTH.in(Meters) - y3, FieldZones.FIELD_LENGTH.in(Meters) - x2, FieldZones.FIELD_WIDTH.in(Meters) - y2, FieldZones.FIELD_LENGTH.in(Meters) - x1, FieldZones.FIELD_WIDTH.in(Meters) - y1);
         }
     }
 
