@@ -59,8 +59,8 @@ public final class Constants {
 
         public static final class TurretConstants {
 
-                public static final Current STATOR_LIMIT = Amps.of(80);
-                public static final Current SUPPLY_LIMIT = Amps.of(80);
+                public static final Current STATOR_LIMIT = Amps.of(60);
+                public static final Current SUPPLY_LIMIT = Amps.of(60);
                 public static final double GEAR_RATIO = 1.45 * 3;
 
                 public static final double KP = 70;
@@ -185,8 +185,8 @@ public final class Constants {
 
                 TREE_MAP.put(2.747612404731888, 57.0);
                 TREE_MAP.put(3.809172382556807, 65.0);
-                TREE_MAP.put(4.323078087417264, 68.0);
-                TREE_MAP.put(5.3043601660939546, 75.0);
+                TREE_MAP.put(4.323078087417264, 69.0);
+                TREE_MAP.put(5.3043601660939546, 76.0);
                 TREE_MAP.put(3.419481919864344, 61.0);
                 TREE_MAP.put(5.598174816390024, 80.0);
                 TREE_MAP.put(6.5, 105.0);
@@ -199,6 +199,8 @@ public final class Constants {
 
 
             TOF_MAP.put(-55.37029871249218, 3.81- 2.7);
+            TOF_MAP.put(-50.0, 4.285-3.15);
+
             TOF_MAP.put(-62.047688968078134, 9.17-7.76);
 
             TOF_MAP.put(-69.29962142071493, 2.59-1.1);
@@ -206,6 +208,7 @@ public final class Constants {
             TOF_MAP.put(-76.9365323598279, 4.4-2.62);
             TOF_MAP.put(-65.48803377289674, 3.05-1.57);
             TOF_MAP.put(-77.28934651220227, 11.43-9.71);
+            TOF_MAP.put(-80.0 , 5.125 - 3.43);
 
 
         }
@@ -302,10 +305,10 @@ public final class Constants {
         };
 
         public static final class Swerve {
-                public static final double trackWidth = Units.inchesToMeters(22.75); // TODO: This must be tuned to
+                public static final double trackWidth = Units.inchesToMeters(21); // TODO: This must be tuned to
                                                                                      // specific
                                                                                      // robot
-                public static final double wheelBase = Units.inchesToMeters(26.75); // TODO: This must be tuned to
+                public static final double wheelBase = Units.inchesToMeters(22.25); // TODO: This must be tuned to
                                                                                     // specific
                                                                                     // robot
                 public static final double wheelCircumference = 4 * Math.PI;

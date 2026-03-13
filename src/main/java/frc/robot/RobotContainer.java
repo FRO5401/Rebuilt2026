@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -67,7 +68,7 @@ public class RobotContainer {
 
   //Leave these here god forbid we have to retune
   @SuppressWarnings("unused")
-  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,false);
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
@@ -179,6 +180,12 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
+
+    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
     driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.25));
     driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
  
@@ -198,8 +205,8 @@ public class RobotContainer {
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    driver.y().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
-    driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
+    driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
+    driver.a().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
 
     // This is for real
     shooter.setDefaultCommand(shooter.setVelocity(
@@ -219,7 +226,7 @@ public class RobotContainer {
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
-    operator.leftBumper().onTrue(intake.setInfeedVelocityCommand(0));
+    operator.leftTrigger().onFalse(intake.setInfeedVelocityCommand(0));
 
     operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> .8, () -> 11.0));
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
