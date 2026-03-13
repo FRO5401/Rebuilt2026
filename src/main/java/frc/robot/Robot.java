@@ -122,6 +122,8 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+    HubTracker.getInstance().initalizeMatchTimer();
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -131,6 +133,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -159,6 +162,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
+    //HubTracker.getInstance().initalizeMatchTimer();
   }
 
   /** This function is called periodically whilst in simulation. */
