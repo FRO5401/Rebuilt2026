@@ -70,7 +70,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
-    private final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(5, 0.0, 0.0);
 
     Pigeon2 pigeon2;
 
@@ -515,7 +515,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // Logger.recordOutput("Vison/"+camera.getName() +
             // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
             if (targets.size() == 1) {
-                if (targets.get(0).poseAmbiguity < .4) {
+                if (targets.get(0).poseAmbiguity < .2) {
                     addVisionMeasurement(poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
                             poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds);
                 }
