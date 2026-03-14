@@ -50,7 +50,7 @@ import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
-
+import frc.robot.Utils.RobotMode.Mode;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.Constants.Swerve.DriveType;
@@ -259,6 +259,7 @@ public class RobotContainer {
 
   /* Team 5000 Fuel Sim Set up */
   private void configureFuelSim() {
+    if(RobotMode.currentMode != Mode.SIM) return;
     fuelSim = new FuelSim("Fuel-Pose");
     fuelSim.spawnStartingFuel();
     fuelSim.enableAirResistance();
@@ -273,6 +274,7 @@ public class RobotContainer {
   }
 
   private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
+    if(RobotMode.currentMode != Mode.SIM) return;
     fuelSim.registerRobot(
         RobotDimensionConstants.WIDTH_WBUMPERS,
         RobotDimensionConstants.LENGTH_WBUMPERS,

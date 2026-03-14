@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.RobotMode.Mode;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -95,6 +96,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Current Shift", HubTracker.getInstance().getCurrentShift());
     Logger.recordOutput("Is hub Active", HubTracker.getInstance().isHubActive());
     Logger.recordOutput("Match Time", HubTracker.getInstance().getMatchTime());
+    Logger.recordOutput("Shift Time", HubTracker.getInstance().getShiftTimeCountdown());
 
   }
 
@@ -120,6 +122,8 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+    HubTracker.getInstance().initalizeMatchTimer();
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -129,6 +133,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    HubTracker.getInstance().initalizeMatchTimer();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

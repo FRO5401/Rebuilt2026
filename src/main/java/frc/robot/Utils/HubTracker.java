@@ -2,7 +2,6 @@ package frc.robot.Utils;
 
 import java.util.Optional;
 
-import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -10,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class HubTracker {
     public static HubTracker instance;
     private Timer matchTimer = new Timer();
-    private double driverStationMatchTime = 140 - DriverStationJNI.getMatchTime(); // DriverStation.getMatchTime();
 
     private HubTracker(){}
 
@@ -27,10 +25,22 @@ public class HubTracker {
         return instance;
     }
 
-    public double getMatchTime(){
-        return driverStationMatchTime;
+    protected double getDriverStationTime(){
+        return DriverStation.getMatchTime();
     }
 
+    protected double getTimerTime(){
+        return 140 - matchTimer.get();
+    }
+
+    public double getMatchTime(){
+        //checks if the timers are within a second and return the more accurate time
+        return (getDriverStationTime() % 3 == 0 && !MathHelp.epsilonEquals(getDriverStationTime(), getTimerTime(), 1.01)) ? getDriverStationTime() : getTimerTime();
+    }
+
+    public double getShiftTimeCountdown(){
+        return getMatchTime() - getCurrentShift().endTime;
+    }
 
     //TODO: test this on the real robot is this may crash if this doesnt return a value.
     public Optional<Alliance> getAutoWinner(){
@@ -51,20 +61,20 @@ public class HubTracker {
     }
 
     public Shift getCurrentShift(){
-        if(DriverStation.isAutonomous() && driverStationMatchTime <= Shift.AUTO.getEndTime()){
+        if(DriverStation.isAutonomous() && getMatchTime() >= Shift.AUTO.getEndTime()){
             return Shift.AUTO;
         }
-        if(driverStationMatchTime <= Shift.TRANSITION.getEndTime()) {
+        if(getMatchTime() >= Shift.TRANSITION.getEndTime()) {
             return Shift.TRANSITION;
-        } else if(driverStationMatchTime <= Shift.SHIFT_1.getEndTime()) {
+        } else if(getMatchTime() >= Shift.SHIFT_1.getEndTime()) {
             return Shift.SHIFT_1;
-        } else if(driverStationMatchTime <= Shift.SHIFT_2.getEndTime()) {
+        } else if(getMatchTime() >= Shift.SHIFT_2.getEndTime()) {
             return Shift.SHIFT_2;
-        } else if(driverStationMatchTime <= Shift.SHIFT_3.getEndTime()) {
+        } else if(getMatchTime() >= Shift.SHIFT_3.getEndTime()) {
             return Shift.SHIFT_3;
-        } else if(driverStationMatchTime <= Shift.SHIFT_4.getEndTime()) {
+        } else if(getMatchTime() >= Shift.SHIFT_4.getEndTime()) {
             return Shift.SHIFT_4;
-        } else if (driverStationMatchTime <= Shift.END_GAME.getEndTime()) {
+        } else if (getMatchTime() >= Shift.END_GAME.getEndTime()) {
             return Shift.END_GAME;
         } else {
             return Shift.UNKNOWN;
@@ -89,14 +99,14 @@ public class HubTracker {
     }
 
     public enum Shift{
-        AUTO(0, 20, ActiveType.BOTH),
-        TRANSITION(0, 10, ActiveType.BOTH),
-        SHIFT_1(10, 35, ActiveType.AUTO_LOSER),
-        SHIFT_2(35, 60, ActiveType.AUTO_WINNER),
-        SHIFT_3(60, 85, ActiveType.AUTO_LOSER),
-        SHIFT_4(85, 110, ActiveType.AUTO_WINNER),
-        END_GAME(110, 140, ActiveType.BOTH),
-        UNKNOWN(0, 140, ActiveType.BOTH);
+        AUTO(20, 0, ActiveType.BOTH),
+        TRANSITION(140, 130, ActiveType.BOTH),
+        SHIFT_1(130, 105, ActiveType.AUTO_LOSER),
+        SHIFT_2(105, 80, ActiveType.AUTO_WINNER),
+        SHIFT_3(80, 55, ActiveType.AUTO_LOSER),
+        SHIFT_4(55, 30, ActiveType.AUTO_WINNER),
+        END_GAME(30, 0, ActiveType.BOTH),
+        UNKNOWN(140, 0, ActiveType.BOTH);
 
         final double startTime;
         final double endTime;
