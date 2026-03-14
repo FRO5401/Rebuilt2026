@@ -185,7 +185,7 @@ public final class Constants {
 
                 TREE_MAP.put(2.747612404731888, 57.0);
                 TREE_MAP.put(3.809172382556807, 65.0);
-                TREE_MAP.put(4.323078087417264, 69.0);
+                TREE_MAP.put(4.323078087417264, 68.0);
                 TREE_MAP.put(5.3043601660939546, 76.0);
                 TREE_MAP.put(3.419481919864344, 61.0);
                 TREE_MAP.put(5.598174816390024, 80.0);
