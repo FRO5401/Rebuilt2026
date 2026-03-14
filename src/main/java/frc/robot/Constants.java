@@ -332,7 +332,8 @@ public final class Constants {
                 public enum DriveType{
                         BUMP,
                         TRENCH,
-                        DEFAULT
+                        FIELD_CENTRIC,
+                        ROBOT_CENTRIC
                 }
         }
 

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 
 import choreo.auto.AutoChooser;
 
@@ -108,6 +109,12 @@ public class RobotContainer {
       .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
+  public static final RobotCentric robotCentricDrive = new RobotCentric()
+    .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+    .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+    .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -201,7 +208,7 @@ public class RobotContainer {
     // Commands.runOnce(() ->
     // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
-    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.DEFAULT)));
+    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.ROBOT_CENTRIC)));
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
@@ -316,6 +323,12 @@ public class RobotContainer {
               getclosest45(drivetrain.getPose())), 
             Degrees)
         );
+      }
+      case ROBOT_CENTRIC ->{
+        return robotCentricDrive      
+          .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
+          .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+          .withDesaturateWheelSpeeds(true);
       }
       default ->{
         drive.withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate);
