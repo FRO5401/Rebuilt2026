@@ -23,9 +23,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -48,6 +51,7 @@ import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.Utils.FuelSim;
+import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
@@ -100,6 +104,8 @@ public class RobotContainer {
   private static Intake intake;
   private static Indexer indexer;
   private static Visulization visulization = null;
+
+  private Trigger gameShift;
 
   // Command Declaration
   private static Autos autos;
@@ -162,6 +168,8 @@ public class RobotContainer {
         break;
     }
 
+    gameShift = new Trigger(()-> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
+
 
     configureAutoChooser();
 
@@ -197,7 +205,9 @@ public class RobotContainer {
     driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
  
     // // This is for the real robot
-     turret.setDefaultCommand(turret.setSmartTarget());
+    turret.setDefaultCommand(turret.setSmartTarget());
+
+    shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
     // this is for tuning
     //turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
@@ -208,18 +218,18 @@ public class RobotContainer {
     // Commands.runOnce(() ->
     // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
-    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.ROBOT_CENTRIC)));
+    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.FIELD_CENTRIC)));
 
     driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
     driver.a().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
 
-    // This is for real
-    shooter.setDefaultCommand(shooter.setVelocity(
-        () -> RotationsPerSecond
-            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-        intake::getDesiredAngle));
+    // // This is for real
+    // shooter.setDefaultCommand(shooter.setVelocity(
+    //     () -> RotationsPerSecond
+    //         .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+    //     intake::getDesiredAngle));
 
     // //this is for tuning
     //   shooter.setDefaultCommand(shooter.setVelocity(
@@ -235,13 +245,25 @@ public class RobotContainer {
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftTrigger().onFalse(intake.setInfeedVelocityCommand(0));
 
-    operator.rightTrigger().whileTrue(indexer.setIndexerCommand(() -> .8, () -> 11.0));
+    operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
+        () -> RotationsPerSecond
+            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+        intake::getDesiredAngle)),
+        new SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(() -> .65, () -> 11.0))));
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
     operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
+    operator.start().whileTrue(shooter.setVelocity(
+        () -> RotationsPerSecond
+            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+        intake::getDesiredAngle));
+
+    gameShift.whileTrue((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, .5))));
+    gameShift.whileFalse((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, 0))));
 
 
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -328,6 +350,7 @@ public class RobotContainer {
         return robotCentricDrive      
           .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
           .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
+          .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
           .withDesaturateWheelSpeeds(true);
       }
       default ->{

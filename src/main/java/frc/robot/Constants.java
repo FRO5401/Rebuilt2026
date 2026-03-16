@@ -413,7 +413,7 @@ public final class Constants {
                 public static final int SPINDEXER_ID = 18;
                 public static final int KICKER_ID = 12;
 
-                public static final Current STATOR_LIMIT = Amps.of(120);
+                public static final Current STATOR_LIMIT = Amps.of(80);
                 public static final Current SUPPLY_LIMIT = Amps.of(60);
                 public static final double SPINDEXER_GEAR_RATIO = 3;
                 public static final double KICKER_GEAR_RATIO = 1;
@@ -471,9 +471,9 @@ public final class Constants {
                 public static final PoseStrategy POSE_STRATEGY = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
 
                 public static final Transform3d BACK_RIGHT_CAMERA_POSE = new Transform3d(
-                                new Translation3d(Inches.of(-6.625).in(Meters),
-                                                Inches.of(-11.5).in(Meters), Inches.of(13.25).in(Meters)),
-                                new Rotation3d(0, Math.toRadians(5), Math.toRadians(180)));
+                                new Translation3d(Inches.of(-12.6875).in(Meters),
+                                                Inches.of(-12.5625).in(Meters), Inches.of(16.0625).in(Meters)),
+                                new Rotation3d(Math.toRadians(90), Math.toRadians(5), Math.toRadians(180)));
 
                 public static final Transform3d BACK_LEFT_CAMERA_POSE = new Transform3d(
                                 new Translation3d(Inches.of(-7.625).in(Meters), Inches.of(13.3125).in(Meters),

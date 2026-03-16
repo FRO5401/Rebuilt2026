@@ -515,7 +515,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // Logger.recordOutput("Vison/"+camera.getName() +
             // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
             if (targets.size() == 1) {
-                if (targets.get(0).poseAmbiguity < .2) {
+                if (targets.get(0).poseAmbiguity < .1) {
                     addVisionMeasurement(poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
                             poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds);
                 }

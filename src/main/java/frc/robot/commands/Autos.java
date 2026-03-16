@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Utils.MathHelp;
@@ -37,12 +38,12 @@ public class Autos {
                 true,
                 drivetrain);
         autoFactory.bind("Intake", (intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1))));
-        autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
-        autoFactory.bind("Init", shooter.setVelocity(
+        autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(0));
+        autoFactory.bind("Init", Commands.repeatingSequence(shooter.setVelocity(
                 () -> RotationsPerSecond
                         .of(ShooterConstants.TREE_MAP
                                 .get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-                intake::getDesiredAngle));
+                intake::getDesiredAngle)));
     }
 
     public AutoRoutine testAuto() {
@@ -85,12 +86,14 @@ public class Autos {
         AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
         AutoTrajectory secondGrab = routine.trajectory("LeftTrenchSweep2");
 
+        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1)));
+
+
         routine.active().onTrue(
                 Commands.sequence(
-                        intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1),
-                        Commands.waitSeconds(0.3),
                         firstGrab.resetOdometry(),
-                        firstGrab.cmd())));
+                        
+                        firstGrab.cmd()));
 
         
 
@@ -117,14 +120,12 @@ public class Autos {
         routine.active().onTrue(
 
                 Commands.sequence(
-                        intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1),
-                        Commands.waitSeconds(0.3),
                         firstGrab.resetOdometry(),
-                        firstGrab.cmd())));
+                        firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1")
                 .onTrue(new ParallelCommandGroup(turret.setSmartTarget(), (indexer.setIndexerCommand(() -> .8, () -> 11.0)))
-                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)).andThen(Commands.waitSeconds(2)));
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)).andThen(Commands.waitSeconds(2)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.2)));
 
         
 
