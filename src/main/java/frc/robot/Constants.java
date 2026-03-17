@@ -224,11 +224,11 @@ public final class Constants {
                 public static final double PIVOT_GEAR_RATIO = 45;
                 public static final double INFEED_GEAR_RATIO = 3;
 
-                public static final double PIVOT_STATOR_LIMIT = 80;
-                public static final double PIVOT_SUPPLY_LIMIT = 120;
+                public static final double PIVOT_STATOR_LIMIT = 60;
+                public static final double PIVOT_SUPPLY_LIMIT = 80;
 
-                public static final double INFEED_SUPPLY_LIMIT = 60;
-                public static final double INFEED_STATOR_LIMIT = 80;
+                public static final double INFEED_SUPPLY_LIMIT = 40;
+                public static final double INFEED_STATOR_LIMIT = 60;
 
                 public static final boolean PIVOT_MASTER_INVERT = false;
                 public static final boolean PIVOT_FOLLOWER_INVERT = true;
