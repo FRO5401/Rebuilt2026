@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.TreeMap;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
@@ -63,12 +64,12 @@ public final class Constants {
                 public static final Current SUPPLY_LIMIT = Amps.of(60);
                 public static final double GEAR_RATIO = 1.45 * 3;
 
-                public static final double KP = 70;
-                public static final double KI = 0.0;
-                public static final double KD = 2;
+                public static final double KP = 35;
+                public static final double KI = 0;
+                public static final double KD = 2.15;
 
                 public static final double KS = 0;
-                public static final double KV = 0;
+                public static final double KV = 130;
 
                 public static final double KP_SIM = 10;
                 public static final double KI_SIM = 0.0;
@@ -179,19 +180,29 @@ public final class Constants {
                 public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
         public static void initializeTreeMap() {
-                //TREE_MAP.put(, );
-                TREE_MAP.put(2.974249165939367,55.0);
-                TREE_MAP.put(2.494898698234213,50.0);
+                TREE_MAP.put(2.32259878830001, 45.0 );
+                TREE_MAP.put(2.5300890752065692, 47.5);
+                TREE_MAP.put(3.1142236500023888, 52.0);
 
-                TREE_MAP.put(2.747612404731888, 57.0);
-                TREE_MAP.put(3.809172382556807, 65.0);
-                TREE_MAP.put(4.323078087417264, 68.0);
-                TREE_MAP.put(5.3043601660939546, 76.0);
-                TREE_MAP.put(3.419481919864344, 61.0);
-                TREE_MAP.put(5.598174816390024, 80.0);
-                TREE_MAP.put(6.5, 105.0);
+                TREE_MAP.put(3.4162424433589873, 53.5);
+                TREE_MAP.put(3.9793055470403043, 57.0);
+                TREE_MAP.put(4.506902352551565, 61.2);
 
-                TREE_MAP.put(1.7284305040682872, 51.0);
+                TREE_MAP.put(2.9646569811088375, 51.0);
+                TREE_MAP.put(5.029389532321382, 63.2);
+                TREE_MAP.put(5.563944053655437, 71.2);
+                // TREE_MAP.put(2.974249165939367,55.0);
+                // TREE_MAP.put(2.494898698234213,50.0);
+
+                // TREE_MAP.put(2.747612404731888, 57.0);
+                // TREE_MAP.put(3.809172382556807, 65.0);
+                // TREE_MAP.put(4.323078087417264, 68.0);
+                // TREE_MAP.put(5.3043601660939546, 76.0);
+                // TREE_MAP.put(3.419481919864344, 61.0);
+                // TREE_MAP.put(5.598174816390024, 80.0);
+                // TREE_MAP.put(6.5, 105.0);
+
+                // TREE_MAP.put(1.7284305040682872, 51.0);
 
 
                 // TREE_MAP.put(, );

@@ -23,6 +23,6 @@ public interface TurretIO {
 
     public default void setPosition(double position){};
 
-    public default void setPID(double p, double i, double d){}
+    public default void setPID(double p, double i, double d, double kS, double kV){}
     
 }

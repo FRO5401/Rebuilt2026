@@ -20,6 +20,8 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     private final PositionVoltage pivotPositionRequest = new PositionVoltage(0.0);
 
+    private final VoltageOut infeedPositionRequest = new VoltageOut(0.0).withEnableFOC(true);
+
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0.0);
 
     public IntakeIOTalonFX(){
@@ -78,12 +80,12 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     @Override
     public void setPivotVoltage(double voltage){
-        pivot.setControl(pivotVoltageRequest.withOutput(voltage));
+        pivot.setControl(pivotVoltageRequest.withOutput(voltage).withEnableFOC(true));
     }
     
     @Override
     public void setInfeedVoltage(double voltage){
-        infeed.setVoltage(voltage);
+        infeed.setControl(infeedPositionRequest.withOutput(voltage).withEnableFOC(true));
     }
 
     @Override 

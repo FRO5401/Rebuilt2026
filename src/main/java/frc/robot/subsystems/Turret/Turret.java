@@ -36,15 +36,18 @@ import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
 import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.RobotMode;
 
 public class Turret extends SubsystemBase {
 
-  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, true);
-  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, true);
-  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, true );
 
-  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, true);
-  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, true);
+
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, RobotMode.isTuningOff);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, RobotMode.isTuningOff);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, RobotMode.isTuningOff );
+
+  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, RobotMode.isTuningOff);
+  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, RobotMode.isTuningOff);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -230,6 +233,6 @@ public class Turret extends SubsystemBase {
   }
 
   public void setPID(double P, double I, double D, double V, double S) {
-    io.setPID(P, I, D);
+    io.setPID(P, I, D, S, V);
   }
 }

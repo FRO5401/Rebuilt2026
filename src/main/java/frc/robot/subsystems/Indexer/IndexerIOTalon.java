@@ -62,7 +62,7 @@ public class IndexerIOTalon implements IndexerIO {
 
     @Override
     public void setKickerVelocity(double velocity) {
-        kicker.setControl(new VelocityVoltage(velocity));
+        kicker.setControl(new VelocityVoltage(velocity).withEnableFOC(true));
     }
 
     @Override
