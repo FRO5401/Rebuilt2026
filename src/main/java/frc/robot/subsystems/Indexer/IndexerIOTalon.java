@@ -1,6 +1,8 @@
 package frc.robot.subsystems.Indexer;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.LinearFilter;
@@ -11,7 +13,6 @@ public class IndexerIOTalon implements IndexerIO {
     
     private TalonFX spindexer;
     private TalonFX kicker;
-
 
     public IndexerIOTalon() {
         spindexer = new TalonFX(IndexerConstants.SPINDEXER_ID);
@@ -52,12 +53,12 @@ public class IndexerIOTalon implements IndexerIO {
 
     @Override
     public void setSpindexerPercent(double percent) {
-        spindexer.set((percent));
+        spindexer.setControl(new DutyCycleOut(percent).withEnableFOC(true));
     }
 
     @Override
     public void setKickerVoltage(double voltage) {
-        kicker.setVoltage(voltage);
+        kicker.setControl(new VoltageOut(voltage).withEnableFOC(true));
     }
 
     @Override

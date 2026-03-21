@@ -109,11 +109,15 @@ public class Turret extends SubsystemBase {
 
     if (turretPose != null && target != null) {
 
+      ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+
+      Logger.recordOutput("SOTM/Chassis Speeds", fieldSpeeds);
+
       //SOTM!!!
       poseDifference = turretPose.minus(target);
       robotVelocities = new Transform2d(
-          fieldSpeedsSupplier.get().vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
-          fieldSpeedsSupplier.get().vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+          fieldSpeeds.vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+          fieldSpeeds.vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
           Rotation2d.kZero);
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
@@ -122,10 +126,11 @@ public class Turret extends SubsystemBase {
             .minus(target.plus(robotVelocities.inverse()));
 
         robotVelocities = new Transform2d(
-            fieldSpeedsSupplier.get().vxMetersPerSecond * tof,
-            fieldSpeedsSupplier.get().vyMetersPerSecond * tof,
+            fieldSpeeds.vxMetersPerSecond * tof,
+            fieldSpeeds.vyMetersPerSecond * tof,
             Rotation2d.kZero);
       }
+
 
       Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
@@ -140,7 +145,9 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-    Logger.recordOutput("Turret Position", (inputs.position));
+    Logger.recordOutput("Turret Position", (MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1) - (inputs.position))*TurretConstants.GEAR_RATIO);
+
+    Logger.recordOutput("Turret/Error", inputs.position);
 
     // Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345,
     // new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
@@ -164,10 +171,10 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Applied",
         inputs.applied);
 
-    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
-      setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
+    // if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
+    //   setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
 
-    }
+    // }
 
   }
 
@@ -194,6 +201,7 @@ public class Turret extends SubsystemBase {
 
   private Translation3d launchVel(LinearVelocity vel) {
     ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+
 
     double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
     double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);

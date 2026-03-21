@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -21,6 +22,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
@@ -32,6 +35,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -64,12 +69,12 @@ public final class Constants {
                 public static final Current SUPPLY_LIMIT = Amps.of(60);
                 public static final double GEAR_RATIO = 1.45 * 3;
 
-                public static final double KP = 35;
+                public static final double KP = 45;
                 public static final double KI = 0;
-                public static final double KD = 2.15;
+                public static final double KD = 1.2;
 
                 public static final double KS = 0;
-                public static final double KV = 130;
+                public static final double KV = 150;
 
                 public static final double KP_SIM = 10;
                 public static final double KI_SIM = 0.0;
@@ -88,6 +93,8 @@ public final class Constants {
 
                 public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs()
                                 .withContinuousWrap(false);
+                
+
 
                 public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
                                 .withKP(KP)
@@ -180,46 +187,39 @@ public final class Constants {
                 public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
         public static void initializeTreeMap() {
-                TREE_MAP.put(2.32259878830001, 45.0 );
-                TREE_MAP.put(2.5300890752065692, 47.5);
-                TREE_MAP.put(3.1142236500023888, 52.0);
+                TREE_MAP.put(2.5953977991550894, 45.9+.25);
+                TREE_MAP.put(2.2, 44.5+.25);
 
-                TREE_MAP.put(3.4162424433589873, 53.5);
-                TREE_MAP.put(3.9793055470403043, 57.0);
-                TREE_MAP.put(4.506902352551565, 61.2);
+                TREE_MAP.put(1.6020685427214896, 39.5+.25);
+                TREE_MAP.put(3.4150778849219403, 53.0+.25);
 
-                TREE_MAP.put(2.9646569811088375, 51.0);
-                TREE_MAP.put(5.029389532321382, 63.2);
-                TREE_MAP.put(5.563944053655437, 71.2);
-                // TREE_MAP.put(2.974249165939367,55.0);
-                // TREE_MAP.put(2.494898698234213,50.0);
+                TREE_MAP.put(4.446583003872625, 58.9+.5);
+                TREE_MAP.put(3.9682505219498414, 55.7+.25);
+                TREE_MAP.put(2.9466495845744736, 48.0+.25);
 
-                // TREE_MAP.put(2.747612404731888, 57.0);
-                // TREE_MAP.put(3.809172382556807, 65.0);
-                // TREE_MAP.put(4.323078087417264, 68.0);
-                // TREE_MAP.put(5.3043601660939546, 76.0);
-                // TREE_MAP.put(3.419481919864344, 61.0);
-                // TREE_MAP.put(5.598174816390024, 80.0);
-                // TREE_MAP.put(6.5, 105.0);
-
-                // TREE_MAP.put(1.7284305040682872, 51.0);
-
-
-                // TREE_MAP.put(, );
+                TREE_MAP.put(4.274097398282739, 57.89+.25);
+                TREE_MAP.put(5.5413886401422925, 68.0+.25);
+                TREE_MAP.put(2.0173505876268756, 42.0+.25);
+                TREE_MAP.put(3.751134276118736, 55.3+.25);
+                TREE_MAP.put(6.279675663537236, 76.3);
+                TREE_MAP.put(4.248993429164897, 57.7+.25);
 
 
 
-            TOF_MAP.put(-55.37029871249218, 3.81- 2.7);
-            TOF_MAP.put(-50.0, 4.285-3.15);
 
-            TOF_MAP.put(-62.047688968078134, 9.17-7.76);
 
-            TOF_MAP.put(-69.29962142071493, 2.59-1.1);
-            TOF_MAP.put(-71.60450484836369, 4.23-2.57);
-            TOF_MAP.put(-76.9365323598279, 4.4-2.62);
-            TOF_MAP.put(-65.48803377289674, 3.05-1.57);
-            TOF_MAP.put(-77.28934651220227, 11.43-9.71);
-            TOF_MAP.put(-80.0 , 5.125 - 3.43);
+
+            TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
+            TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);
+            TOF_MAP.put(-48.564590602080635, 3.325 - 2.20);
+            TOF_MAP.put(-56.61023365424546, 4.878 - 3.51);
+            TOF_MAP.put(-54.45611853982277, 7.536 - 6.22);
+
+            TOF_MAP.put(-65.01477348760973, 10.44 - 8.95);
+            TOF_MAP.put(-56.603308217465546, 5.57 - 4.20);
+            TOF_MAP.put(-43.4210927573636, 3.115 - 2.13);
+            TOF_MAP.put(-57.324515607256586, 5.64 - 4.24);
+ 
 
 
         }
@@ -228,6 +228,8 @@ public final class Constants {
 
         public static final class IntakeConstants {
                 public static final int PIVOT_MASTER_ID = 20;
+                public static final int PIVOT_FOLLOWER_ID = 26;
+
                 public static final int INFEED_ID = 21;
 
                 public static final double INTAKE_SPEED = 0.5;
@@ -264,7 +266,7 @@ public final class Constants {
                                 .withKS(ks)
                                 .withKV(kv);
 
-                public static final double INTAKE_OUT_POSE = 0.265;
+                public static final double INTAKE_OUT_POSE = 0.269;
 
         }
 
@@ -344,7 +346,8 @@ public final class Constants {
                         BUMP,
                         TRENCH,
                         FIELD_CENTRIC,
-                        ROBOT_CENTRIC
+                        ROBOT_CENTRIC,
+                        BRAKE
                 }
         }
 
@@ -395,7 +398,7 @@ public final class Constants {
 
                 public static final Pose2d BLUE_HUB_TARGET = new Pose2d(4.5, 4, new Rotation2d());
 
-                public static final Pose2d RED_HUB_TARGET = new Pose2d(11.9, 4, new Rotation2d());
+                public static final Pose2d RED_HUB_TARGET = new Pose2d(11.75, 4, new Rotation2d());
 
                 public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
 
@@ -493,6 +496,9 @@ public final class Constants {
 
                 public static final Transform3d FRONT_CAMERA_POSE = new Transform3d(new Translation3d(0, 0, 0),
                                 new Rotation3d(0, -5, 0));
+
+                public static final Matrix<N3, N1> SINGLE_TAG_STDDEV = VecBuilder.fill(4, 4, 8);
+                public static final Matrix<N3, N1> MULTI_TAG_STDDEV = VecBuilder.fill(0.5, 0.5, 1);
 
         }
 

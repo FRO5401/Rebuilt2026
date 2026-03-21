@@ -5,9 +5,11 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -27,6 +29,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -406,8 +409,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
 
         secondSampleTime = System.nanoTime();
-        Logger.recordOutput("SOTM/Measured Chassis Speeds", findChassisSpeeds());
-        Logger.recordOutput("SOTM/Chassis Speeds", getFieldRelativeChassisSpeeds());
+        //Logger.recordOutput("SOTM/Measured Chassis Speeds", findChassisSpeeds());
+        //Logger.recordOutput("SOTM/Chassis Speeds", getFieldRelativeChassisSpeeds());
 
 
         backRightResults = backRightCamera.getAllUnreadResults();
@@ -451,7 +454,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Pose2d pose = getPose();
         Long timeDifference = secondSampleTime- firstSampleTime;
         double timeDifferenceSeconds = timeDifference / 1000000000.0;
-        double filteredTimeDifference = chasisFilter.calculate(timeDifferenceSeconds);
+        double filteredTimeDifference = 0.02; //chasisFilter.calculate(timeDifferenceSeconds);
 
         Logger.recordOutput("SOTM/secondSampleTime", secondSampleTime/1000000000.0);
         Logger.recordOutput("SOTM/firstSampleTime", firstSampleTime/1000000000.0);
@@ -543,12 +546,56 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 if (targets.get(0).poseAmbiguity < .1) {
                     addVisionMeasurement(
                             poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
-                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds);
+                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds
+                            );
                 }
             } else if (targets.size() > 1 && poseEstimator.estimateCoprocMultiTagPose(results.get(0)).isPresent()) {
                 addVisionMeasurement(
                         poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().estimatedPose.toPose2d(),
-                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds);
+                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds
+                        );
+            }
+        }
+    }
+      private Matrix<N3, N1>  updateEstimationStdDevs(
+            Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets, PhotonPoseEstimator estimator) {
+        if (estimatedPose.isEmpty()) {
+            // No pose input. Default to single-tag std devs
+            return VisionConstants.SINGLE_TAG_STDDEV;
+
+        } else {
+            // Pose present. Start running Heuristic
+            var estStdDevs =  VisionConstants.SINGLE_TAG_STDDEV;
+            int numTags = 0;
+            double avgDist = 0;
+
+
+            // Precalculation - see how many tags we found, and calculate an average-distance metric
+            for (var tgt : targets) {
+                var tagPose = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
+                if (tagPose.isEmpty()) continue;
+                numTags++;
+                avgDist +=
+                        tagPose
+                                .get()
+                                .toPose2d()
+                                .getTranslation()
+                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+            }
+
+            if (numTags == 0) {
+                // No tags visible. Default to single-tag std devs
+                return VisionConstants.SINGLE_TAG_STDDEV;
+            } else {
+                // One or more tags visible, run the full heuristic.
+                avgDist /= numTags;
+                // Decrease std devs if multiple targets are visible
+                if (numTags > 1) estStdDevs = VisionConstants.MULTI_TAG_STDDEV;
+                // Increase std devs based on (average) distance
+                if (numTags == 1 && avgDist > 4)
+                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+                return estStdDevs;
             }
         }
     }

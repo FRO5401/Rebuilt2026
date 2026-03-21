@@ -73,11 +73,11 @@ public class RobotContainer {
 
   //Leave these here god forbid we have to retune
   @SuppressWarnings("unused")
-  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,true);
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,false);
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
-  private PIDController thetaController = new PIDController(3, 0, 0);
+  private PIDController thetaController = new PIDController(1.687, 0, 0);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
@@ -139,7 +139,7 @@ public class RobotContainer {
       case REAL:
         intake = new Intake(new IntakeIOTalonFX());
         shooter = new Shooter(new ShooterIOTalon());
-        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::findChassisSpeeds,
+        turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds,
             intake::isNotStartingPose);
         // drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
@@ -201,16 +201,16 @@ public class RobotContainer {
     // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.25));
+    driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.2));
     driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
  
-    // // This is for the real robot
-    turret.setDefaultCommand(turret.setSmartTarget());
+    // // // This is for the real robot
+    // turret.setDefaultCommand(turret.setSmartTarget());
 
     shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
-    // //this is for tuning
-    // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+      //this is for tuning
+      turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
     // turret.setDefaultCommand(turret.setSmartTarget()
@@ -220,10 +220,10 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.FIELD_CENTRIC)));
 
-    driver.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
     driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
     driver.a().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
+    driver.leftBumper().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BRAKE)));
+
 
 
     // // //this is for tuning
@@ -235,7 +235,10 @@ public class RobotContainer {
  
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
-    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .75));
+    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
+
+    operator.leftBumper().onTrue(Commands.repeatingSequence(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED),intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .4), Commands.waitSeconds(0.5), intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
+
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
     operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
@@ -245,15 +248,12 @@ public class RobotContainer {
         () -> RotationsPerSecond
             .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
         intake::getDesiredAngle)),
-        new SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(() -> .8, () -> 11.0))));
+        new SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(() -> .9, () -> 11.0))));
 
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
-    operator.rightBumper().onTrue(getAutonomousCommand()).onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
+    operator.rightBumper().onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
-    operator.start().whileTrue(shooter.setVelocity(
-        () -> RotationsPerSecond
-            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-        intake::getDesiredAngle));
+
 
     gameShift.whileTrue((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, .5))));
     gameShift.whileFalse((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, 0))));
@@ -350,8 +350,11 @@ public class RobotContainer {
           .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
           .withDesaturateWheelSpeeds(true);
       }
+      case BRAKE -> {
+        return new SwerveRequest.SwerveDriveBrake();
+      }
       default ->{
-        drive.withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate);
+        drive.withRotationalRate(shootingSpeed*-driver.getRightX() * Constants.Swerve.MaxAngularRate);
       }
     }
     drive

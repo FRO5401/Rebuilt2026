@@ -1,11 +1,13 @@
 package frc.robot.subsystems.Intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Constants.IntakeConstants;
@@ -14,11 +16,14 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     private final TalonFX infeed = new TalonFX(IntakeConstants.INFEED_ID);
     private final TalonFX pivot = new TalonFX(IntakeConstants.PIVOT_MASTER_ID);
+    private final TalonFX pivotFollow = new TalonFX(IntakeConstants.PIVOT_FOLLOWER_ID);
 
     private final TalonFXConfiguration infeedConfig = new TalonFXConfiguration();
     private final TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
 
     private final PositionVoltage pivotPositionRequest = new PositionVoltage(0.0);
+
+
 
     private final VoltageOut infeedPositionRequest = new VoltageOut(0.0).withEnableFOC(true);
 
@@ -42,6 +47,9 @@ public class IntakeIOTalonFX implements IntakeIO{
 
         infeed.getConfigurator().apply(infeedConfig);
         pivot.getConfigurator().apply(pivotConfig);
+        pivotFollow.getConfigurator().apply(pivotConfig);
+
+        pivotFollow.setControl(new Follower(IntakeConstants.PIVOT_MASTER_ID, MotorAlignmentValue.Aligned));
 
         pivot.setPosition(0.0);
 
