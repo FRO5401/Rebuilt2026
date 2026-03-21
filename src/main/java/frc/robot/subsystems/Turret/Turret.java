@@ -118,7 +118,7 @@ public class Turret extends SubsystemBase {
       robotVelocities = new Transform2d(
           fieldSpeeds.vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
           fieldSpeeds.vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
-          Rotation2d.kZero);
+        new Rotation2d(fieldSpeeds.omegaRadiansPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
         tof = ShooterConstants.TOF_MAP.get(-ShooterConstants.TREE_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
@@ -145,9 +145,9 @@ public class Turret extends SubsystemBase {
 
     Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-    Logger.recordOutput("Turret Position", (MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1) - (inputs.position))*TurretConstants.GEAR_RATIO);
+    Logger.recordOutput("Turret/Error", (MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1) - (inputs.position))*TurretConstants.GEAR_RATIO);
 
-    Logger.recordOutput("Turret/Error", inputs.position);
+    Logger.recordOutput("Turret/Position", inputs.position);
 
     // Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345,
     // new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));

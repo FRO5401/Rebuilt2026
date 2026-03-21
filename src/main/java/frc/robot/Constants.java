@@ -10,15 +10,22 @@ import java.util.TreeMap;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -67,7 +74,7 @@ public final class Constants {
 
                 public static final Current STATOR_LIMIT = Amps.of(60);
                 public static final Current SUPPLY_LIMIT = Amps.of(60);
-                public static final double GEAR_RATIO = 1.45 * 3;
+                public static final double GEAR_RATIO = 1.4545; // * 3;
 
                 public static final double KP = 45;
                 public static final double KI = 0;
@@ -80,12 +87,18 @@ public final class Constants {
                 public static final double KI_SIM = 0.0;
                 public static final double KD_SIM = 0.5;
 
+                public static final CANcoder encoder = new CANcoder(27);
+
+
                 public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
                                 .withInverted(InvertedValue.Clockwise_Positive)
                                 .withNeutralMode(NeutralModeValue.Brake);
 
                 public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
-                                .withSensorToMechanismRatio(GEAR_RATIO);
+                                .withSensorToMechanismRatio(GEAR_RATIO)
+                                .withRotorToSensorRatio(3)
+                                .withRemoteCANcoder(encoder)
+                                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
 
                 public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIG = new CurrentLimitsConfigs()
                                 .withStatorCurrentLimit(STATOR_LIMIT)
@@ -93,8 +106,6 @@ public final class Constants {
 
                 public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs()
                                 .withContinuousWrap(false);
-                
-
 
                 public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
                                 .withKP(KP)
@@ -123,6 +134,14 @@ public final class Constants {
                  *
                  */
                 public static int ITERATIONS = 5;
+
+                static {
+                        encoder.getConfigurator()
+                                        .apply(new MagnetSensorConfigs()
+                                        .withMagnetOffset(0)
+                                        .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+                                        .withAbsoluteSensorDiscontinuityPoint(1));
+                }
         }
 
         public static final class ShooterConstants {
@@ -186,43 +205,37 @@ public final class Constants {
 
                 public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
-        public static void initializeTreeMap() {
-                TREE_MAP.put(2.5953977991550894, 45.9+.25);
-                TREE_MAP.put(2.2, 44.5+.25);
+                public static void initializeTreeMap() {
+                        TREE_MAP.put(2.5953977991550894, 45.9 + .4);
+                        TREE_MAP.put(2.2, 44.5 + .4);
+                        TREE_MAP.put(1.6020685427214896, 39.5 + .4);
+                        TREE_MAP.put(3.4150778849219403, 53.0 + .4);
+                        TREE_MAP.put(4.446583003872625, 58.9 + .5);
+                        TREE_MAP.put(3.9682505219498414, 55.7 + .4);
+                        TREE_MAP.put(2.9466495845744736, 48.0 + .4);
+                        TREE_MAP.put(4.943188421149647, 64.5+.4);
+                        TREE_MAP.put(4.274097398282739, 57.89 + .4);
+                        TREE_MAP.put(5.5413886401422925, 68.0 + .4);
+                        TREE_MAP.put(5.8689346416862795, 74.3);
+                        TREE_MAP.put(2.0173505876268756, 42.0 + .4);
+                        TREE_MAP.put(3.751134276118736, 55.3 + .4);
+                        TREE_MAP.put(6.279675663537236, 86+.4);
+                        TREE_MAP.put(4.248993429164897, 57.7 + .4);
 
-                TREE_MAP.put(1.6020685427214896, 39.5+.25);
-                TREE_MAP.put(3.4150778849219403, 53.0+.25);
+                        TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
+                        TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);
+                        TOF_MAP.put(-48.564590602080635, 3.325 - 2.20);
+                        TOF_MAP.put(-56.61023365424546, 4.878 - 3.51);
+                        TOF_MAP.put(-54.45611853982277, 7.536 - 6.22);
 
-                TREE_MAP.put(4.446583003872625, 58.9+.5);
-                TREE_MAP.put(3.9682505219498414, 55.7+.25);
-                TREE_MAP.put(2.9466495845744736, 48.0+.25);
+                        TOF_MAP.put(-65.01477348760973, 10.44 - 8.95);
+                        TOF_MAP.put(-56.603308217465546, 5.57 - 4.20);
+                        TOF_MAP.put(-43.4210927573636, 3.115 - 2.13);
+                        TOF_MAP.put(-57.324515607256586, 5.64 - 4.24);
+                        TOF_MAP.put(-70.4731497869255, 7.54-5.9);
+                        TOF_MAP.put(-83.5442041114383, 13.53-11.65);
 
-                TREE_MAP.put(4.274097398282739, 57.89+.25);
-                TREE_MAP.put(5.5413886401422925, 68.0+.25);
-                TREE_MAP.put(2.0173505876268756, 42.0+.25);
-                TREE_MAP.put(3.751134276118736, 55.3+.25);
-                TREE_MAP.put(6.279675663537236, 76.3);
-                TREE_MAP.put(4.248993429164897, 57.7+.25);
-
-
-
-
-
-
-            TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
-            TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);
-            TOF_MAP.put(-48.564590602080635, 3.325 - 2.20);
-            TOF_MAP.put(-56.61023365424546, 4.878 - 3.51);
-            TOF_MAP.put(-54.45611853982277, 7.536 - 6.22);
-
-            TOF_MAP.put(-65.01477348760973, 10.44 - 8.95);
-            TOF_MAP.put(-56.603308217465546, 5.57 - 4.20);
-            TOF_MAP.put(-43.4210927573636, 3.115 - 2.13);
-            TOF_MAP.put(-57.324515607256586, 5.64 - 4.24);
- 
-
-
-        }
+                }
 
         }
 
@@ -319,8 +332,8 @@ public final class Constants {
 
         public static final class Swerve {
                 public static final double trackWidth = Units.inchesToMeters(21); // TODO: This must be tuned to
-                                                                                     // specific
-                                                                                     // robot
+                                                                                  // specific
+                                                                                  // robot
                 public static final double wheelBase = Units.inchesToMeters(22.25); // TODO: This must be tuned to
                                                                                     // specific
                                                                                     // robot
@@ -342,7 +355,7 @@ public final class Constants {
                                                                                                           // top speed
                 public static final double MaxAngularRate = RotationsPerSecond.of(1).in(RadiansPerSecond);
 
-                public enum DriveType{
+                public enum DriveType {
                         BUMP,
                         TRENCH,
                         FIELD_CENTRIC,
