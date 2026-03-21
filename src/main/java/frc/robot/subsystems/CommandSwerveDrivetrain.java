@@ -3,10 +3,13 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -26,9 +29,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -37,6 +43,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -67,6 +74,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public List<PhotonPipelineResult> backRightResults;
     public List<PhotonPipelineResult> backLeftResults;
     public List<PhotonPipelineResult> frontResults;
+
+    public Long firstSampleTime = System.nanoTime();
+    public Long secondSampleTime = System.nanoTime();
+
+    public LinearFilter chasisFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
+
+    public Pose2d lastPose = new Pose2d();
 
     private final PIDController xController = new PIDController(10.0, 0.0, 0.0);
     private final PIDController yController = new PIDController(10.0, 0.0, 0.0);
@@ -101,7 +115,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withDeadband(.1)
             .withRotationalDeadband(.1)
             .withDesaturateWheelSpeeds(true);
-
 
     private final SwerveRequest.ApplyFieldSpeeds m_applyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity)
@@ -240,10 +253,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         this.backRightCamera = backRightCamera;
         this.backLeftCamera = backLeftCamera;
 
-        backRightPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-        backLeftPoseEstimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
-
-
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
@@ -316,7 +325,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
 
-
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -372,7 +380,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 sample.vy + yController.calculate(pose.getY(), sample.y),
                 sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
 
-        Logger.recordOutput("Chassis Speeds", speeds);
 
         // Apply the generated speeds
         this.setControl(driveFieldRelative(speeds));
@@ -401,9 +408,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
 
+        secondSampleTime = System.nanoTime();
+        //Logger.recordOutput("SOTM/Measured Chassis Speeds", findChassisSpeeds());
+        //Logger.recordOutput("SOTM/Chassis Speeds", getFieldRelativeChassisSpeeds());
+
+
         backRightResults = backRightCamera.getAllUnreadResults();
         backLeftResults = backLeftCamera.getAllUnreadResults();
-        //frontResults = frontCamera.getAllUnreadResults();
+        // frontResults = frontCamera.getAllUnreadResults();
 
         if (getCurrentCommand() != null) {
             Logger.recordOutput("Commands/RobotPose", getPose());
@@ -430,10 +442,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-       // getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
+        // getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
         getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
         getEstimatedGlobalPose(backLeftPoseEstimator, backLeftCamera, backLeftResults);
 
+        lastPose = getPose();
+        firstSampleTime = System.nanoTime();
+    }
+
+    public ChassisSpeeds findChassisSpeeds() {
+        Pose2d pose = getPose();
+        Long timeDifference = secondSampleTime- firstSampleTime;
+        double timeDifferenceSeconds = timeDifference / 1000000000.0;
+        double filteredTimeDifference = 0.02; //chasisFilter.calculate(timeDifferenceSeconds);
+
+        Logger.recordOutput("SOTM/secondSampleTime", secondSampleTime/1000000000.0);
+        Logger.recordOutput("SOTM/firstSampleTime", firstSampleTime/1000000000.0);
+        Logger.recordOutput("SOTM/timeDifference", filteredTimeDifference);
+
+        return new ChassisSpeeds((pose.getX() - lastPose.getX()) / filteredTimeDifference,
+                (pose.getY() - lastPose.getY()) / filteredTimeDifference,
+                (pose.getRotation().minus(lastPose.getRotation())).getRadians() / filteredTimeDifference);
     }
 
     private void startSimThread() {
@@ -465,7 +494,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
     }
-
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the
@@ -515,13 +543,59 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // Logger.recordOutput("Vison/"+camera.getName() +
             // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
             if (targets.size() == 1) {
-                if (targets.get(0).poseAmbiguity < .2) {
-                    addVisionMeasurement(poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
-                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds);
+                if (targets.get(0).poseAmbiguity < .1) {
+                    addVisionMeasurement(
+                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().estimatedPose.toPose2d(),
+                            poseEstimator.estimateAverageBestTargetsPose(results.get(0)).get().timestampSeconds
+                            );
                 }
-            } else if (targets.size() > 1 && poseEstimator.estimateCoprocMultiTagPose(results.get(0)).isPresent()){
-                addVisionMeasurement(poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().estimatedPose.toPose2d(),
-                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds);
+            } else if (targets.size() > 1 && poseEstimator.estimateCoprocMultiTagPose(results.get(0)).isPresent()) {
+                addVisionMeasurement(
+                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().estimatedPose.toPose2d(),
+                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds
+                        );
+            }
+        }
+    }
+      private Matrix<N3, N1>  updateEstimationStdDevs(
+            Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets, PhotonPoseEstimator estimator) {
+        if (estimatedPose.isEmpty()) {
+            // No pose input. Default to single-tag std devs
+            return VisionConstants.SINGLE_TAG_STDDEV;
+
+        } else {
+            // Pose present. Start running Heuristic
+            var estStdDevs =  VisionConstants.SINGLE_TAG_STDDEV;
+            int numTags = 0;
+            double avgDist = 0;
+
+
+            // Precalculation - see how many tags we found, and calculate an average-distance metric
+            for (var tgt : targets) {
+                var tagPose = estimator.getFieldTags().getTagPose(tgt.getFiducialId());
+                if (tagPose.isEmpty()) continue;
+                numTags++;
+                avgDist +=
+                        tagPose
+                                .get()
+                                .toPose2d()
+                                .getTranslation()
+                                .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
+            }
+
+            if (numTags == 0) {
+                // No tags visible. Default to single-tag std devs
+                return VisionConstants.SINGLE_TAG_STDDEV;
+            } else {
+                // One or more tags visible, run the full heuristic.
+                avgDist /= numTags;
+                // Decrease std devs if multiple targets are visible
+                if (numTags > 1) estStdDevs = VisionConstants.MULTI_TAG_STDDEV;
+                // Increase std devs based on (average) distance
+                if (numTags == 1 && avgDist > 4)
+                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+                else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+                return estStdDevs;
             }
         }
     }

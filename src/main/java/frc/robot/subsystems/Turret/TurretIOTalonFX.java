@@ -25,10 +25,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        turretMotor.setPosition(0.5);
-
-        
-        
+        TurretConstants.encoder.setPosition(0.485*TurretConstants.GEAR_RATIO);
 
     }
 
@@ -64,10 +61,12 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     @Override
-    public void setPID(double p, double i, double d){
+    public void setPID(double p, double i, double d, double kS, double kV){
         TurretConstants.CLOSED_LOOP.kP = p;
         TurretConstants.CLOSED_LOOP.kI = i;
         TurretConstants.CLOSED_LOOP.kD = d;
+        TurretConstants.CLOSED_LOOP.kV = kV;
+        TurretConstants.CLOSED_LOOP.kS = kS;
         
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG.withSlot0(TurretConstants.CLOSED_LOOP));
 
