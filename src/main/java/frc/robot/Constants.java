@@ -39,8 +39,10 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
 import frc.robot.Utils.Zones.Triangle;
+import frc.robot.Utils.Zones.Rectangle.PredictiveRectangleX;
 import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
 import frc.robot.Utils.Zones.Triangle.TriangleBound;
+import frc.robot.Utils.Zones.ZoneBases.PredictiveZoneGroup;
 import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
 import frc.robot.generated.TunerConstants;
 
@@ -519,7 +521,7 @@ public final class Constants {
              */
             public static final Distance FIELD_LENGTH = Inches.of(651.2);
             public static final Distance FIELD_WIDTH = Inches.of(317.6);
-            public static final Distance ALLIANCE_FROM_WALL = Inches.of(158.6);
+            public static final Distance ALLIANCE_FROM_DRIVERSTATION = Inches.of(158.6);
             public static final Distance TRAVERSAL_LENGTH = Inches.of(47);
             public static final Distance TRENCH_WIDTH = Inches.of(50.34);
             public static final Distance BUMP_FROM_WALL = Inches.of(65.65);
@@ -532,39 +534,52 @@ public final class Constants {
                     Inches.of(0), FIELD_WIDTH);
 
             public static final RectangleBounds BLUE_ZONE = new RectangleBounds(
-                    Inches.of(0), ALLIANCE_FROM_WALL,
+                    Inches.of(0), ALLIANCE_FROM_DRIVERSTATION,
                     Inches.of(0), FIELD_WIDTH);
     
             public static final RectangleBounds RED_ZONE = BLUE_ZONE.getMirrorX();
 
             public static final RectangleBounds NUETRAL_BLUE_OUTPOST = new RectangleBounds(
-                ALLIANCE_FROM_WALL.plus(TRAVERSAL_LENGTH), FIELD_LENGTH.minus(ALLIANCE_FROM_WALL).minus(TRAVERSAL_LENGTH), 
+                ALLIANCE_FROM_DRIVERSTATION.plus(TRAVERSAL_LENGTH), FIELD_LENGTH.minus(ALLIANCE_FROM_DRIVERSTATION).minus(TRAVERSAL_LENGTH), 
                 Inches.of(0), FIELD_WIDTH.div(2));
 
             public static final RectangleBounds NUETRAL_BLUE_DEPO = NUETRAL_BLUE_OUTPOST.getMirrorY();
 
-            public static final RectangleBounds BLUE_TRENCH_OUTPOST_ZONE = new RectangleBounds(
-                ALLIANCE_FROM_WALL, ALLIANCE_FROM_WALL.plus(TRAVERSAL_LENGTH), 
+            public static final PredictiveRectangleX BLUE_TRENCH_OUTPOST_ZONE = new PredictiveRectangleX(
+                ALLIANCE_FROM_DRIVERSTATION, ALLIANCE_FROM_DRIVERSTATION.plus(TRAVERSAL_LENGTH), 
                 Inches.of(0), TRENCH_WIDTH);
             
-            public static final RectangleBounds BLUE_TRENCH_DEPO_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorY();
-            public static final RectangleBounds RED_TRENCH_OUTPOST_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorBounds();
-            public static final RectangleBounds RED_TRENCH_DEPO_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorX();
+            public static final PredictiveRectangleX BLUE_TRENCH_DEPO_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorY();
+            public static final PredictiveRectangleX RED_TRENCH_OUTPOST_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorBounds();
+            public static final PredictiveRectangleX RED_TRENCH_DEPO_ZONE = BLUE_TRENCH_OUTPOST_ZONE.getMirrorX();
 
-            public static final RectangleBounds BLUE_BUMP_OUTPOST_ZONE = new RectangleBounds(
-                ALLIANCE_FROM_WALL, ALLIANCE_FROM_WALL.plus(TRAVERSAL_LENGTH), 
+            public static final PredictiveRectangleX BLUE_BUMP_OUTPOST_ZONE = new PredictiveRectangleX(
+                ALLIANCE_FROM_DRIVERSTATION, ALLIANCE_FROM_DRIVERSTATION.plus(TRAVERSAL_LENGTH), 
                 BUMP_FROM_WALL, BUMP_FROM_WALL.plus(BUMP_WIDTH));
             
-            public static final RectangleBounds BLUE_BUMP_DEPO_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorY();
-            public static final RectangleBounds RED_BUMP_OUTPOST_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorBounds();
-            public static final RectangleBounds RED_BUMP_DEPO_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorX();
+            public static final PredictiveRectangleX BLUE_BUMP_DEPO_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorY();
+            public static final PredictiveRectangleX RED_BUMP_OUTPOST_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorBounds();
+            public static final PredictiveRectangleX RED_BUMP_DEPO_ZONE = BLUE_BUMP_OUTPOST_ZONE.getMirrorX();
 
             public static final TriangleBound BLUE_TURTLE_ZONE = new TriangleBound(
                 new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
                 new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
                 new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
             );
+            
             public static final TriangleBound RED_TURTLE_ZONE = BLUE_TURTLE_ZONE.getMirrorBound();
+
+            public static final PredictiveZoneGroup TRENCH_GROUP = new PredictiveZoneGroup(
+                BLUE_TRENCH_DEPO_ZONE, BLUE_TRENCH_OUTPOST_ZONE, RED_TRENCH_DEPO_ZONE, RED_TRENCH_OUTPOST_ZONE
+            );
+
+            public static final PredictiveZoneGroup BUMP_GROUP = new PredictiveZoneGroup(
+                BLUE_BUMP_DEPO_ZONE, BLUE_BUMP_OUTPOST_ZONE, RED_BUMP_DEPO_ZONE, RED_BUMP_OUTPOST_ZONE
+            );
+
+            public static final ZoneGroup NUETRAL_GROUP = new ZoneGroup(
+                NUETRAL_BLUE_DEPO, NUETRAL_BLUE_OUTPOST
+            );
 
         }
 

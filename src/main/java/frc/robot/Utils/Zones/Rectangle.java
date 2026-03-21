@@ -92,8 +92,8 @@ public class Rectangle {
         }
 
         @Override
-        public Trigger willContain(Supplier<Pose2d> robotPose, ChassisSpeeds driveVelocity, Time time) {
-            return new Trigger(()-> willBeWithin(robotPose.get().getTranslation(), driveVelocity, time));
+        public Trigger willContain(Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> driveVelocity, Time time) {
+            return new Trigger(()-> willBeWithin(robotPose.get().getTranslation(), driveVelocity.get(), time));
         }
 
         protected boolean willBeWithin(Translation2d robotPose, ChassisSpeeds velocity, Time time){
@@ -103,6 +103,16 @@ public class Rectangle {
         protected boolean checkFutureX(Translation2d robotPose, ChassisSpeeds velocity, Time time){
             return (robotPose.getX() < xMin && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)>xMin) 
             || (robotPose.getX()> xMax && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)<xMax);
+        }
+
+        public PredictiveRectangleX getMirrorX(){
+            return new PredictiveRectangleX(FieldZones.FIELD_LENGTH.in(Meters) - xMax, FieldZones.FIELD_LENGTH.in(Meters) - xMin, yMin, yMax);
+        }
+        public PredictiveRectangleX getMirrorY(){
+            return new PredictiveRectangleX(xMin, xMax, FieldZones.FIELD_WIDTH.in(Meters) - yMax, FieldZones.FIELD_WIDTH.in(Meters) - yMin);
+        }
+        public PredictiveRectangleX getMirrorBounds(){
+            return new PredictiveRectangleX(FieldZones.FIELD_LENGTH.in(Meters) - xMax, FieldZones.FIELD_LENGTH.in(Meters) - xMin, FieldZones.FIELD_WIDTH.in(Meters) - yMax, FieldZones.FIELD_WIDTH.in(Meters) - yMin);
         }
         
     }
