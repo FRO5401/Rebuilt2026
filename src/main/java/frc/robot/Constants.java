@@ -365,6 +365,11 @@ public final class Constants {
                         ROBOT_CENTRIC,
                         BRAKE
                 }
+
+                public enum DriveMode {
+                        AUTOMATED,
+                        MANUAL
+                }
         }
 
         public static final class FieldConstants {
