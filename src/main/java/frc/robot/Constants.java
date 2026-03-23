@@ -172,7 +172,8 @@ public final class Constants {
 
                 public static final MotorOutputConfigs OUTPUT_CONFIG = new MotorOutputConfigs()
                                 .withInverted(InvertedValue.CounterClockwise_Positive)
-                                .withNeutralMode(NeutralModeValue.Coast);
+                                .withNeutralMode(NeutralModeValue.Coast)
+                                .withPeakForwardDutyCycle(0);
 
                 public static final FeedbackConfigs FEEDBACK_CONFIG = new FeedbackConfigs()
                                 .withSensorToMechanismRatio(GEAR_RATIO);
