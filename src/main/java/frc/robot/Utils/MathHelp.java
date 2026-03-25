@@ -34,7 +34,7 @@ public class MathHelp {
 
             velocity = MetersPerSecond.of((numerator / denominator) / MathConstants.FLYWHEEL_EFFICIENCY);
         } else {
-            velocity = MetersPerSecond.of(ShooterConstants.TREE_MAP.get(findDistance(poseDifference).in(Meters)));
+            velocity = MetersPerSecond.of(ShooterConstants.FLYWHEEL_MAP.get(findDistance(poseDifference).in(Meters)));
         }
 
         Logger.recordOutput("MathHelp/Flywheel Velocity", velocity.in(MetersPerSecond));

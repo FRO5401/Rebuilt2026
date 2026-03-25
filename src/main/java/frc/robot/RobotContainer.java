@@ -14,8 +14,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
 
@@ -31,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
@@ -57,7 +54,6 @@ import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.TunableNumber;
 import frc.robot.Utils.RobotMode.Mode;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.Swerve;
 import frc.robot.Constants.Swerve.DriveType;
 
 /**
@@ -71,9 +67,9 @@ import frc.robot.Constants.Swerve.DriveType;
  */
 public class RobotContainer {
 
-  //Leave these here god forbid we have to retune
+  // Leave these here god forbid we have to retune
   @SuppressWarnings("unused")
-  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0,false);
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0, false);
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
@@ -116,10 +112,9 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
   public static final RobotCentric robotCentricDrive = new RobotCentric()
-    .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
-    .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
-    .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-
+      .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+      .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -168,11 +163,9 @@ public class RobotContainer {
         break;
     }
 
-    gameShift = new Trigger(()-> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
-
+    gameShift = new Trigger(() -> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
 
     configureAutoChooser();
-
 
     // Configure the trigger bindings
     configureBindings();
@@ -202,15 +195,15 @@ public class RobotContainer {
     // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.2));
-    driver.rightBumper().whileFalse(Commands.runOnce(()-> shootingSpeed = 1));
- 
+    driver.rightBumper().whileFalse(Commands.runOnce(() -> shootingSpeed = 1));
+
     // // // This is for the real robot
     // turret.setDefaultCommand(turret.setSmartTarget());
 
-    shooter.setDefaultCommand(shooter.setVelocity(()->RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+    shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
-      //this is for tuning
-      turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    // this is for tuning
+    turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
     // turret.setDefaultCommand(turret.setSmartTarget()
@@ -218,26 +211,29 @@ public class RobotContainer {
     // Commands.runOnce(() ->
     // turret.updateFuel(MathHelp.findFlyWheelVelocity(turret.getPoseDifference())))));
 
-    drivetrain.setDefaultCommand(drivetrain.applyRequest(()->getDriveRequest(DriveType.FIELD_CENTRIC)));
+    drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriveRequest(DriveType.FIELD_CENTRIC)));
 
-    driver.x().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.TRENCH)));
-    driver.a().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BUMP)));
-    driver.leftBumper().whileTrue(drivetrain.applyRequest(()->getDriveRequest(DriveType.BRAKE)));
-
-
+    driver.x().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.TRENCH)));
+    driver.a().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BUMP)));
+    driver.leftBumper().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BRAKE)));
 
     // // //this is for tuning
-    // operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-    //     () -> RotationsPerSecond
-    //         .of(ShooterRPM.get()),
-    //     intake::getDesiredAngle)),
-    //     new SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(() -> .8, () -> 11.0))));
- 
+    // operator.rightTrigger().whileTrue(new
+    // ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
+    // () -> RotationsPerSecond
+    // .of(ShooterRPM.get()),
+    // intake::getDesiredAngle)),
+    // new
+    // SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(()
+    // -> .8, () -> 11.0))));
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
 
-    operator.leftBumper().onTrue(Commands.repeatingSequence(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED),intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .4), Commands.waitSeconds(0.5), intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
+    operator.leftBumper()
+        .onTrue(Commands.repeatingSequence(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED),
+            intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .4), Commands.waitSeconds(0.5),
+            intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
 
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
@@ -245,22 +241,19 @@ public class RobotContainer {
     operator.leftTrigger().onFalse(intake.setInfeedVelocityCommand(0));
 
     operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-        () -> RotationsPerSecond
-            .of(ShooterConstants.TREE_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-        intake::getDesiredAngle)),
-        new SequentialCommandGroup(Commands.waitSeconds(.2),indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+    () -> RotationsPerSecond
+      .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+    intake::getDesiredAngle)),
+        new SequentialCommandGroup(Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
 
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
-    operator.rightBumper().onTrue(indexer.setIndexerCommand(()->-.5, ()->-4.0));
+    operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
-
-    gameShift.whileTrue((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, .5))));
-    gameShift.whileFalse((Commands.run(()-> operator.setRumble(RumbleType.kBothRumble, 0))));
-
+    gameShift.onTrue((Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, .5))));
+    gameShift.onFalse((Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0))));
 
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -268,24 +261,24 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return Commands.none();
+    // return Commands.none();
     return autoChooser.selectedCommand();
   }
 
-  public void configureAutoChooser(){
+  public void configureAutoChooser() {
     autos = new Autos(drivetrain, turret, intake, shooter, indexer);
     autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
     autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
     autoChooser.addRoutine("DepotBumpNoSweep", autos::DepotNoSwipe);
     autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
-    
 
     SmartDashboard.putData("Chooser", autoChooser);
   }
 
   /* Team 5000 Fuel Sim Set up */
   private void configureFuelSim() {
-    if(RobotMode.currentMode != Mode.SIM) return;
+    if (RobotMode.currentMode != Mode.SIM)
+      return;
     fuelSim = new FuelSim("Fuel-Pose");
     fuelSim.spawnStartingFuel();
     fuelSim.enableAirResistance();
@@ -300,7 +293,8 @@ public class RobotContainer {
   }
 
   private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
-    if(RobotMode.currentMode != Mode.SIM) return;
+    if (RobotMode.currentMode != Mode.SIM)
+      return;
     fuelSim.registerRobot(
         RobotDimensionConstants.WIDTH_WBUMPERS,
         RobotDimensionConstants.LENGTH_WBUMPERS,
@@ -316,53 +310,52 @@ public class RobotContainer {
         intakeCallback);
   }
 
-  private double getclosest90(Pose2d pose){
+  private double getclosest90(Pose2d pose) {
     return MathHelp.nearest90(pose.getRotation().getDegrees());
   }
-  private double getclosest45(Pose2d pose){
+
+  private double getclosest45(Pose2d pose) {
     return MathHelp.nearest45(pose.getRotation().getDegrees());
   }
 
-  private SwerveRequest getDriveRequest(DriveType driveType){
-    switch(driveType){
+  private SwerveRequest getDriveRequest(DriveType driveType) {
+    switch (driveType) {
       case BUMP -> {
         drive.withRotationalRate(
-          Radians.convertFrom(
-            thetaController.calculate(
-              drivetrain.getPose().getRotation().getDegrees(), 
-              getclosest90(drivetrain.getPose())), 
-            Degrees)
-        );
+            Radians.convertFrom(
+                thetaController.calculate(
+                    drivetrain.getPose().getRotation().getDegrees(),
+                    getclosest90(drivetrain.getPose())),
+                Degrees));
       }
       case TRENCH -> {
         drive.withRotationalRate(
-          Radians.convertFrom(
-            thetaController.calculate(
-              drivetrain.getPose().getRotation().getDegrees(), 
-              getclosest45(drivetrain.getPose())), 
-            Degrees)
-        );
+            Radians.convertFrom(
+                thetaController.calculate(
+                    drivetrain.getPose().getRotation().getDegrees(),
+                    getclosest45(drivetrain.getPose())),
+                Degrees));
       }
-      case ROBOT_CENTRIC ->{
-        return robotCentricDrive      
-          .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-          .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
-          .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
-          .withDesaturateWheelSpeeds(true);
+      case ROBOT_CENTRIC -> {
+        return robotCentricDrive
+            .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
+            .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
+            .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
+            .withDesaturateWheelSpeeds(true);
       }
       case BRAKE -> {
         return new SwerveRequest.SwerveDriveBrake();
       }
-      default ->{
-        drive.withRotationalRate(shootingSpeed*-driver.getRightX() * Constants.Swerve.MaxAngularRate);
+      default -> {
+        drive.withRotationalRate(shootingSpeed * -driver.getRightX() * Constants.Swerve.MaxAngularRate);
       }
     }
     drive
-      .withVelocityX(shootingSpeed*-driver.getLeftY() * Constants.Swerve.MaxSpeed)
-      .withVelocityY(shootingSpeed*-driver.getLeftX() * Constants.Swerve.MaxSpeed)
-      .withDesaturateWheelSpeeds(true);
+        .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
+        .withDesaturateWheelSpeeds(true);
     return drive;
 
   }
-  
+
 }

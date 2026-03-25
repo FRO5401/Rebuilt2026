@@ -6,21 +6,16 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.TreeMap;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
-import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -202,48 +197,49 @@ public final class Constants {
                                 .withMotorOutput(OUTPUT_CONFIG)
                                 .withFeedback(FEEDBACK_CONFIG).withMotorOutput(OUTPUT_CONFIG);
 
-                public static final InterpolatingDoubleTreeMap TREE_MAP = new InterpolatingDoubleTreeMap();
+                public static final InterpolatingDoubleTreeMap FLYWHEEL_MAP = new InterpolatingDoubleTreeMap();
+                
 
                 public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
                 public static void initializeTreeMap() {
-                        TREE_MAP.put(1.5437171376305936, 40.0);
-                        TREE_MAP.put(1.9579019624329193, 44.4);
-                        TREE_MAP.put(2.243642057323107, 44.9);
-                        TREE_MAP.put(2.4773555790964834, 46.2);
-                        TREE_MAP.put(2.580118241539039, 46.9);
-                        TREE_MAP.put(2.762545007200165, 48.0);
-                        TREE_MAP.put(2.9690895534584527, 48.9);
-                        TREE_MAP.put(3.2598757767863358, 53.0);
-                        TREE_MAP.put(3.5025031777035407, 55.1);
-                        TREE_MAP.put(3.7515509451943614, 57.4);
-                        TREE_MAP.put(3.931132241158132, 58.6);
-                        TREE_MAP.put(4.234808964168099, 61.4);
+                        FLYWHEEL_MAP.put(1.5437171376305936, 40.0);
+                        FLYWHEEL_MAP.put(1.9579019624329193, 44.4);
+                        FLYWHEEL_MAP.put(2.243642057323107, 44.9);
+                        FLYWHEEL_MAP.put(2.4773555790964834, 46.2);
+                        FLYWHEEL_MAP.put(2.580118241539039, 46.9);
+                        FLYWHEEL_MAP.put(2.762545007200165, 48.0);
+                        FLYWHEEL_MAP.put(2.9690895534584527, 48.9);
+                        FLYWHEEL_MAP.put(3.2598757767863358, 53.0);
+                        FLYWHEEL_MAP.put(3.5025031777035407, 55.1);
+                        FLYWHEEL_MAP.put(3.7515509451943614, 57.4);
+                        FLYWHEEL_MAP.put(3.931132241158132, 58.6);
+                        FLYWHEEL_MAP.put(4.234808964168099, 61.4);
                         //Already edited this one to hit
-                        TREE_MAP.put(4.486896019541133, 63.4);
-                        TREE_MAP.put(4.737732528754779, 66.2-.2);
-                        TREE_MAP.put(5.039099787600017, 68.7-.2);
-                        TREE_MAP.put(5.232601376263012, 71.3-.2);
-                        TREE_MAP.put(5.546327985048606, 72.5-.2);
-                        TREE_MAP.put(6.006910981899345, 89.4-.2);
+                        FLYWHEEL_MAP.put(4.486896019541133, 63.4);
+                        FLYWHEEL_MAP.put(4.737732528754779, 66.2-.2);
+                        FLYWHEEL_MAP.put(5.039099787600017, 68.7-.2);
+                        FLYWHEEL_MAP.put(5.232601376263012, 71.3-.2);
+                        FLYWHEEL_MAP.put(5.546327985048606, 72.5-.2);
+                        FLYWHEEL_MAP.put(6.006910981899345, 89.4-.2);
 
                         //Pre 
                         
-                        // TREE_MAP.put(2.5953977991550894, 45.9 + .4);
-                        // TREE_MAP.put(2.2, 44.5 + .4);
-                        // TREE_MAP.put(1.6020685427214896, 39.5 + .4);
-                        // TREE_MAP.put(3.4150778849219403, 53.0 + .4);
-                        // TREE_MAP.put(4.446583003872625, 58.9 + .5);
-                        // TREE_MAP.put(3.9682505219498414, 55.7 + .4);
-                        // TREE_MAP.put(2.9466495845744736, 48.0 + .4);
-                        // TREE_MAP.put(4.943188421149647, 64.5+.4);
-                        // TREE_MAP.put(4.274097398282739, 57.89 + .4);
-                        // TREE_MAP.put(5.5413886401422925, 68.0 + .4);
-                        // TREE_MAP.put(5.8689346416862795, 74.3);
-                        // TREE_MAP.put(2.0173505876268756, 42.0 + .4);
-                        // TREE_MAP.put(3.751134276118736, 55.3 + .4);
-                        // TREE_MAP.put(6.279675663537236, 86+.4);
-                        // TREE_MAP.put(4.248993429164897, 57.7 + .4);
+                        // FLYWHEEL_MAP.put(2.5953977991550894, 45.9 + .4);
+                        // FLYWHEEL_MAP.put(2.2, 44.5 + .4);
+                        // FLYWHEEL_MAP.put(1.6020685427214896, 39.5 + .4);
+                        // FLYWHEEL_MAP.put(3.4150778849219403, 53.0 + .4);
+                        // FLYWHEEL_MAP.put(4.446583003872625, 58.9 + .5);
+                        // FLYWHEEL_MAP.put(3.9682505219498414, 55.7 + .4);
+                        // FLYWHEEL_MAP.put(2.9466495845744736, 48.0 + .4);
+                        // FLYWHEEL_MAP.put(4.943188421149647, 64.5+.4);
+                        // FLYWHEEL_MAP.put(4.274097398282739, 57.89 + .4);
+                        // FLYWHEEL_MAP.put(5.5413886401422925, 68.0 + .4);
+                        // FLYWHEEL_MAP.put(5.8689346416862795, 74.3);
+                        // FLYWHEEL_MAP.put(2.0173505876268756, 42.0 + .4);
+                        // FLYWHEEL_MAP.put(3.751134276118736, 55.3 + .4);
+                        // FLYWHEEL_MAP.put(6.279675663537236, 86+.4);
+                        // FLYWHEEL_MAP.put(4.248993429164897, 57.7 + .4);
 
                         TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
                         TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);

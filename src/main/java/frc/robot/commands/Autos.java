@@ -41,7 +41,7 @@ public class Autos {
         autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(0));
         autoFactory.bind("Init", Commands.repeatingSequence(shooter.setVelocity(
                 () -> RotationsPerSecond
-                        .of(ShooterConstants.TREE_MAP
+                        .of(ShooterConstants.FLYWHEEL_MAP
                                 .get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
                 intake::getDesiredAngle)));
     }

@@ -85,6 +85,8 @@ public class Turret extends SubsystemBase {
 
   private Supplier<Boolean> isIntakeDeployed;
 
+  ChassisSpeeds fieldSpeeds;
+
   public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier, Supplier<Boolean> isIntakeDeployed) {
 
     this.fieldSpeedsSupplier = fieldSpeedsSupplier;
@@ -109,7 +111,7 @@ public class Turret extends SubsystemBase {
 
     if (turretPose != null && target != null) {
 
-      ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+      fieldSpeeds = fieldSpeedsSupplier.get();
 
       Logger.recordOutput("SOTM/Chassis Speeds", fieldSpeeds);
 
@@ -120,8 +122,8 @@ public class Turret extends SubsystemBase {
           fieldSpeeds.vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
         new Rotation2d(fieldSpeeds.omegaRadiansPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
 
-      for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-        tof = ShooterConstants.TOF_MAP.get(-ShooterConstants.TREE_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
+  for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
+  tof = ShooterConstants.TOF_MAP.get(-ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
         poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM)
             .minus(target.plus(robotVelocities.inverse()));
 
