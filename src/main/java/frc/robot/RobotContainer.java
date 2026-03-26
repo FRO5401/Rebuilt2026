@@ -17,6 +17,7 @@ import java.util.function.BooleanSupplier;
 
 import org.photonvision.PhotonCamera;
 
+import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -39,7 +40,9 @@ import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Visulization;
+import frc.robot.subsystems.CANdleSystem.AnimationTypes;
 import frc.robot.subsystems.Indexer.Indexer;
+import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.Indexer.IndexerIOTalon;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterIOSim;
@@ -99,6 +102,7 @@ public class RobotContainer {
   private static Shooter shooter;
   private static Intake intake;
   private static Indexer indexer;
+  private static CANdleSystem candle = new CANdleSystem();
   private static Visulization visulization = null;
 
   private Trigger gameShift;
@@ -172,20 +176,6 @@ public class RobotContainer {
 
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
 
   private void configureBindings() {
 
@@ -197,13 +187,14 @@ public class RobotContainer {
     driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.2));
     driver.rightBumper().whileFalse(Commands.runOnce(() -> shootingSpeed = 1));
 
-    // // // This is for the real robot
-    // turret.setDefaultCommand(turret.setSmartTarget());
+    
+    // // This is for the real robot
+    turret.setDefaultCommand(turret.setSmartTarget());
 
     shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
-    // this is for tuning
-    turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    // // this is for tuning
+    // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
     // turret.setDefaultCommand(turret.setSmartTarget()
@@ -237,7 +228,7 @@ public class RobotContainer {
 
     operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
 
-    operator.leftTrigger().onTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
+    operator.leftTrigger().whileTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftTrigger().onFalse(intake.setInfeedVelocityCommand(0));
 
     operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
@@ -250,8 +241,8 @@ public class RobotContainer {
     operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
-    gameShift.onTrue((Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, .5))));
-    gameShift.onFalse((Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0))));
+    gameShift.onTrue((Commands.parallel(candle.setLights(AnimationTypes.Strobe),Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, .5)))));
+    gameShift.onFalse((Commands.parallel(candle.setLights(AnimationTypes.Looking),Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0)))));
 
   }
 

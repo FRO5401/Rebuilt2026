@@ -211,17 +211,17 @@ public final class Constants {
                         FLYWHEEL_MAP.put(2.762545007200165, 48.0);
                         FLYWHEEL_MAP.put(2.9690895534584527, 48.9);
                         FLYWHEEL_MAP.put(3.2598757767863358, 53.0);
-                        FLYWHEEL_MAP.put(3.5025031777035407, 55.1);
-                        FLYWHEEL_MAP.put(3.7515509451943614, 57.4);
-                        FLYWHEEL_MAP.put(3.931132241158132, 58.6);
-                        FLYWHEEL_MAP.put(4.234808964168099, 61.4);
-                        //Already edited this one to hit
-                        FLYWHEEL_MAP.put(4.486896019541133, 63.4);
-                        FLYWHEEL_MAP.put(4.737732528754779, 66.2-.2);
-                        FLYWHEEL_MAP.put(5.039099787600017, 68.7-.2);
-                        FLYWHEEL_MAP.put(5.232601376263012, 71.3-.2);
-                        FLYWHEEL_MAP.put(5.546327985048606, 72.5-.2);
-                        FLYWHEEL_MAP.put(6.006910981899345, 89.4-.2);
+                        FLYWHEEL_MAP.put(3.5025031777035407, 55.1-2);
+                        FLYWHEEL_MAP.put(3.7515509451943614, 57.4-2);
+
+                        FLYWHEEL_MAP.put(3.931132241158132, 58.6-2.3);
+                        FLYWHEEL_MAP.put(4.234808964168099, 61.4-2.3);
+                        FLYWHEEL_MAP.put(4.486896019541133, 63.4-2.5);
+                        FLYWHEEL_MAP.put(4.737732528754779, 66.3-2.5);
+                        FLYWHEEL_MAP.put(5.039099787600017, 68.7-2.5);
+                        FLYWHEEL_MAP.put(5.232601376263012, 71.3-2.3);
+                        FLYWHEEL_MAP.put(5.546327985048606, 72.5-2.3);
+                        FLYWHEEL_MAP.put(6.006910981899345, 89.4-2.3);
 
                         //Pre 
                         

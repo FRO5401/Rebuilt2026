@@ -408,7 +408,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
 
-        secondSampleTime = System.nanoTime();
         //Logger.recordOutput("SOTM/Measured Chassis Speeds", findChassisSpeeds());
         //Logger.recordOutput("SOTM/Chassis Speeds", getFieldRelativeChassisSpeeds());
 
@@ -446,8 +445,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
         getEstimatedGlobalPose(backLeftPoseEstimator, backLeftCamera, backLeftResults);
 
-        lastPose = getPose();
-        firstSampleTime = System.nanoTime();
     }
 
     public ChassisSpeeds findChassisSpeeds() {
@@ -540,8 +537,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         if (!results.isEmpty()) {
             List<PhotonTrackedTarget> targets = results.get(0).targets;
-            // Logger.recordOutput("Vison/"+camera.getName() +
-            // "targets",VisionHelper.getTagPoses(rightResults.get(0)));
+            PhotonPipelineResult result = results.get(0);
+            //Logger.recordOutput("Vison/"+camera.getName() +  "targets", targets.toString());
             if (targets.size() == 1) {
                 if (targets.get(0).poseAmbiguity < .1) {
                     addVisionMeasurement(
@@ -551,8 +548,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
             } else if (targets.size() > 1 && poseEstimator.estimateCoprocMultiTagPose(results.get(0)).isPresent()) {
                 addVisionMeasurement(
-                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().estimatedPose.toPose2d(),
-                        poseEstimator.estimateCoprocMultiTagPose(results.get(0)).get().timestampSeconds
+                        poseEstimator.estimateCoprocMultiTagPose(result).get().estimatedPose.toPose2d(),
+                        poseEstimator.estimateCoprocMultiTagPose(result).get().timestampSeconds
                         );
             }
         }
