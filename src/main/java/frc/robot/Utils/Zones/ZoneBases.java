@@ -15,7 +15,7 @@ public class ZoneBases {
 
     // Predictive zones
     public static interface PredictiveZone extends Zone{
-        public Trigger willContain(Supplier<Pose2d> robotPose, ChassisSpeeds driveVelocity, Time time);
+        public Trigger willContain(Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> driveVelocity, Time time);
     }
 
 
@@ -58,7 +58,7 @@ public class ZoneBases {
         }
 
         @Override
-        public Trigger willContain(Supplier<Pose2d> robotPose, ChassisSpeeds driveVelocity, Time time) {
+        public Trigger willContain(Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> driveVelocity, Time time) {
             Trigger groupTrigger = new Trigger(()->false);
 
             for(PredictiveZone bound: bounds){

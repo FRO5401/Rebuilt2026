@@ -24,6 +24,7 @@
     {"x":{"exp":"2.9497299194335938 m", "val":2.9497299194335938}, "y":{"exp":"7.464839935302734 m", "val":7.464839935302734}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":83, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"2.7158501148223877 m", "val":2.7158501148223877}, "y":{"exp":"1.0721198320388794 m", "val":1.0721198320388794}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":32, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"2.0142099857330322 m", "val":2.014209985733032}, "y":{"exp":"4.638789653778076 m", "val":4.638789653778076}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+>>>>>>>>> Temporary merge branch 2
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
