@@ -37,6 +37,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -58,6 +59,7 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.simulation.MapleSimSwerveDrivetrain;
+import frc.robot.utils.simulation.RobotBumpSim;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -464,7 +466,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 (pose.getRotation().minus(lastPose.getRotation())).getRadians() / filteredTimeDifference);
     }
 
-    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
+    public MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
+    public RobotBumpSim robotBumpSim = null;
+    private Pose3d simPose3d;
+    private Pose2d simPose;
+    private ChassisSpeeds fieldRelativeSpeeds;
+
     private void startSimThread() {
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
             Seconds.of(kSimLoopPeriod),
@@ -481,10 +488,32 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             TunerConstants.FrontRight,
             TunerConstants.BackLeft,
             TunerConstants.BackRight);
-    /* Run simulation at a faster rate so PID gains behave more reasonably */
-    m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
-    m_simNotifier.startPeriodic(kSimLoopPeriod);
-}
+        robotBumpSim = new RobotBumpSim(getModuleLocations());
+        /* Run simulation at a faster rate so PID gains behave more reasonably */
+        m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
+
+        simPose = mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+
+        fieldRelativeSpeeds =
+            mapleSimSwerveDrivetrain.mapleSimDrive.getDriveTrainSimulatedChassisSpeedsFieldRelative();
+
+        simPose3d = robotBumpSim.update(simPose, fieldRelativeSpeeds, 5);
+
+        if (robotBumpSim.isOnRamp()) {
+            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(
+                robotBumpSim.getSimWorldPose(simPose)
+            );
+        }
+        Logger.recordOutput("Drive/Pose3d", simPose3d);
+
+        m_simNotifier.startPeriodic(kSimLoopPeriod);
+    }
+
+    public Pose3d getPose3d(){
+        if(robotBumpSim != null) return simPose3d;
+        else return new Pose3d(getPose());
+    }
+    
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the
