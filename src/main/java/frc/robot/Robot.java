@@ -12,8 +12,10 @@ import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.FieldZones;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.RobotMode;
 
@@ -161,12 +163,21 @@ public class Robot extends LoggedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
+    //HubTracker.getInstance().initalizeMatchTimer();
   }
 
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
     m_robotContainer.fuelSim.updateSim();
+    Logger.recordOutput("Zones/Field", FieldZones.FIELD_ZONE.getCorners());
+    Logger.recordOutput("Zones/Blue", FieldZones.BLUE_ZONE.getCorners());
+    Logger.recordOutput("Zones/Red", FieldZones.RED_ZONE.getCorners());
+    Logger.recordOutput("Zones/Nuetral", new Translation2d[][]{FieldZones.NUETRAL_BLUE_DEPO.getCorners(), FieldZones.NUETRAL_BLUE_OUTPOST.getCorners()});
+    Logger.recordOutput("Zones/Trenches", new Translation2d[][]{FieldZones.BLUE_TRENCH_DEPO_ZONE.getCorners(), FieldZones.BLUE_TRENCH_OUTPOST_ZONE.getCorners(),FieldZones.RED_TRENCH_DEPO_ZONE.getCorners(), FieldZones.RED_TRENCH_OUTPOST_ZONE.getCorners()});
+    Logger.recordOutput("Zones/Bumps", new Translation2d[][]{FieldZones.BLUE_BUMP_DEPO_ZONE.getCorners(), FieldZones.BLUE_BUMP_OUTPOST_ZONE.getCorners(),FieldZones.RED_BUMP_DEPO_ZONE.getCorners(), FieldZones.RED_BUMP_OUTPOST_ZONE.getCorners()});
+    Logger.recordOutput("Zones/Turtle", new Translation2d[][]{FieldZones.BLUE_TURTLE_ZONE.getCorners(), FieldZones.RED_TURTLE_ZONE.getCorners()});
+    
   }
   
 

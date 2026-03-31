@@ -20,6 +20,7 @@ public class HubTracker {
         matchTimer.stop();
     }
 
+
     public static HubTracker getInstance(){
         if(instance == null) instance = new HubTracker();
         return instance;
