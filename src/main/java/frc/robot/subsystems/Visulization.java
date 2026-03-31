@@ -48,13 +48,13 @@ public class Visulization extends SubsystemBase {
   private Translation3d intakePoseTransform = new Translation3d(0.215, 0, 0.178);
 
 
-  private Supplier<Pose2d> robotPose;
+  private Supplier<Pose3d> robotPose;
   private Pose3d intakePose, turretPose;
   //    Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
 
 
   /** Creates a new Visulization. */
-  public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
+  public Visulization(FuelSim fuelSim, Supplier<Pose3d> robotPose, Turret turret, Shooter shooter, Intake intake) {
     this.fuelSim = fuelSim;
     this.robotPose = robotPose;
     this.turret = turret;
@@ -62,6 +62,10 @@ public class Visulization extends SubsystemBase {
     this.intake = intake;
     shootTimer.start();
 
+  }
+
+  public Visulization(FuelSim fuelSim, Pose2d robotPose, Turret turret, Shooter shooter, Intake intake){
+    this(fuelSim, ()->new Pose3d(robotPose), turret, shooter, intake);
   }
 
   @Override

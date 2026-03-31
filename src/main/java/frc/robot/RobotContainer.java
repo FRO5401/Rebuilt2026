@@ -15,6 +15,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
+import org.ironmaple.simulation.SimulatedArena;
 import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.hardware.CANdle;
@@ -153,7 +154,7 @@ public class RobotContainer {
             drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
         indexer = new Indexer(new IndexerIOTalon());
 
-        visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
+        visulization = new Visulization(fuelSim, drivetrain::getPose3d, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         ShooterConstants.initializeTreeMap();
         break;
@@ -299,6 +300,10 @@ public class RobotContainer {
         RobotDimensionConstants.INTAKE_YMAX,
         () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
         intakeCallback);
+  }
+  public void updateSimulation(){
+    if (RobotMode.currentMode != Mode.SIM) return;
+    SimulatedArena.getInstance().simulationPeriodic();
   }
 
   private double getclosest90(Pose2d pose) {
