@@ -1,4 +1,4 @@
-package frc.robot.Utils.Zones;
+package frc.robot.utils.Zones;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldZones;
-import frc.robot.Utils.MathHelp;
-import frc.robot.Utils.Zones.ZoneBases.Zone;
+import frc.robot.utils.MathHelp;
+import frc.robot.utils.Zones.ZoneBases.Zone;
 
 public class Triangle {
     public static class TriangleBound implements Zone{

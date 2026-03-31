@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.Utils.FuelSim;
-import frc.robot.Utils.MathHelp;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
+import frc.robot.utils.FuelSim;
+import frc.robot.utils.MathHelp;
 
 public class Visulization extends SubsystemBase {
 

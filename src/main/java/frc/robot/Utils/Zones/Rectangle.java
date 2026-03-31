@@ -1,4 +1,4 @@
-package frc.robot.Utils.Zones;
+package frc.robot.utils.Zones;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
@@ -12,8 +12,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldZones;
-import frc.robot.Utils.Zones.ZoneBases.PredictiveZone;
-import frc.robot.Utils.Zones.ZoneBases.Zone;
+import frc.robot.utils.Zones.ZoneBases.PredictiveZone;
+import frc.robot.utils.Zones.ZoneBases.Zone;
 
 public class Rectangle {
     

@@ -16,8 +16,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.FieldZones;
-import frc.robot.Utils.HubTracker;
-import frc.robot.Utils.RobotMode;
+import frc.robot.utils.HubTracker;
+import frc.robot.utils.RobotMode;
 
 /**
  * The methods in this class are called automatically corresponding to each

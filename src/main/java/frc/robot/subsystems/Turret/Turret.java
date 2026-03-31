@@ -32,11 +32,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.Utils.MathHelp;
-import frc.robot.Utils.PhysicsSolver;
-import frc.robot.Utils.ZoneGetter;
-import frc.robot.Utils.TunableNumber;
-import frc.robot.Utils.RobotMode;
+import frc.robot.utils.MathHelp;
+import frc.robot.utils.PhysicsSolver;
+import frc.robot.utils.RobotMode;
+import frc.robot.utils.TunableNumber;
+import frc.robot.utils.ZoneGetter;
 
 public class Turret extends SubsystemBase {
 

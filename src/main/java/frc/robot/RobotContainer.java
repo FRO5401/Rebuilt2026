@@ -50,12 +50,12 @@ import frc.robot.subsystems.Shooter.ShooterIOTalon;
 import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.Turret.TurretIOTalonFX;
-import frc.robot.Utils.FuelSim;
-import frc.robot.Utils.HubTracker;
-import frc.robot.Utils.MathHelp;
-import frc.robot.Utils.RobotMode;
-import frc.robot.Utils.TunableNumber;
-import frc.robot.Utils.RobotMode.Mode;
+import frc.robot.utils.FuelSim;
+import frc.robot.utils.HubTracker;
+import frc.robot.utils.MathHelp;
+import frc.robot.utils.RobotMode;
+import frc.robot.utils.TunableNumber;
+import frc.robot.utils.RobotMode.Mode;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Swerve.DriveType;
 

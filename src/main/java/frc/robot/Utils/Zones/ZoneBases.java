@@ -1,4 +1,4 @@
-package frc.robot.Utils.Zones;
+package frc.robot.utils.Zones;
 
 import java.util.function.Supplier;
 

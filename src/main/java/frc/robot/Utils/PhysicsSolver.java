@@ -1,4 +1,4 @@
-package frc.robot.Utils;
+package frc.robot.utils;
 
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
@@ -11,7 +11,7 @@ import edu.wpi.first.units.measure.Time;
 import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Utils.RobotMode.Mode;
+import frc.robot.utils.RobotMode.Mode;
 
 public class PhysicsSolver {
 

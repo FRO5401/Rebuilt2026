@@ -46,13 +46,13 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import frc.robot.Utils.Zones.Triangle;
-import frc.robot.Utils.Zones.Rectangle.PredictiveRectangleX;
-import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
-import frc.robot.Utils.Zones.Triangle.TriangleBound;
-import frc.robot.Utils.Zones.ZoneBases.PredictiveZoneGroup;
-import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
 import frc.robot.generated.TunerConstants;
+import frc.robot.utils.Zones.Triangle;
+import frc.robot.utils.Zones.Rectangle.PredictiveRectangleX;
+import frc.robot.utils.Zones.Rectangle.RectangleBounds;
+import frc.robot.utils.Zones.Triangle.TriangleBound;
+import frc.robot.utils.Zones.ZoneBases.PredictiveZoneGroup;
+import frc.robot.utils.Zones.ZoneBases.ZoneGroup;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
