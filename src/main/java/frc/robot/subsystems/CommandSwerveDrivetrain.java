@@ -58,6 +58,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.utils.RobotMode;
+import frc.robot.utils.RobotMode.Mode;
 import frc.robot.utils.simulation.MapleSimSwerveDrivetrain;
 import frc.robot.utils.simulation.RobotBumpSim;
 
@@ -492,6 +494,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
 
+        m_simNotifier.startPeriodic(kSimLoopPeriod);
+    }
+
+    public void bumpSimulationLogic(){
+        if(RobotMode.currentMode != Mode.SIM || robotBumpSim == null) return;
+
         simPose = mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
 
         fieldRelativeSpeeds =
@@ -504,14 +512,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 robotBumpSim.getSimWorldPose(simPose)
             );
         }
-        Logger.recordOutput("Drive/Pose3d", simPose3d);
-
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
+        Logger.recordOutput("Simulation/Robot Pose3d", simPose3d);
     }
 
     public Pose3d getPose3d(){
-        if(robotBumpSim != null) return simPose3d;
-        else return new Pose3d(getPose());
+        if(robotBumpSim != null){
+            bumpSimulationLogic();
+            return simPose3d;
+        } else return new Pose3d(getPose());
     }
     
 
