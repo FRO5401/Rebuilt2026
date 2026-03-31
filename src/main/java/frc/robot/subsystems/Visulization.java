@@ -26,8 +26,8 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
-import frc.robot.utils.FuelSim;
 import frc.robot.utils.MathHelp;
+import frc.robot.utils.simulation.FuelSim;
 
 public class Visulization extends SubsystemBase {
 
