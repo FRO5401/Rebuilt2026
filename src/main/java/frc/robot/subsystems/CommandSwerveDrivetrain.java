@@ -1,18 +1,20 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.ironmaple.simulation.drivesims.COTS;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -34,7 +36,6 @@ import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -42,12 +43,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -56,6 +57,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.utils.simulation.MapleSimSwerveDrivetrain;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -202,7 +204,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             PhotonCamera backLeftCamera,
             PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, modules);
+        super(drivetrainConstants, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -245,7 +247,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             PhotonCamera backLeftCamera,
             PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
+        super(drivetrainConstants, odometryUpdateFrequency, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -293,7 +295,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             PhotonCamera frontCamera,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
-                modules);
+                MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -462,20 +464,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 (pose.getRotation().minus(lastPose.getRotation())).getRadians() / filteredTimeDifference);
     }
 
+    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
-
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
+        mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
+            Seconds.of(kSimLoopPeriod),
+            Pounds.of(135), // robot weight
+            Inches.of(31.5), // bumper length
+            Inches.of(31.25), // bumper width
+            DCMotor.getKrakenX60(1), // drive motor type
+            DCMotor.getKrakenX60(1), // steer motor type
+            COTS.WHEELS.DEFAULT_NEOPRENE_TREAD.cof, // wheel COF
+            getModuleLocations(),
+            getPigeon2(),
+            getModules(),
+            TunerConstants.FrontLeft,
+            TunerConstants.FrontRight,
+            TunerConstants.BackLeft,
+            TunerConstants.BackRight);
+    /* Run simulation at a faster rate so PID gains behave more reasonably */
+    m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
+    m_simNotifier.startPeriodic(kSimLoopPeriod);
+}
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the
@@ -554,7 +563,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
         }
     }
-      private Matrix<N3, N1>  updateEstimationStdDevs(
+
+    private Matrix<N3, N1>  updateEstimationStdDevs(
             Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets, PhotonPoseEstimator estimator) {
         if (estimatedPose.isEmpty()) {
             // No pose input. Default to single-tag std devs
@@ -595,6 +605,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 return estStdDevs;
             }
         }
+    }
+
+    @Override
+    public void resetPose(Pose2d pose) {
+        if (this.mapleSimSwerveDrivetrain != null)
+            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+        Timer.delay(0.05); // Wait for simulation to update
+        super.resetPose(pose);
     }
 
 }
