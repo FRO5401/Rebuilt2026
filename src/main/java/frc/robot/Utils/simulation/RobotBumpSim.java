@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 
 /**
  * RobotBumpSim — standalone robot-bump physics simulation for MapleSim.
@@ -157,7 +158,7 @@ public class RobotBumpSim {
     private static final double WHEEL_RADIUS = 0.048;
 
     /** Height offset from the average module-contact Z to the robot-body origin (metres). */
-    private static final double CHASSIS_HEIGHT = 0.0;
+    private static final double CHASSIS_HEIGHT = Units.inchesToMeters(1);
 
     /**
      * Coefficient of restitution for vertical (Z) robot-bump collisions.
