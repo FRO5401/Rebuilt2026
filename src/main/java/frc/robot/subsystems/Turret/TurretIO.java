@@ -9,7 +9,7 @@ public interface TurretIO {
         public double position = 0;
         public double velocity = 0;
         public double temperature = 0;
-        public double voltage = 0;
+        public double voltage;
         public double current = 0;
         public double applied = 0;
     }

@@ -19,7 +19,6 @@ public class Intake extends SubsystemBase {
 
     private double desiredAngle = 0;
 
-    // TODO: Finish tuning these, I ball parked it
     private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true );
     private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
     private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
@@ -35,7 +34,6 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
         io.updateIntakeInputs(pivotInputs, infeedInputs);
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
@@ -72,7 +70,6 @@ public class Intake extends SubsystemBase {
         return pivotInputs.angle;
     }
 
-    // TODO: may change naming format
     public Command setPivotPositionCommand(double angle) {
         return runOnce(() -> setPivotPosition(angle));
     }
