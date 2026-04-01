@@ -166,7 +166,7 @@ public class CANdleSystem extends SubsystemBase {
 
             case Strobe:
                 m_candle.setControl(new StrobeAnimation(m_candleChannel, LEDS_PER_ANIMATION)
-                        .withColor(RGBWColor.fromHex("#9000FF").get()));
+                        .withColor(RGBWColor.fromHex("#9000ffff").get()));
                 break;
 
             case Twinkle:
