@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -355,6 +357,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     // pulls the 2d state of the robot
     public Pose2d getPose() {
+        if(RobotMode.currentMode == Mode.SIM){
+            return mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+        }
         return getStateCopy().Pose;
     }
 
@@ -472,9 +477,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public RobotBumpSim robotBumpSim = null;
     private Pose3d simPose3d;
     private Pose2d simPose;
-    private ChassisSpeeds fieldRelativeSpeeds;
 
     private void startSimThread() {
+        SimulatedArena.overrideInstance(new Arena2026Rebuilt(false));
+
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
             Seconds.of(kSimLoopPeriod),
             Pounds.of(135), // robot weight
@@ -497,29 +503,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    public void bumpSimulationLogic(){
-        if(RobotMode.currentMode != Mode.SIM || robotBumpSim == null) return;
-
+    @Override
+    public void simulationPeriodic(){
+        
         simPose = mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
 
-        fieldRelativeSpeeds =
-            mapleSimSwerveDrivetrain.mapleSimDrive.getDriveTrainSimulatedChassisSpeedsFieldRelative();
-
-        simPose3d = robotBumpSim.update(simPose, fieldRelativeSpeeds, 5);
-
+        simPose3d = robotBumpSim.update(simPose, mapleSimSwerveDrivetrain.mapleSimDrive.getDriveTrainSimulatedChassisSpeedsFieldRelative(), 4);
+        
         if (robotBumpSim.isOnRamp()) {
             mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(
                 robotBumpSim.getSimWorldPose(simPose)
             );
         }
-        Logger.recordOutput("Simulation/Robot Pose3d", simPose3d);
+        Logger.recordOutput("DrivePose/Robot Pose3d", simPose3d);
     }
 
     public Pose3d getPose3d(){
-        if(robotBumpSim != null){
-            bumpSimulationLogic();
-            return simPose3d;
-        } else return new Pose3d(getPose());
+        return simPose3d;
     }
     
 

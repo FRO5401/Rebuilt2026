@@ -7,7 +7,8 @@ package frc.robot;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -169,7 +170,9 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
+
     m_robotContainer.fuelSim.updateSim();
+    m_robotContainer.updateSimulation();
     Logger.recordOutput("Zones/Field", FieldZones.FIELD_ZONE.getCorners());
     Logger.recordOutput("Zones/Blue", FieldZones.BLUE_ZONE.getCorners());
     Logger.recordOutput("Zones/Red", FieldZones.RED_ZONE.getCorners());

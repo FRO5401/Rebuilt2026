@@ -16,6 +16,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import java.util.function.BooleanSupplier;
 
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.photonvision.PhotonCamera;
 
 import com.ctre.phoenix6.hardware.CANdle;
@@ -23,6 +24,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -156,6 +158,7 @@ public class RobotContainer {
 
         visulization = new Visulization(fuelSim, drivetrain::getPose3d, turret, shooter, intake);
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
+        drivetrain.resetPose(new Pose2d(3, 3, Rotation2d.kZero));
         ShooterConstants.initializeTreeMap();
         break;
 
@@ -301,6 +304,7 @@ public class RobotContainer {
         () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
         intakeCallback);
   }
+
   public void updateSimulation(){
     if (RobotMode.currentMode != Mode.SIM) return;
     SimulatedArena.getInstance().simulationPeriodic();
