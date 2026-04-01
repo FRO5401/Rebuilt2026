@@ -13,26 +13,25 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
-  IndexerIO io;
-  IndexerIOInputs inputs = new IndexerIOInputs();
+    private final IndexerIO io;
+    private IndexerIOInputs inputs = new IndexerIOInputs();
 
-  public Indexer(IndexerIO io) {
-    this.io = io;
-  }
+    public Indexer(IndexerIO io) {
+        this.io = io;
+    }
 
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-  }
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+    }
 
-  public void setIndexer(double spindexerVoltage, double kickerVoltage) {
-    io.setSpindexerPercent(spindexerVoltage);
-    io.setKickerVoltage(kickerVoltage);
-  }
+    public void setIndexer(double spindexerVoltage, double kickerVoltage) {
+        io.setSpindexerPercent(spindexerVoltage);
+        io.setKickerVoltage(kickerVoltage);
+    }
 
-  public Command setIndexerCommand(Supplier<Double> spindexerPercent, Supplier<Double> kickerVoltage) {
-    return Commands.runOnce(() -> setIndexer(spindexerPercent.get(), kickerVoltage.get()));
-  }
+    public Command setIndexerCommand(Supplier<Double> spindexerPercent, Supplier<Double> kickerVoltage) {
+        return Commands.runOnce(() -> setIndexer(spindexerPercent.get(), kickerVoltage.get()));
+    }
 
-  
 }
