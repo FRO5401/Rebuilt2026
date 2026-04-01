@@ -172,6 +172,7 @@ public class MapleSimSwerveDrivetrain {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class TalonFXMotorControllerWithRemoteCanCoderSim extends TalonFXMotorControllerSim {
         private final int encoderId;
         private final CANcoderSimState remoteCancoderSimState;

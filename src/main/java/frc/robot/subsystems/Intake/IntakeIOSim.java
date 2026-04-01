@@ -27,7 +27,7 @@ public class IntakeIOSim implements IntakeIO {
     private double intakeVoltage = 0;
     private double desiredAngle;
     private boolean isPositionControl;
-    private double kp, ki, kd, kv, ks;
+    private double kp, ki, kd;
     
     public IntakeIOSim(){
         pivotMotor = DCMotor.getKrakenX60(1);
@@ -120,8 +120,7 @@ public class IntakeIOSim implements IntakeIO {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.kv = kv;
-        this.ks = ks;
+
     }
 
 }

@@ -66,7 +66,6 @@ import com.ctre.phoenix6.signals.VBatOutputModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
     private final int LEDS_PER_ANIMATION = 100;
