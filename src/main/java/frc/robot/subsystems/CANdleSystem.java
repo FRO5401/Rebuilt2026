@@ -66,7 +66,6 @@ import com.ctre.phoenix6.signals.VBatOutputModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
     private final int LEDS_PER_ANIMATION = 100;
@@ -77,7 +76,6 @@ public class CANdleSystem extends SubsystemBase {
     private boolean m_last5V = false;
     private boolean m_animDirection = false;
     private boolean m_setAnim = false;
-
 
     public enum AnimationTypes {
         ColorFlow,
@@ -110,9 +108,9 @@ public class CANdleSystem extends SubsystemBase {
     }
 
     // public void toggle5VOverride() {
-    //     System.out.println("State is: " + m_last5V);
-    //     m_candle.configV5Enabled(m_last5V);
-    //     m_last5V = !m_last5V;
+    // System.out.println("State is: " + m_last5V);
+    // m_candle.configV5Enabled(m_last5V);
+    // m_last5V = !m_last5V;
     // }
 
     public void toggleAnimDirection() {
@@ -140,9 +138,6 @@ public class CANdleSystem extends SubsystemBase {
         return m_candle.getDeviceTemp().getValueAsDouble();
     }
 
-
-
-
     public void changeAnimation(AnimationTypes toChange) {
         mAnimationTypes = toChange;
 
@@ -153,7 +148,8 @@ public class CANdleSystem extends SubsystemBase {
                 break;
 
             case Larson:
-                m_candle.setControl(new LarsonAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#042698").get()));
+                m_candle.setControl(new LarsonAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#042698").get()));
                 break;
 
             case Rainbow:
@@ -169,7 +165,8 @@ public class CANdleSystem extends SubsystemBase {
                 break;
 
             case Strobe:
-                m_candle.setControl(new StrobeAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#9000FF").get()));
+                m_candle.setControl(new StrobeAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#9000FF").get()));
                 break;
 
             case Twinkle:
@@ -184,9 +181,9 @@ public class CANdleSystem extends SubsystemBase {
                 m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
                 break;
 
-
             case Looking:
-                m_candle.setControl(new SingleFadeAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#000000").get()));
+                m_candle.setControl(new SingleFadeAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#000000").get()));
                 break;
 
             case Align:
@@ -196,8 +193,7 @@ public class CANdleSystem extends SubsystemBase {
             case SetAll:
                 m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
                 break;
-            
-                
+
         }
     }
 
@@ -207,7 +203,7 @@ public class CANdleSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-       
+
     }
 
     public Command setLights(AnimationTypes toChange) {
