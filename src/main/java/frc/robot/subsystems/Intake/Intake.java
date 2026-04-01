@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.Intake;
 
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,14 +18,13 @@ public class Intake extends SubsystemBase {
 
     private double desiredAngle = 0;
 
-    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true );
+    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true);
     private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
     private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
 
     private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
     private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
 
-    /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
         this.io = m_io;
         io.setPivotPID(IntakeConstants.kp, 0, IntakeConstants.kd, IntakeConstants.kv, IntakeConstants.ks);
@@ -41,7 +39,7 @@ public class Intake extends SubsystemBase {
 
         Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
 
-        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
+        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || kv.hasChanged() || ks.hasChanged()) {
             io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
         }
 
@@ -78,11 +76,11 @@ public class Intake extends SubsystemBase {
         return runOnce(() -> setInfeedVelocity(percent));
     }
 
-    public double getDesiredAngle(){
+    public double getDesiredAngle() {
         return desiredAngle;
     }
 
-    public Boolean isNotStartingPose(){
+    public Boolean isNotStartingPose() {
         return (getDesiredAngle() != 0);
     }
 }

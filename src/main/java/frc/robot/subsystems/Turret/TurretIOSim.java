@@ -20,10 +20,9 @@ public class TurretIOSim implements TurretIO {
             LinearSystemId.createDCMotorSystem(motorModel, 0.025, TurretConstants.GEAR_RATIO),
             motorModel);
 
-    public TurretIOSim() {
+    public TurretIOSim() {}
 
-    }
-
+    @Override
     public void updateInputs(TurretIOInputs inputs) {
 
         applyVoltage(controller.calculate(inputs.position, desiredPos));
@@ -37,16 +36,19 @@ public class TurretIOSim implements TurretIO {
         driveSim.update(.02);
     }
 
+    @Override
     public void applyVoltage(double voltage) {
         double appliedVoltage = MathUtil.clamp(voltage, -12.0, 12.0);
         driveSim.setInputVoltage(appliedVoltage);
     }
 
+    @Override
     public void applyDutyCycle(double percent) {
         double appliedVoltage = MathUtil.clamp(percent, -12.0, 12.0);
         driveSim.setInputVoltage(appliedVoltage);
     }
 
+    @Override
     public void stop() {
         driveSim.setInputVoltage(0);
     }

@@ -27,39 +27,34 @@ public class IntakeIOSim implements IntakeIO {
     private double intakeVoltage = 0;
     private double desiredAngle;
     private boolean isPositionControl;
-    private double kp, ki, kd, kv, ks;
-    
-    public IntakeIOSim(){
+    private double kp, ki, kd;
+
+    public IntakeIOSim() {
         pivotMotor = DCMotor.getKrakenX60(1);
         intakeMotor = DCMotor.getKrakenX44(1);
 
         pivotSim = new SingleJointedArmSim(
-            LinearSystemId.createDCMotorSystem(
-                pivotMotor, 
-                SingleJointedArmSim.estimateMOI(
-                    Inches.of(17).in(Meters), 
-                    Pounds.of(7).in(Kilograms)
-                ),
-                27
-            ), 
-            pivotMotor, 
-            27, 
-            Inches.of(17).in(Meters), 
-            Degrees.of(0).in(Radians), 
-            Degrees.of(90).in(Radians),
-            true, 
-            Degrees.of(0).in(Radians)
-        );
+                LinearSystemId.createDCMotorSystem(
+                        pivotMotor,
+                        SingleJointedArmSim.estimateMOI(
+                                Inches.of(17).in(Meters),
+                                Pounds.of(7).in(Kilograms)),
+                        27),
+                pivotMotor,
+                27,
+                Inches.of(17).in(Meters),
+                Degrees.of(0).in(Radians),
+                Degrees.of(90).in(Radians),
+                true,
+                Degrees.of(0).in(Radians));
 
         intakeSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                intakeMotor, 
-                0.025, //TODO give this a real value, I made it up
-                1
-            ), 
-            intakeMotor
-        );
-        
+                LinearSystemId.createDCMotorSystem(
+                        intakeMotor,
+                        0.025,
+                        1),
+                intakeMotor);
+
         desiredAngle = pivotSim.getAngleRads();
     }
 
@@ -69,10 +64,10 @@ public class IntakeIOSim implements IntakeIO {
 
         pivotController.setPID(kp, ki, kd);
 
-        if(isPositionControl){
+        if (isPositionControl) {
             pivotVoltage = pivotController.calculate(pivotSim.getAngleRads(), desiredAngle);
         }
-        
+
         pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
         intakeVoltage = MathUtil.clamp(intakeVoltage, -12, 12);
 
@@ -114,14 +109,12 @@ public class IntakeIOSim implements IntakeIO {
     public void setInfeedVoltage(double voltage) {
         intakeVoltage = voltage;
     }
-    
+
     @Override
     public void setPivotPID(double kp, double ki, double kd, double kv, double ks) {
         this.kp = kp;
         this.ki = ki;
         this.kd = kd;
-        this.kv = kv;
-        this.ks = ks;
     }
 
 }

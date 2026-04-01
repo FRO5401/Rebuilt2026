@@ -29,22 +29,27 @@ public class ShooterIOTalon implements ShooterIO {
         shooterFollowerMotor.setControl(new Follower(ShooterConstants.MOTOR_ID, MotorAlignmentValue.Aligned));
     }
 
+    @Override
     public void updateInputs(ShooterIOInputs inputs) {
         inputs.voltage = shooterMotor.getMotorVoltage().getValueAsDouble();
         inputs.current = shooterMotor.getSupplyCurrent().getValueAsDouble();
         inputs.velocity = shooterMotor.getVelocity().getValueAsDouble();
     };
 
+    @Override
     public void applyVoltage(double voltage) {
         shooterMotor.setControl(voltageRequest.withOutput(voltage));
     };
 
-    public void setVelocity(double velocity, ShooterIOInputs inputs) {
+    @Override
+    public void setVelocity(double velocity) {
         shooterMotor.setControl(velocityRequest.withVelocity(velocity).withEnableFOC(true));
     };
 
+    @Override
     public void stop() {};
 
+    @Override
     public void applyPID(double P, double I, double D, double S, double V) {
         ShooterConstants.CLOSED_LOOP.kP = P;
         ShooterConstants.CLOSED_LOOP.kI = I;
