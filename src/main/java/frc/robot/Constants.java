@@ -45,7 +45,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import frc.robot.Utils.Zones.Triangle;
+import frc.robot.Utils.Zones.Triangle.TriangleBound;
 import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
 import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
 import frc.robot.generated.TunerConstants;
@@ -554,7 +554,14 @@ public final class Constants {
         public static final RectangleBounds FIELD_ZONE = new RectangleBounds(Inches.of(0), FIELD_LENGTH,
                 Inches.of(0),
                 FIELD_WIDTH);
-        public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, Triangle.turtly);
+
+        public static final TriangleBound turtly = new TriangleBound(
+            new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
+            new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
+            new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
+        );
+
+        public static final ZoneGroup group = new ZoneGroup(FIELD_ZONE, turtly);
 
     }
 
