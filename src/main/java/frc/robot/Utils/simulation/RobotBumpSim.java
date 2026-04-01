@@ -158,7 +158,7 @@ public class RobotBumpSim {
     private static final double WHEEL_RADIUS = 0.048;
 
     /** Height offset from the average module-contact Z to the robot-body origin (metres). */
-    private static final double CHASSIS_HEIGHT = 0;
+    private static final double CHASSIS_HEIGHT = Units.inchesToMeters(1);
 
     /**
      * Coefficient of restitution for vertical (Z) robot-bump collisions.

@@ -79,7 +79,7 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
-  private PIDController thetaController = new PIDController(1.687, 0, 0);
+  private PIDController thetaController = new PIDController(20, 0, 0);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
