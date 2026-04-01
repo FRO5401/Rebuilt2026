@@ -105,6 +105,7 @@ public class RobotContainer {
 
     // Command Declaration
     private static Autos autos;
+
     /* Setting up bindings for necessary control of the swerve drive platform */
     public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
@@ -124,7 +125,7 @@ public class RobotContainer {
     private CommandXboxController operator = new CommandXboxController(1);
 
     // Simulation Visulization
-    public static FuelSim fuelSim;
+    public FuelSim fuelSim = null;
 
     /**
      * The container for the robot. Contains subsystems, IO devices, and commands.
@@ -359,5 +360,9 @@ public class RobotContainer {
                 RobotDimensionConstants.INTAKE_YMAX,
                 () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
                 intakeCallback);
+    }
+
+    public void updateSimulation(){
+        fuelSim.updateSim();
     }
 }
