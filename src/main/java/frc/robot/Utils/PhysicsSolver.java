@@ -17,12 +17,14 @@ public class PhysicsSolver {
 
     public static Time solveTimeOfFlight(Transform2d targDistance) {
 
-        if (RobotMode.currentMode == Mode.SIM|| Robot.isReal()) {
+        if (RobotMode.currentMode == Mode.SIM || Robot.isReal()) {
             return MathHelp.findTOF(targDistance);
         }
 
-    double launchVelocity = (ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(targDistance).baseUnitMagnitude())* ((Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters))))
-        * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * .8;
+        double launchVelocity = (ShooterConstants.FLYWHEEL_MAP
+                .get(MathHelp.findDistance(targDistance).baseUnitMagnitude())
+                * ((Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters))))
+                * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * .8;
 
         double area = Math.PI * Math.pow(MathConstants.BALL_DIAMETER.in(Meters) / 2.0, 2);
         double mass = MathConstants.BALL_MASS.in(Kilograms);
@@ -58,6 +60,5 @@ public class PhysicsSolver {
 
         return Seconds.of(time);
     }
-
 
 }

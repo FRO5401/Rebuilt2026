@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
@@ -26,7 +27,7 @@ public class MathHelp {
         LinearVelocity velocity;
 
         if (Robot.isSimulation()) {
-            Distance targetDistance = findDistance(poseDifference);
+            MutDistance targetDistance = findDistance(poseDifference).mutableCopy();
             double numerator = targetDistance.in(Meters)
                     * Math.sqrt(9.8 / (2 * (Math.tan(MathConstants.LAUNCH_ANGLE.in(Radians)) * targetDistance.in(Meters)
                             - MathConstants.HUB_HEIGHT.in(Meters))));
@@ -44,20 +45,21 @@ public class MathHelp {
 
     public static AngularVelocity findFlyWheelRPM(LinearVelocity flywheelVelocity) {
         // 60 is for the seconds to minute, 3.82
-        if(Robot.isSimulation()){
-        Logger.recordOutput("MathHelp/Flywheel RPM",
+        if (Robot.isSimulation()) {
+            Logger.recordOutput("MathHelp/Flywheel RPM", 
                 (flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 60);
-        return RotationsPerSecond
-                .of((flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
-        } else {return RotationsPerSecond.of(RPM.get());
+            return RotationsPerSecond
+                    .of((flywheelVelocity.in(MetersPerSecond)) / (Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)));
+        } else {
+            return RotationsPerSecond.of(RPM.get());
+        }
     }
-}
 
     // Once again splitting up the math, this is the quadatric equation of height
     // displacement formula to find the time of flight
     public static Time findTOF(Transform2d targDistance) {
         double a = -4.9;
-        double b =  findFlyWheelVelocity(targDistance).in(MetersPerSecond)
+        double b = findFlyWheelVelocity(targDistance).in(MetersPerSecond)
                 * Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians));
         double c = -MathConstants.HUB_HEIGHT.in(Meters);
         Logger.recordOutput("MathHelp/TOF", (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a));
@@ -75,9 +77,9 @@ public class MathHelp {
 
     }
 
-    public static double RPMtoVelocity(double RPM){
-        Logger.recordOutput("MathHelp/Ball Velocity", .43*(RPM*MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude()*Math.PI));
-        return .43*(RPM*MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude()*Math.PI);
+    public static double RPMtoVelocity(double RPM) {
+        Logger.recordOutput("MathHelp/Ball Velocity", .43 * (RPM * MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude() * Math.PI));
+        return .43 * (RPM * MathConstants.FLY_WHEEL_DIAMETER.baseUnitMagnitude() * Math.PI);
     }
 
     public static boolean epsilonEquals(double a, double b, double epsilon) {
@@ -88,11 +90,11 @@ public class MathHelp {
         return epsilonEquals(a, b, 1e-3);
     }
 
-    public static double nearest90(double input){
-        return 90 * Math.rint(input/90);
+    public static double nearest90(double input) {
+        return 90 * Math.rint(input / 90);
     }
 
-    public static double nearest45(double input){
-        return (90 * Math.rint((input+45)/90))-45;
+    public static double nearest45(double input) {
+        return (90 * Math.rint((input + 45) / 90)) - 45;
     }
 }

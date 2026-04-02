@@ -20,54 +20,52 @@ import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
 
-  private final ShooterIO io;
-  private ShooterIOInputs inputs = new ShooterIOInputs();
+    private final ShooterIO io;
+    private ShooterIOInputs inputs = new ShooterIOInputs();
 
-  private double desiredVel = 0;
+    private TunableNumber kP = new TunableNumber("Shooter/KP", ShooterConstants.KP, true);
+    private TunableNumber kD = new TunableNumber("Shooter/KD", ShooterConstants.KD, true);
+    private TunableNumber kV = new TunableNumber("Shooter/KV", ShooterConstants.KV, true);
 
-  public Shooter(ShooterIO io) {
-    this.io = io;
+    private double desiredVel = 0;
 
-  }
+    public Shooter(ShooterIO io) {
+        this.io = io;
 
-  TunableNumber kP = new TunableNumber("Shooter/KP", ShooterConstants.KP, true);
-  TunableNumber kD = new TunableNumber("Shooter/KD", ShooterConstants.KD, true);
-  TunableNumber kV = new TunableNumber("Shooter/KV", ShooterConstants.KV, true);
+    }
 
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    io.updateInputs(inputs);
+        Logger.recordOutput("Shooter/Shooter velocity", getVelocity().in(RotationsPerSecond));
+        Logger.recordOutput("Shooter/Shooter Desired Velocity", desiredVel);
 
-    Logger.recordOutput("Shooter/Shooter velocity", getVelocity().in(RotationsPerSecond));
-    Logger.recordOutput("Shooter/Shooter Desired Velocity", desiredVel);
-
-    if (kP.hasChanged() || kD.hasChanged() || kV.hasChanged()) {
-            io.applyPID(kP.get(), 0, kD.get(), 0 ,kV.get());
+        if (kP.hasChanged() || kD.hasChanged() || kV.hasChanged()) {
+            io.applyPID(kP.get(), 0, kD.get(), 0, kV.get());
         }
-  }
+    }
 
-  public Command setVelocity(Supplier<AngularVelocity> vel, Supplier<Double> intakePose) {
+    public Command setVelocity(Supplier<AngularVelocity> vel, Supplier<Double> intakePose) {
 
-    return runOnce(() -> {
-      if (intakePose.get() != 0) {
-        io.setVelocity(-vel.get().in(RotationsPerSecond),inputs);
-        desiredVel = -vel.get().in(RotationsPerSecond);
-      } else {
+        return runOnce(() -> {
+            if (intakePose.get() != 0) {
+                io.setVelocity(-vel.get().in(RotationsPerSecond));
+                desiredVel = -vel.get().in(RotationsPerSecond);
+            } else {
+                io.stop();
+                desiredVel = 0;
+            }
+        });
+
+    }
+
+    public AngularVelocity getVelocity() {
+        return RotationsPerSecond.of(inputs.velocity);
+    }
+
+    public void stop() {
         io.stop();
-        desiredVel = 0;
-      }
-    });
-
-  }
-
-  public AngularVelocity getVelocity() {
-    return RotationsPerSecond.of(inputs.velocity);
-  }
-
-  public void stop() {
-    io.stop();
-  }
+    }
 
 }

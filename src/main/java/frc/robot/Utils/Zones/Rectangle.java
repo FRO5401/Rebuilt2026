@@ -92,7 +92,7 @@ public class Rectangle {
         
         protected boolean checkFutureX(Translation2d robotPose, ChassisSpeeds velocity, Time time){
             return (robotPose.getX() < xMin && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)>xMin) 
-            || (robotPose.getX()> xMax && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)<xMax);
+                || (robotPose.getX()> xMax && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)<xMax);
         }
         
     }

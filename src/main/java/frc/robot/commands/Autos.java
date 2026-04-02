@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Utils.MathHelp;
@@ -37,7 +36,8 @@ public class Autos {
                 drivetrain::followTrajectory,
                 true,
                 drivetrain);
-        autoFactory.bind("Intake", (intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1))));
+        autoFactory.bind("Intake", (intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED - .1))));
         autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(0));
         autoFactory.bind("Init", Commands.repeatingSequence(shooter.setVelocity(
                 () -> RotationsPerSecond
@@ -74,38 +74,39 @@ public class Autos {
 
         traj.atTime("Shoot")
                 .onTrue(turret.setSmartTarget()
-                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE/3))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE / 3))
                         .andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)));
 
         return routine;
     }
 
-        public AutoRoutine leftDoubleTrenchAuto() {
+    public AutoRoutine leftDoubleTrenchAuto() {
         AutoRoutine routine = autoFactory.newRoutine("leftBumpAuto");
 
         AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
         AutoTrajectory secondGrab = routine.trajectory("LeftTrenchSweep2");
 
-        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1)));
-
+        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED - .1)));
 
         routine.active().onTrue(
                 Commands.sequence(
                         firstGrab.resetOdometry(),
-                        
+
                         firstGrab.cmd()));
 
-        
-
         firstGrab.atTime("Shoot 1")
-.onTrue(new ParallelCommandGroup(turret.setSmartTarget(), (indexer.setIndexerCommand(() -> .8, () -> 11.0))));
-                        
+                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                        (indexer.setIndexerCommand(() -> .8, () -> 11.0))));
 
-        firstGrab.done().onTrue(Commands.waitSeconds(3).andThen(indexer.setIndexerCommand(() -> 0.0, () -> 0.0)).andThen(secondGrab.cmd()));
+        firstGrab.done().onTrue(Commands.waitSeconds(3).andThen(indexer.setIndexerCommand(() -> 0.0, () -> 0.0))
+                .andThen(secondGrab.cmd()));
 
         secondGrab.atTime("Shoot 1")
-                 .onTrue(new ParallelCommandGroup(turret.setSmartTarget(), Commands.waitSeconds(.1).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
-                        .andThen(Commands.waitSeconds(1)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.2)));
+                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                        Commands.waitSeconds(.1).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
+                        .andThen(Commands.waitSeconds(1))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .2)));
 
         return routine;
     }
@@ -115,7 +116,8 @@ public class Autos {
 
         AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
 
-        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1)));
+        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED - .1)));
 
         routine.active().onTrue(
 
@@ -124,22 +126,22 @@ public class Autos {
                         firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1")
-                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(), Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
-                        .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED)).andThen(Commands.waitSeconds(4)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.4)));
-
-        
-
+                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                        Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
+                        .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED))
+                        .andThen(Commands.waitSeconds(4))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .4)));
 
         return routine;
     }
 
-    
     public AutoRoutine rightSingleTrenchAuto() {
         AutoRoutine routine = autoFactory.newRoutine("RightTrenchSweep");
 
         AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
 
-        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1)));
+        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED - .1)));
 
         routine.active().onTrue(
 
@@ -148,22 +150,22 @@ public class Autos {
                         firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1")
-                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(), Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
-                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)).andThen(Commands.waitSeconds(4)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.3)));
-
-        
-
+                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                        Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE))
+                        .andThen(Commands.waitSeconds(4))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3)));
 
         return routine;
     }
 
-
-        public AutoRoutine leftSingleTrenchCloseAuto() {
+    public AutoRoutine leftSingleTrenchCloseAuto() {
         AutoRoutine routine = autoFactory.newRoutine("leftBumpAuto");
 
         AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep2");
 
-        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE).andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED-.1)));
+        firstGrab.active().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED - .1)));
 
         routine.active().onTrue(
 
@@ -172,11 +174,11 @@ public class Autos {
                         firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1")
-                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(), Commands.waitSeconds(.3).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
-                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)).andThen(Commands.waitSeconds(4)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.3)));
-
-        
-
+                .onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                        Commands.waitSeconds(.3).andThen(indexer.setIndexerCommand(() -> .8, () -> 11.0)))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE))
+                        .andThen(Commands.waitSeconds(4))
+                        .andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3)));
 
         return routine;
     }
@@ -198,5 +200,5 @@ public class Autos {
 
         return routine;
     }
-    
+
 }

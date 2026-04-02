@@ -12,53 +12,53 @@ public class TunableNumber implements DoubleSupplier {
     private LoggedNetworkNumber networkNumber;
 
     private double defaultValue;
-    private boolean hasDefault = false; 
-    private boolean isTuningDisabled = false; 
+    private boolean hasDefault = false;
+    private boolean isTuningDisabled = false;
+    private boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
 
-    public TunableNumber(String m_key){
+    public TunableNumber(String m_key) {
         this.key = DIRECTORY + m_key;
     }
 
-    public TunableNumber(String m_key, double m_defaultValue){
+    public TunableNumber(String m_key, double m_defaultValue) {
         this(m_key);
         initalizeDefault(m_defaultValue);
     }
 
-    public TunableNumber(String m_key, double m_defaultValue, boolean m_disableTuning){
+    public TunableNumber(String m_key, double m_defaultValue, boolean m_disableTuning) {
         this(m_key);
         this.isTuningDisabled = m_disableTuning;
         initalizeDefault(m_defaultValue);
     }
 
-    public void disableTuning(boolean m_disable){
+    public void disableTuning(boolean m_disable) {
         this.isTuningDisabled = m_disable;
     }
 
-    public void initalizeDefault(double m_defaultValue){
-        if(!hasDefault){
+    public void initalizeDefault(double m_defaultValue) {
+        if (!hasDefault) {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if(RobotMode.isTuningMode && !isTuningDisabled){
-                //tunableValue = defaultValue;
+            if (masterTuningEnabled) {
                 networkNumber = new LoggedNetworkNumber(key, defaultValue);
             }
-            
+
         }
     }
 
-    public double get(){
-        if(!hasDefault){
+    public double get() {
+        if (!hasDefault) {
             return 0.0;
         } else {
-            return (RobotMode.isTuningMode && !isTuningDisabled) ? networkNumber.get() : defaultValue;
+            return masterTuningEnabled ? networkNumber.get() : defaultValue;
         }
     }
 
-    public boolean hasChanged(){
+    public boolean hasChanged() {
 
         double currentValue = this.get();
-        if(currentValue != defaultValue){
+        if (currentValue != defaultValue) {
             networkNumber.set(currentValue);
             defaultValue = currentValue;
             return true;
@@ -66,8 +66,8 @@ public class TunableNumber implements DoubleSupplier {
         return false;
     }
 
-    public static boolean hasChanged(TunableNumber... tunables){
-        if(Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())){
+    public static boolean hasChanged(TunableNumber... tunables) {
+        if (Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())) {
             return true;
         }
         return false;

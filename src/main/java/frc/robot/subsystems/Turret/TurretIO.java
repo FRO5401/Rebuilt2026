@@ -3,6 +3,7 @@ package frc.robot.subsystems.Turret;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface TurretIO {
+
     @AutoLog
     public class TurretIOInputs{
         public double position = 0;
@@ -10,7 +11,7 @@ public interface TurretIO {
         public double temperature = 0;
         public double voltage;
         public double current = 0;
-        public double applied =0;
+        public double applied = 0;
     }
 
     public default void updateInputs(TurretIOInputs inputs){};

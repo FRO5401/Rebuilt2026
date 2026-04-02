@@ -31,56 +31,57 @@ import frc.robot.subsystems.Turret.Turret;
 
 public class Visulization extends SubsystemBase {
 
-  private FuelSim fuelSim;
-  private Turret turret;
+    private FuelSim fuelSim;
+    private Turret turret;
 
-  @SuppressWarnings("unused")
-  private Shooter shooter;
-  private Intake intake;
+    @SuppressWarnings("unused")
+    private Shooter shooter;
+    private Intake intake;
 
-  private final double CAPACITY = 24;
-  private double fuelStored = 8;
+    private final double CAPACITY = 24;
+    private double fuelStored = 8;
 
-  private Timer shootTimer = new Timer();
+    private Timer shootTimer = new Timer();
 
-  private Transform3d turretTransform = new Transform3d(TurretConstants.TURRET_TRANSFORM.getMeasureX(), TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
-  private Translation3d turretPoseTransform = new Translation3d(-0.11, 0, 0.345);
-  private Translation3d intakePoseTransform = new Translation3d(0.215, 0, 0.178);
+    private Transform3d turretTransform = new Transform3d(TurretConstants.TURRET_TRANSFORM.getMeasureX(),
+            TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
 
+    private Translation3d turretPoseTransform = new Translation3d(-0.11, 0, 0.345);
+    private Translation3d intakePoseTransform = new Translation3d(0.215, 0, 0.178);
 
-  private Supplier<Pose2d> robotPose;
-  private Pose3d intakePose, turretPose;
-  //    Pose3d indexer = new Pose3d(0, 0, 0.015, new Rotation3d(0, 0, Math.sin(Timer.getTimestamp())-1));
+    private Supplier<Pose2d> robotPose;
+    private Pose3d intakePose, turretPose;
 
+    /** Creates a new Visulization. */
+    public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
+        this.fuelSim = fuelSim;
+        this.robotPose = robotPose;
+        this.turret = turret;
+        this.shooter = shooter;
+        this.intake = intake;
+        shootTimer.start();
 
-  /** Creates a new Visulization. */
-  public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
-    this.fuelSim = fuelSim;
-    this.robotPose = robotPose;
-    this.turret = turret;
-    this.shooter = shooter;
-    this.intake = intake;
-    shootTimer.start();
-
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
-    intakePose = new Pose3d(intakePoseTransform, new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(70).in(Radians), 0));
-    Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
-    Logger.recordOutput("Visulization/Intake", intakePose);
-    Logger.recordOutput("Visulization/Turret", turretPose);
-    Logger.recordOutput("Visulization/Robot Components", new Pose3d[] {intakePose, turretPose});
-    Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] {new Pose3d(), new Pose3d()});
-    Logger.recordOutput("Current Fuel Count", fuelStored);
-    if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
-      launchFuel();
     }
-  }
 
-  public boolean canIntake() {
+    @Override
+    public void periodic() {
+        turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
+        intakePose = new Pose3d(intakePoseTransform,
+                new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(70).in(Radians), 0));
+    
+        Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
+        Logger.recordOutput("Visulization/Intake", intakePose);
+        Logger.recordOutput("Visulization/Turret", turretPose);
+        Logger.recordOutput("Visulization/Robot Components", new Pose3d[] { intakePose, turretPose });
+        Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d() });
+        Logger.recordOutput("Current Fuel Count", fuelStored);
+
+        if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
+            launchFuel();
+        }
+    }
+
+    public boolean canIntake() {
         return fuelStored < CAPACITY;
     }
 
@@ -89,14 +90,14 @@ public class Visulization extends SubsystemBase {
     }
 
     public void launchFuel() {
-        if (fuelStored == 0) return;
+        if (fuelStored == 0)
+            return;
         fuelStored--;
 
         fuelSim.launchFuel(
                 MathHelp.findFlyWheelVelocity(turret.getPoseDifference()),
                 MathConstants.LAUNCH_ANGLE,
                 turret.getTurretAngle(),
-                turretTransform.getMeasureZ()
-          );
+                turretTransform.getMeasureZ());
     }
 }
