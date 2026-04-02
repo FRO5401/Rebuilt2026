@@ -55,7 +55,7 @@ public class TurretIOSim implements TurretIO {
     }
 
     @Override 
-    public void setPosition(double position){
+    public void setPosition(double position, double velocity){
         desiredPos = position;
     }
 

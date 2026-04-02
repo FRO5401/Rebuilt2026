@@ -237,7 +237,7 @@ public class RobotContainer {
     () -> RotationsPerSecond
       .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
     intake::getDesiredAngle)),
-        new SequentialCommandGroup(Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+        new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0),Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
 
     operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
     operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));

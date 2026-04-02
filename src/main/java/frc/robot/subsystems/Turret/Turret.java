@@ -52,6 +52,9 @@ public class Turret extends SubsystemBase {
   private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, false);
   private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, false);
 
+  //need this for rotational feedforward
+  private double turretFeedForward;
+
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
   private Translation3d[] trajectory = new Translation3d[50];
@@ -98,6 +101,7 @@ public class Turret extends SubsystemBase {
     this.io = io;
     this.robotPose = robotPose;
 
+    turretFeedForward = (-this.fieldSpeedsSupplier.get().omegaRadiansPerSecond / (2.0 * Math.PI)) * TurretConstants.GEAR_RATIO;
 
     // controller.enableContinuousInput(0, 1);
   }
@@ -116,13 +120,21 @@ public class Turret extends SubsystemBase {
 
       fieldSpeeds = fieldSpeedsSupplier.get();
 
+      turretFeedForward = (-this.fieldSpeeds.omegaRadiansPerSecond / (2.0 * Math.PI)) * TurretConstants.GEAR_RATIO;
+
       Logger.recordOutput("SOTM/Chassis Speeds", fieldSpeeds);
 
       //SOTM!!!
       poseDifference = turretPose.minus(target);
       robotVelocities = new Transform2d(
-          fieldSpeeds.vxMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
-          fieldSpeeds.vyMetersPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+          (fieldSpeeds.vxMetersPerSecond + (1*fieldSpeeds.omegaRadiansPerSecond) * (
+                TurretConstants.TURRET_TRANSFORM.getY() * Math.sin(robotPose.get().getRotation().getRadians()) - 
+                TurretConstants.TURRET_TRANSFORM.getX() * Math.cos(robotPose.get().getRotation().getRadians())
+            )) * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+          (fieldSpeeds.vyMetersPerSecond  + (1*fieldSpeeds.omegaRadiansPerSecond) * (
+                TurretConstants.TURRET_TRANSFORM.getY() * Math.sin(robotPose.get().getRotation().getRadians()) - 
+                TurretConstants.TURRET_TRANSFORM.getX() * Math.cos(robotPose.get().getRotation().getRadians())
+            )) * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
         new Rotation2d(fieldSpeeds.omegaRadiansPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
 
   for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
@@ -162,10 +174,10 @@ public class Turret extends SubsystemBase {
       
     
     if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Turret)){
-      io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+      io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1), turretFeedForward);
     }
     if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Static)){
-      io.setPosition(.5);
+      io.setPosition(.5, 0);
     }
 
     

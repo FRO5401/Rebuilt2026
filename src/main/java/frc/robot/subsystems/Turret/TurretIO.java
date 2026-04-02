@@ -21,7 +21,7 @@ public interface TurretIO {
 
     public default void applyDutyCycle(double percent){};
 
-    public default void setPosition(double position){};
+    public default void setPosition(double position, double velocity){};
 
     public default void setPID(double p, double i, double d, double kS, double kV){}
     
