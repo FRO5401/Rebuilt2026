@@ -149,7 +149,7 @@ public class CANdleSystem extends SubsystemBase {
         switch (toChange) {
             default:
             case ColorFlow:
-                m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
+                m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION));
                 break;
 
             case Larson:

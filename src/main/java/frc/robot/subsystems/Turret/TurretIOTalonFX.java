@@ -16,7 +16,7 @@ import frc.robot.Constants.TurretConstants;
 public class TurretIOTalonFX implements TurretIO {
 
     VoltageOut voltageRequest = new VoltageOut(0.0);
-    PositionVoltage positionRequest = new PositionVoltage(0);
+    PositionVoltage positionRequest = new PositionVoltage(0).withUpdateFreqHz(250);
 
     TalonFX turretMotor = new TalonFX(TurretConstants.CAN_ID);
 
@@ -25,7 +25,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        TurretConstants.encoder.setPosition(0.485*TurretConstants.GEAR_RATIO);
+        TurretConstants.encoder.setPosition(0.5*TurretConstants.GEAR_RATIO);
 
     }
 

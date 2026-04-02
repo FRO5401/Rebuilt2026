@@ -71,9 +71,9 @@ public final class Constants {
                 public static final Current SUPPLY_LIMIT = Amps.of(60);
                 public static final double GEAR_RATIO = 1.4545; // * 3;
 
-                public static final double KP = 45;
+                public static final double KP = 70;
                 public static final double KI = 0;
-                public static final double KD = 1.2;
+                public static final double KD = 3.3;
 
                 public static final double KS = 0;
                 public static final double KV = 150;
@@ -107,7 +107,7 @@ public final class Constants {
                                 .withKI(KI)
                                 .withKD(KD)
                                 .withKA(0)
-                                .withKV(0)
+                                .withKV(KV)
                                 .withKG(0);
 
                 public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
@@ -137,6 +137,14 @@ public final class Constants {
                                         .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
                                         .withAbsoluteSensorDiscontinuityPoint(1));
                 }
+
+                public enum TurretMode{
+                        Static,
+                        Turret
+                };
+
+                
+
         }
 
         public static final class ShooterConstants {
@@ -218,10 +226,10 @@ public final class Constants {
                         FLYWHEEL_MAP.put(4.234808964168099, 61.4-2.3);
                         FLYWHEEL_MAP.put(4.486896019541133, 63.4-2.5);
                         FLYWHEEL_MAP.put(4.737732528754779, 66.3-2.5);
-                        FLYWHEEL_MAP.put(5.039099787600017, 68.7-2.5);
-                        FLYWHEEL_MAP.put(5.232601376263012, 71.3-2.3);
-                        FLYWHEEL_MAP.put(5.546327985048606, 72.5-2.3);
-                        FLYWHEEL_MAP.put(6.006910981899345, 89.4-2.3);
+                        FLYWHEEL_MAP.put(5.039099787600017, 68.7-1.9);
+                        FLYWHEEL_MAP.put(5.232601376263012, 71.3-2.0);
+                        FLYWHEEL_MAP.put(5.546327985048606, 72.5-2.8);
+                        FLYWHEEL_MAP.put(6.006910981899345, 89.4-2.8);
 
                         //Pre 
                         
@@ -336,8 +344,8 @@ public final class Constants {
                 public static final double kPXController = 1.687;
                 public static final double kPYController = 1.687;
 
-                public static final double kPThetaController = 1.687;
-                public static final double kDThetaController = kPThetaController / 2;
+                public static final double kPThetaController = 1.2;
+                public static final double kDThetaController = .8;
 
                 /* Constraint for kpx motion profilied robot angle controller */
                 public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

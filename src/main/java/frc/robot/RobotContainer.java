@@ -58,6 +58,7 @@ import frc.robot.Utils.TunableNumber;
 import frc.robot.Utils.RobotMode.Mode;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Swerve.DriveType;
+import frc.robot.Constants.TurretConstants.TurretMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -106,6 +107,8 @@ public class RobotContainer {
   private static Visulization visulization = null;
 
   private Trigger gameShift;
+  private Trigger endGame;
+  private Trigger rainbow;
 
   // Command Declaration
   private static Autos autos;
@@ -140,7 +143,6 @@ public class RobotContainer {
         shooter = new Shooter(new ShooterIOTalon());
         turret = new Turret(new TurretIOTalonFX(), drivetrain::getPose, drivetrain::getFieldRelativeChassisSpeeds,
             intake::isNotStartingPose);
-        // drivetrain::getFieldRelativeChassisSpeeds);
         indexer = new Indexer(new IndexerIOTalon());
         ShooterConstants.initializeTreeMap();
         break;
@@ -168,6 +170,11 @@ public class RobotContainer {
     }
 
     gameShift = new Trigger(() -> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
+    endGame = new Trigger(()-> HubTracker.getInstance().getMatchTime() <= 30);
+    rainbow = new Trigger(()-> HubTracker.getInstance().getMatchTime() <= 1);
+
+
+    
 
     configureAutoChooser();
 
@@ -221,12 +228,7 @@ public class RobotContainer {
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
 
-    operator.leftBumper()
-        .onTrue(Commands.repeatingSequence(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED),
-            intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .4), Commands.waitSeconds(0.5),
-            intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
-
-    operator.a().onTrue(intake.setPivotPositionCommand(0).andThen(intake.setInfeedVelocityCommand(0)));
+    operator.a().onTrue(intake.setPivotPositionCommand(0));
 
     operator.leftTrigger().whileTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED));
     operator.leftTrigger().onFalse(intake.setInfeedVelocityCommand(0));
@@ -241,8 +243,20 @@ public class RobotContainer {
     operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
     operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
+    operator.start().onTrue(Commands.runOnce(()->turret.changeTurretMode(TurretMode.Static), turret));
+    operator.back().onTrue(Commands.runOnce(()->turret.changeTurretMode(TurretMode.Turret), turret));
+
+
     gameShift.onTrue((Commands.parallel(candle.setLights(AnimationTypes.Strobe),Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, .5)))));
     gameShift.onFalse((Commands.parallel(candle.setLights(AnimationTypes.Looking),Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0)))));
+
+    endGame.onTrue(candle.setLights(AnimationTypes.Rainbow));
+
+    rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
+
+    driver.povUp().onTrue(candle.setLights(AnimationTypes.Rainbow));
+    driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
+    
 
   }
 
@@ -262,6 +276,7 @@ public class RobotContainer {
     autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
     autoChooser.addRoutine("DepotBumpNoSweep", autos::DepotNoSwipe);
     autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
+    autoChooser.addRoutine("DepotSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
 
     SmartDashboard.putData("Chooser", autoChooser);
   }

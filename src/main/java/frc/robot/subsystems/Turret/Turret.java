@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.TurretConstants.TurretMode;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
@@ -40,14 +41,16 @@ import frc.robot.Utils.RobotMode;
 
 public class Turret extends SubsystemBase {
 
+  private TurretMode turretMode = TurretMode.Turret;
 
 
-  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, RobotMode.isTuningOff);
-  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, RobotMode.isTuningOff);
-  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, RobotMode.isTuningOff );
 
-  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, RobotMode.isTuningOff);
-  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, RobotMode.isTuningOff);
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, false);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, false);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, false);
+
+  private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, false);
+  private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, false);
 
   private final TurretIO io;
   private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
@@ -158,9 +161,14 @@ public class Turret extends SubsystemBase {
         (-2 * robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
       
     
-    if (isIntakeDeployed.get()){
+    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Turret)){
       io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
     }
+    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Static)){
+      io.setPosition(.5);
+    }
+
+    
 
 
 
@@ -173,10 +181,10 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/Applied",
         inputs.applied);
 
-    // if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
-    //   setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
+    if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
+      setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
 
-    // }
+    }
 
   }
 
@@ -244,5 +252,9 @@ public class Turret extends SubsystemBase {
 
   public void setPID(double P, double I, double D, double V, double S) {
     io.setPID(P, I, D, S, V);
+  }
+
+  public void changeTurretMode(TurretMode turretMode){
+    this.turretMode = turretMode;
   }
 }
