@@ -73,7 +73,9 @@ public class Visulization extends SubsystemBase {
         Logger.recordOutput("Visulization/Intake", intakePose);
         Logger.recordOutput("Visulization/Turret", turretPose);
         Logger.recordOutput("Visulization/Robot Components", new Pose3d[] { intakePose, turretPose });
-        Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d() });
+        Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d(), new Pose3d() });
+        Logger.recordOutput("Visulization/Zeroed Component", new Pose3d());
+
         Logger.recordOutput("Current Fuel Count", fuelStored);
 
         if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
