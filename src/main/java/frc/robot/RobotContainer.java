@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Intake.IntakeIOSim;
 import frc.robot.subsystems.Intake.IntakeIOTalonFX;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
@@ -197,13 +198,13 @@ public class RobotContainer {
         driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
 
 
-        // This is for the real robot
-        turret.setDefaultCommand(turret.setSmartTarget());
+        // // This is for the real robot
+        // turret.setDefaultCommand(turret.setSmartTarget());
 
         shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
         
-        // // this is for tuning
-        // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+        // this is for tuning
+        turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
         // // this is for sim
         // turret.setDefaultCommand(turret.setSmartTarget()

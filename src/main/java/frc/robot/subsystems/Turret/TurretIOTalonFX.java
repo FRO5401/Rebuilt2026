@@ -18,7 +18,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     public TurretIOTalonFX() {
         turretMotor.getConfigurator().apply(TurretConstants.CONFIG);
-        TurretConstants.encoder.setPosition(0.5 * TurretConstants.GEAR_RATIO);
+        TurretConstants.encoder.setPosition(0.49 * TurretConstants.GEAR_RATIO);
 
     }
 

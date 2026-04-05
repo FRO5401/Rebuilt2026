@@ -180,10 +180,6 @@ public class Turret extends SubsystemBase {
       io.setPosition(.5, 0);
     }
 
-    
-
-
-
         Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
 
         Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
