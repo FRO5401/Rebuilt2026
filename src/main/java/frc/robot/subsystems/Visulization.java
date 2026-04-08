@@ -25,6 +25,7 @@ import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
+import frc.robot.Utils.TunableNumber;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
@@ -46,11 +47,17 @@ public class Visulization extends SubsystemBase {
     private Transform3d turretTransform = new Transform3d(TurretConstants.TURRET_TRANSFORM.getMeasureX(),
             TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
 
-    private Translation3d turretPoseTransform = new Translation3d(-0.11, 0, 0.345);
-    private Translation3d intakePoseTransform = new Translation3d(0.215, 0, 0.178);
+    private Translation3d turretPoseTransform = new Translation3d(-0.12, 0, 0.34);
+    private Translation3d intakePoseTransform = new Translation3d(0.217, 0.0, 0.208);//new Translation3d(0.215, 0, 0.178);
+    private Translation3d hoodPoseTransform = new Translation3d(-0.09, 0, 0.445);
+
 
     private Supplier<Pose2d> robotPose;
     private Pose3d intakePose, turretPose;
+    TunableNumber xPose = new TunableNumber("Hood Pose X", 0);
+    TunableNumber zPose = new TunableNumber("Hood Pose Z", 0);
+    TunableNumber yPose = new TunableNumber("Hood Pose Y", 0);
+
 
     /** Creates a new Visulization. */
     public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
@@ -67,7 +74,7 @@ public class Visulization extends SubsystemBase {
     public void periodic() {
         turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
         intakePose = new Pose3d(intakePoseTransform,
-                new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(70).in(Radians), 0));
+                new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(90).in(Radians), 0));
     
         Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
         Logger.recordOutput("Visulization/Intake", intakePose);
@@ -75,6 +82,15 @@ public class Visulization extends SubsystemBase {
         Logger.recordOutput("Visulization/Robot Components", new Pose3d[] { intakePose, turretPose });
         Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d(), new Pose3d() });
         Logger.recordOutput("Visulization/Zeroed Component", new Pose3d());
+        Logger.recordOutput("Visulization/HoodRotation Pitch", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, Math.sin(Timer.getTimestamp()+1), 0)));
+        Logger.recordOutput("Visulization/HoodRotation Yaw", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, 0, Math.sin(Timer.getTimestamp()))));
+        Logger.recordOutput("Visulization/IntakeV2", new Pose3d(intakePoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1 ,0)));
+        Logger.recordOutput("Visulization/HoodRotation Static", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, 0, 0)));
+        Logger.recordOutput("Visulization/HoodRotation Roll", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(Math.sin(Timer.getTimestamp()), 0, 0)));
+
+// X: -0.113 Z:0.468
+
+
 
         Logger.recordOutput("Current Fuel Count", fuelStored);
 
