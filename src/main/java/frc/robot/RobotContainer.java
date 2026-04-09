@@ -37,7 +37,7 @@ import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Visulization;
+import frc.robot.subsystems.Visualization;
 import frc.robot.subsystems.CANdleSystem.AnimationTypes;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.CANdleSystem;
@@ -94,7 +94,7 @@ public class RobotContainer {
     private static Intake intake;
     private static Indexer indexer;
     private static CANdleSystem candle = new CANdleSystem();
-    private static Visulization visulization = null;
+    private static Visualization visulization = null;
 
     // Time stamps
     private Trigger gameShift;
@@ -149,7 +149,7 @@ public class RobotContainer {
                 turret = new Turret(new TurretIOSim(), drivetrain::getPose,
                         drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
                 indexer = new Indexer(new IndexerIOTalon());
-                visulization = new Visulization(fuelSim, drivetrain::getPose, turret, shooter, intake);
+                visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake);
 
                 configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
                 break;

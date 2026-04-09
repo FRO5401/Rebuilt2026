@@ -30,7 +30,7 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
 
-public class Visulization extends SubsystemBase {
+public class Visualization extends SubsystemBase {
 
     private FuelSim fuelSim;
     private Turret turret;
@@ -38,6 +38,7 @@ public class Visulization extends SubsystemBase {
     @SuppressWarnings("unused")
     private Shooter shooter;
     private Intake intake;
+    private CommandSwerveDrivetrain drivetrain;
 
     private final double CAPACITY = 24;
     private double fuelStored = 8;
@@ -45,24 +46,19 @@ public class Visulization extends SubsystemBase {
     private Timer shootTimer = new Timer();
 
     private Transform3d turretTransform = new Transform3d(TurretConstants.TURRET_TRANSFORM.getMeasureX(),
-            TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
+        TurretConstants.TURRET_TRANSFORM.getMeasureY(), Inches.of(18), Rotation3d.kZero);
 
+    private Translation3d drivetrainTransform = new Translation3d(0, 0, -0.025);
+    private Translation3d intakePoseTransform = new Translation3d(0.217, 0.0, 0.208);
     private Translation3d turretPoseTransform = new Translation3d(-0.12, 0, 0.34);
-    private Translation3d intakePoseTransform = new Translation3d(0.217, 0.0, 0.208);//new Translation3d(0.215, 0, 0.178);
-    private Translation3d hoodPoseTransform = new Translation3d(-0.09, 0, 0.445);
+    private Translation3d hoodPoseTransform = drivetrainTransform.plus(new Translation3d(-0.09, 0, 0.445));
 
+    private Pose3d robotPose, intakePose, turretPose, hoodPose;
 
-    private Supplier<Pose2d> robotPose;
-    private Pose3d intakePose, turretPose;
-    TunableNumber xPose = new TunableNumber("Hood Pose X", 0);
-    TunableNumber zPose = new TunableNumber("Hood Pose Z", 0);
-    TunableNumber yPose = new TunableNumber("Hood Pose Y", 0);
-
-
-    /** Creates a new Visulization. */
-    public Visulization(FuelSim fuelSim, Supplier<Pose2d> robotPose, Turret turret, Shooter shooter, Intake intake) {
+    /** Creates a new Visualization. */
+    public Visualization(FuelSim fuelSim, CommandSwerveDrivetrain drivetrain, Turret turret, Shooter shooter, Intake intake) {
         this.fuelSim = fuelSim;
-        this.robotPose = robotPose;
+        this.drivetrain = drivetrain;
         this.turret = turret;
         this.shooter = shooter;
         this.intake = intake;
@@ -72,26 +68,26 @@ public class Visulization extends SubsystemBase {
 
     @Override
     public void periodic() {
-        turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
+        robotPose = new Pose3d(drivetrain.getPose());
+
         intakePose = new Pose3d(intakePoseTransform,
                 new Rotation3d(0, Rotations.of(intake.getPivotPosition()).in(Radians) - Degrees.of(90).in(Radians), 0));
-    
-        Logger.recordOutput("Visulization/Robot Pose", robotPose.get());
-        Logger.recordOutput("Visulization/Intake", intakePose);
-        Logger.recordOutput("Visulization/Turret", turretPose);
-        Logger.recordOutput("Visulization/Robot Components", new Pose3d[] { intakePose, turretPose });
-        Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d(), new Pose3d() });
-        Logger.recordOutput("Visulization/Zeroed Component", new Pose3d());
-        Logger.recordOutput("Visulization/HoodRotation Pitch", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, Math.sin(Timer.getTimestamp()+1), 0)));
-        Logger.recordOutput("Visulization/HoodRotation Yaw", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, 0, Math.sin(Timer.getTimestamp()))));
-        Logger.recordOutput("Visulization/IntakeV2", new Pose3d(intakePoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1 ,0)));
-        Logger.recordOutput("Visulization/HoodRotation Static", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(0, 0, 0)));
-        Logger.recordOutput("Visulization/HoodRotation Roll", new Pose3d(xPose.get(), yPose.get(), zPose.get(), new Rotation3d(Math.sin(Timer.getTimestamp()), 0, 0)));
 
+        turretPose = new Pose3d(turretPoseTransform, new Rotation3d(0, 0, turret.getTurretAngle().in(Radians)));
+        hoodPose = new Pose3d(hoodPoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp()+1), 0)).rotateAround(turretPoseTransform, turretPose.getRotation());
+
+        Logger.recordOutput("Visualization/Robot Pose", robotPose);
+        Logger.recordOutput("Visualization/Intake", intakePose);
+        Logger.recordOutput("Visualization/Turret", turretPose);
+        Logger.recordOutput("Visualization/Hood Pose", hoodPose);
+
+        Logger.recordOutput("Visualization/Robot Components", new Pose3d[] {intakePose, turretPose, hoodPose});
+        Logger.recordOutput("Visualization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d(), new Pose3d() });
+        Logger.recordOutput("Visualization/Zeroed Component", new Pose3d());
+        Logger.recordOutput("Visualization/HoodRotation Pitch", new Pose3d(hoodPoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp()+1), turret.getTurretAngle().in(Radians))));
+        Logger.recordOutput("Visualization/IntakeV2", new Pose3d(intakePoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp())-1 ,0)));
+        
 // X: -0.113 Z:0.468
-
-
-
         Logger.recordOutput("Current Fuel Count", fuelStored);
 
         if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
