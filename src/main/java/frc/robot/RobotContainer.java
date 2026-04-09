@@ -212,26 +212,29 @@ public class RobotContainer {
         //         MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))))
         // );
 
-        // // this is for tuning
+        // // // this is for tuning
         // operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
         //     () -> RotationsPerSecond.of(ShooterRPM.get()), intake::getDesiredAngle)),
-        //     new SequentialCommandGroup(Commands.waitSeconds(.2), indexer.setIndexerCommand(()-> .8, () -> 11.0)))
+        //     new SequentialCommandGroup(Commands.waitSeconds(.2), indexer.setIndexerCommand(()-> .9, () -> 11.0)))
         // );
 
-    operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-    () -> RotationsPerSecond
-      .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-    intake::getDesiredAngle)),
-        new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0),Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+        operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
+            () -> RotationsPerSecond
+                .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+            intake::getDesiredAngle)),
+            new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0),Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
+        );
 
         operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
         operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
         operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
         operator.a().onTrue(intake.setPivotPositionCommand(0));
+        operator.b().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE*.91));
 
         operator.leftTrigger().whileTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED))
             .onFalse(intake.setInfeedVelocityCommand(0));
+        operator.leftBumper().whileTrue(intake.setInfeedVelocityCommand(-IntakeConstants.INTAKE_SPEED)).onFalse(intake.setInfeedVelocityCommand(0));
 
         operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
         operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
