@@ -210,54 +210,45 @@ public final class Constants {
         FLYWHEEL_MAP.put(1.6172356882170904, 39.5);
         FLYWHEEL_MAP.put(1.977663678422591, 40.7);
         FLYWHEEL_MAP.put(2.2378909448326656, 43.0);
-        FLYWHEEL_MAP.put(2.5213633269563562, 44.3);
+        FLYWHEEL_MAP.put(2.5213633269563562, 44.7);
         FLYWHEEL_MAP.put(3.091547381937533, 49.5);
-        FLYWHEEL_MAP.put(3.6371098950713048, 54d-.3);
-        FLYWHEEL_MAP.put(3.8381558375194516, 55.9-.3);
-        FLYWHEEL_MAP.put(4.228989917893823, 57.9-.55);
-        FLYWHEEL_MAP.put(4.611644034532603, 60.4-.5);
-        FLYWHEEL_MAP.put(4.806505964322358, 63.5-.5);
-        FLYWHEEL_MAP.put(5.0866738021581, 64.8d-.4);
-        FLYWHEEL_MAP.put(5.843456367540876, 75d-.3);
+        FLYWHEEL_MAP.put(3.6371098950713048, 54d-.5);
+        FLYWHEEL_MAP.put(3.8381558375194516, 55.9-.6);
+        FLYWHEEL_MAP.put(4.228989917893823, 57.9-.8);
+        FLYWHEEL_MAP.put(4.611644034532603, 60.4-.8);
+        FLYWHEEL_MAP.put(4.806505964322358, 63.5-.8);
+        FLYWHEEL_MAP.put(5.0866738021581, 64.8d-.8);
+        FLYWHEEL_MAP.put(5.843456367540876, 73d-.3);
+
+        TOF_MAP.put(1.6149594667137919, 6.81 - 5.64);
+        TOF_MAP.put(1.9867200766826991, 3.55 - 2.7);
+        TOF_MAP.put(2.2446608794147713, 3.64 - 2.7);
+        TOF_MAP.put(3.03075196441775, 3.05 - 2.0);
+        TOF_MAP.put(3.6647840664255824, 3.33 - 2.08);
+        TOF_MAP.put(3.834317519869832, 3.55 - 2.26);
+        TOF_MAP.put(4.267547322378903, 4.12 - 2.78);
+        TOF_MAP.put(4.7887441049103865, 3.85 - 2.41);
+        TOF_MAP.put(5.030931927037597, 5.51 - 3.99);
+
+
+        //REDO THIS POINT
+        //TOF_MAP.put(2.5765807086783186);
 
 
 
+        //     // OLD Time of Flight Interpolating Map
+        //     TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
+        //     TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);
+        //     TOF_MAP.put(-48.564590602080635, 3.325 - 2.20);
+        //     TOF_MAP.put(-56.61023365424546, 4.878 - 3.51);
+        //     TOF_MAP.put(-54.45611853982277, 7.536 - 6.22);
 
-
-        // BENSALEM Flywheel Velocity Interpolating Map
-        //     FLYWHEEL_MAP.put(1.5437171376305936, 40.0);
-        //     FLYWHEEL_MAP.put(1.9579019624329193, 44.4);
-        //     FLYWHEEL_MAP.put(2.243642057323107, 44.9);
-        //     FLYWHEEL_MAP.put(2.4773555790964834, 46.2);
-        //     FLYWHEEL_MAP.put(2.580118241539039, 46.9);
-        //     FLYWHEEL_MAP.put(2.762545007200165, 48.0);
-        //     FLYWHEEL_MAP.put(2.9690895534584527, 48.9);
-        //     FLYWHEEL_MAP.put(3.2598757767863358, 53.0);
-        //     FLYWHEEL_MAP.put(3.5025031777035407, 55.1 - 2);
-        //     FLYWHEEL_MAP.put(3.7515509451943614, 57.4 - 2);
-
-        //     FLYWHEEL_MAP.put(3.931132241158132, 58.6 - 2.3);
-        //     FLYWHEEL_MAP.put(4.234808964168099, 61.4 - 2.3);
-        //     FLYWHEEL_MAP.put(4.486896019541133, 63.4 - 2.5);
-        //     FLYWHEEL_MAP.put(4.737732528754779, 66.3 - 2.5);
-        //     FLYWHEEL_MAP.put(5.039099787600017, 68.7 - 1.9);
-        //     FLYWHEEL_MAP.put(5.232601376263012, 71.3 - 2.0);
-        //     FLYWHEEL_MAP.put(5.546327985048606, 72.5 - 2.8);
-        //     FLYWHEEL_MAP.put(6.006910981899345, 89.4 - 2.8);
-
-            // Time of Flight Interpolating Map
-            TOF_MAP.put(-39.51678196822748, 5.64 - 4.9);
-            TOF_MAP.put(-43.8392300474685, 1.56 - 0.63);
-            TOF_MAP.put(-48.564590602080635, 3.325 - 2.20);
-            TOF_MAP.put(-56.61023365424546, 4.878 - 3.51);
-            TOF_MAP.put(-54.45611853982277, 7.536 - 6.22);
-
-            TOF_MAP.put(-65.01477348760973, 10.44 - 8.95);
-            TOF_MAP.put(-56.603308217465546, 5.57 - 4.20);
-            TOF_MAP.put(-43.4210927573636, 3.115 - 2.13);
-            TOF_MAP.put(-57.324515607256586, 5.64 - 4.24);
-            TOF_MAP.put(-70.4731497869255, 7.54 - 5.9);
-            TOF_MAP.put(-83.5442041114383, 13.53 - 11.65);
+        //     TOF_MAP.put(-65.01477348760973, 10.44 - 8.95);
+        //     TOF_MAP.put(-56.603308217465546, 5.57 - 4.20);
+        //     TOF_MAP.put(-43.4210927573636, 3.115 - 2.13);
+        //     TOF_MAP.put(-57.324515607256586, 5.64 - 4.24);
+        //     TOF_MAP.put(-70.4731497869255, 7.54 - 5.9);
+        //     TOF_MAP.put(-83.5442041114383, 13.53 - 11.65);
 
         }
 
@@ -269,7 +260,7 @@ public final class Constants {
 
         public static final int INFEED_ID = 21;
 
-        public static final double INTAKE_SPEED = 0.7;
+        public static final double INTAKE_SPEED = 0.6;
 
         public static final double PIVOT_GEAR_RATIO = 45;
         public static final double INFEED_GEAR_RATIO = 9;

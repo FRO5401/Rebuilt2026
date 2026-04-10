@@ -136,7 +136,7 @@ public class Turret extends SubsystemBase {
 
             for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
                 tof = ShooterConstants.TOF_MAP
-                        .get(-ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
+                        .get(MathHelp.findDistance(poseDifference).in(Meters));
                 poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM)
                         .minus(target.plus(robotVelocities.inverse()));
 
