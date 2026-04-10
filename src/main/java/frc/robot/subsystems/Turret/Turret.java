@@ -136,7 +136,7 @@ public class Turret extends SubsystemBase {
 
             for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
                 tof = ShooterConstants.TOF_MAP
-                        .get(-ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(poseDifference).in(Meters)));
+                        .get(MathHelp.findDistance(poseDifference).in(Meters));
                 poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM)
                         .minus(target.plus(robotVelocities.inverse()));
 
@@ -178,12 +178,7 @@ public class Turret extends SubsystemBase {
     }
     if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Static)){
       io.setPosition(.5, 0);
-    }
-
-    
-
-
-
+    }    
         Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
 
         Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));

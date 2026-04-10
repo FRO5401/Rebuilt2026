@@ -72,10 +72,7 @@ public class CANdleSystem extends SubsystemBase {
     private final CANdle m_candle = new CANdle(19);
     // private XboxController joystick;
     private int m_candleChannel = 8;
-    private boolean m_clearAllAnims = false;
-    private boolean m_last5V = false;
     private boolean m_animDirection = false;
-    private boolean m_setAnim = false;
 
     public enum AnimationTypes {
         ColorFlow,
@@ -93,7 +90,6 @@ public class CANdleSystem extends SubsystemBase {
         Climb
     }
 
-    private AnimationTypes mAnimationTypes;
 
     public CANdleSystem() {
         // this.joystick = joy;
@@ -139,7 +135,6 @@ public class CANdleSystem extends SubsystemBase {
     }
 
     public void changeAnimation(AnimationTypes toChange) {
-        mAnimationTypes = toChange;
 
         switch (toChange) {
             default:
@@ -198,7 +193,7 @@ public class CANdleSystem extends SubsystemBase {
     }
 
     public void clearAllAnims() {
-        m_clearAllAnims = true;
+
     }
 
     @Override
