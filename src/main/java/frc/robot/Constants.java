@@ -64,6 +64,34 @@ import frc.robot.generated.TunerConstants;
  */
 public final class Constants {
 
+    public static final class HoodConstants {
+        public static final Current STATOR_LIMIT = Amps.of(60);
+        public static final Current SUPPLY_LIMIT = Amps.of(60);
+        public static final double GEAR_RATIO = 9;
+
+        public static final double KP = 0;
+        public static final double KI = 0;
+        public static final double KD = 0;
+
+        public static final double KFF = 0;
+
+        public static final MotorOutputConfigs OUTPUT_CONFIGS = new MotorOutputConfigs()
+                .withInverted(InvertedValue.Clockwise_Positive)
+                .withNeutralMode(NeutralModeValue.Brake);
+        
+        public static final FeedbackConfigs FEEDBACK_CONFIGS = new FeedbackConfigs()
+                .withSensorToMechanismRatio(GEAR_RATIO);
+
+        public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIGS = new CurrentLimitsConfigs()
+                .withStatorCurrentLimit(STATOR_LIMIT)
+                .withSupplyCurrentLimit(SUPPLY_LIMIT);
+
+        public static final Slot0Configs CLOSED_LOOP = new Slot0Configs()
+                .withKP(KP)
+                .withKI(KI)
+                .withKD(KD);
+    }
+
     public static final class TurretConstants {
 
         public static final Current STATOR_LIMIT = Amps.of(60);
