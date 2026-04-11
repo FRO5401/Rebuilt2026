@@ -193,7 +193,7 @@ public class RobotContainer {
         // This is for the real robot
         turret.setDefaultCommand(turret.setSmartTarget());
 
-        shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+        operator.rightTrigger().onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
         // // this is for tuning
         // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
@@ -261,6 +261,7 @@ public class RobotContainer {
         autoChooser.addRoutine("DepotBumpSwipe", autos::DepotBumpSwipe);
         autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
         autoChooser.addRoutine("DepotSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
+        autoChooser.addRoutine("RightSingleTrench", autos::rightSingleTrenchAuto);
         autoChooser.addRoutine("DepotThenSwipe", autos::depotWithSwipe);
         autoChooser.addRoutine("DepotGrab", autos::depotWithoutSwipe);
 

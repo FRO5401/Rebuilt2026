@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
@@ -24,6 +26,7 @@ public class Autos {
     Intake intake;
     Shooter shooter;
     Indexer indexer;
+    CommandSwerveDrivetrain drivetrain;
 
     public Autos(CommandSwerveDrivetrain drivetrain, Turret turret, Intake intake,
             Shooter shooter, Indexer indexer) {
@@ -31,20 +34,27 @@ public class Autos {
         this.intake = intake;
         this.shooter = shooter;
         this.indexer = indexer;
+        this.drivetrain = drivetrain;
         autoFactory = new AutoFactory(drivetrain::getPose, drivetrain::resetPose,
                 drivetrain::followTrajectory, true, drivetrain);
         autoFactory.bind("Intake", (intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1))));
+                        IntakeConstants.INTAKE_SPEED + .3))));
+
         autoFactory.bind("IntakeOff", intake.setInfeedVelocityCommand(0));
+
         autoFactory.bind("Init", Commands.repeatingSequence(shooter.setVelocity(
-                () -> RotationsPerSecond.of(ShooterConstants.FLYWHEEL_MAP.get(
-                        MathHelp.findDistance(turret.getPoseDifference())
-                                .baseUnitMagnitude())),
-                intake::getDesiredAngle))
-                .alongWith(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                () -> RotationsPerSecond
+                        .of(ShooterConstants.FLYWHEEL_MAP
+                                .get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+                intake::getDesiredAngle)));
+
+        autoFactory.bind("start", Commands.repeatingSequence(shooter.setVelocity(
+                () -> RotationsPerSecond
+                        .of(ShooterConstants.FLYWHEEL_MAP
+                                .get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+                intake::getDesiredAngle)));
     }
 
     public AutoRoutine testAuto() {
@@ -86,7 +96,7 @@ public class Autos {
         firstGrab.active().onTrue(intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                        IntakeConstants.INTAKE_SPEED + .1)));
 
         routine.active().onTrue(Commands.sequence(firstGrab.resetOdometry(),
                 firstGrab.cmd()));
@@ -118,7 +128,7 @@ public class Autos {
         firstGrab.active().onTrue(intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                        IntakeConstants.INTAKE_SPEED + .1)));
 
         routine.active().onTrue(
                 Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
@@ -139,12 +149,12 @@ public class Autos {
     public AutoRoutine rightSingleTrenchAuto() {
         AutoRoutine routine = autoFactory.newRoutine("RightTrenchSweep");
 
-        AutoTrajectory firstGrab = routine.trajectory("LeftTrenchSweep");
+        AutoTrajectory firstGrab = routine.trajectory("RightTrenchSweep");
 
         firstGrab.active().onTrue(intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                        IntakeConstants.INTAKE_SPEED + .1)));
 
         routine.active().onTrue(
                 Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
@@ -154,10 +164,10 @@ public class Autos {
                         () -> 11.0))).andThen(
                 intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE))
-                .andThen(Commands.waitSeconds(4))
+                .andThen(Commands.waitSeconds(3))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
-                        * .3)));
+                        * .3)).andThen(Commands.waitSeconds(2)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
 
         return routine;
     }
@@ -170,7 +180,7 @@ public class Autos {
         firstGrab.active().onTrue(intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                        IntakeConstants.INTAKE_SPEED + .1)));
 
         routine.active().onTrue(
                 Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
@@ -209,15 +219,23 @@ public class Autos {
         AutoTrajectory traj = routine.trajectory("Depot");
         AutoTrajectory swipe = routine.trajectory("LeftTrenchSweep2");
 
+        traj.active().onTrue(Commands.repeatingSequence(shooter.setVelocity(
+                () -> RotationsPerSecond.of(ShooterConstants.FLYWHEEL_MAP.get(
+                        MathHelp.findDistance(turret.getPoseDifference())
+                                .baseUnitMagnitude())),
+                intake::getDesiredAngle))
+                .alongWith(intake.setInfeedVelocityCommand(
+                        IntakeConstants.INTAKE_SPEED + .1).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE *.9))));
+
         swipe.active().onTrue(intake
                 .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
                 .andThen(intake.setInfeedVelocityCommand(
-                        IntakeConstants.INTAKE_SPEED - .1)));
+                        IntakeConstants.INTAKE_SPEED + .1)));
 
         routine.active().onTrue(
                 Commands.sequence(traj.resetOdometry(), traj.cmd()));
 
-        traj.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+        traj.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> -.5,() -> -11.0)),
                 Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
                         () -> 11.0))).andThen(
                 intake.setInfeedVelocityCommand(
@@ -229,12 +247,16 @@ public class Autos {
 
         traj.done().onTrue(swipe.cmd());
 
-        swipe.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
-                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
+        swipe.active().onTrue(indexer.setIndexerCommand(()->0.0, ()->0.0).alongWith(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
+
+        swipe.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> -.5,() -> -11.0)),
+                Commands.waitSeconds(.2
+
+                ).andThen(indexer.setIndexerCommand(() -> .8,
                         () -> 11.0))).andThen(
                 intake.setInfeedVelocityCommand(
                         IntakeConstants.INTAKE_SPEED))
-                .andThen(Commands.waitSeconds(4))
+                .andThen(Commands.waitSeconds(2))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
                         * .4)));
@@ -248,8 +270,18 @@ public class Autos {
 
         AutoTrajectory traj = routine.trajectory("Depot");
 
+        traj.active().onTrue(Commands.repeatingSequence(shooter.setVelocity(
+                () -> RotationsPerSecond.of(ShooterConstants.FLYWHEEL_MAP.get(
+                        MathHelp.findDistance(turret.getPoseDifference())
+                                .baseUnitMagnitude())),
+                intake::getDesiredAngle))
+                .alongWith(intake.setInfeedVelocityCommand(
+                        IntakeConstants.INTAKE_SPEED + .1).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE *.9))));
+
         routine.active().onTrue(
                 Commands.sequence(traj.resetOdometry(), traj.cmd()));
+
+        traj.atTime("Stop").onTrue(drivetrain.applyRequest(() -> new SwerveRequest.SwerveDriveBrake()));
 
         traj.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
                 Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
