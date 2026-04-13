@@ -214,7 +214,7 @@ public class RobotContainer {
                 new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0), Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
         );
 
-        operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
+        operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0).andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
 
         operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
         operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));

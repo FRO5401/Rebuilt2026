@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -40,13 +38,22 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Pound;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import frc.robot.Utils.Zones.Triangle.TriangleBound;
 import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
+import frc.robot.Utils.Zones.Triangle.TriangleBound;
 import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
 import frc.robot.generated.TunerConstants;
 
@@ -424,13 +431,13 @@ public final class Constants {
 
         public static final Pose2d RED_HUB_TARGET = new Pose2d(11.75, 4, new Rotation2d());
 
-        public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
+        public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2.5, new Rotation2d());
 
-        public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 7, new Rotation2d());
+        public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 6.5, new Rotation2d());
 
-        public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 7, new Rotation2d());
+        public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 6.5, new Rotation2d());
 
-        public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2, new Rotation2d());
+        public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2.5, new Rotation2d());
 
         public enum CurrentZone {
             RED,
