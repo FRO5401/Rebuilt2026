@@ -7,7 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -65,6 +65,9 @@ import frc.robot.generated.TunerConstants;
 public final class Constants {
 
     public static final class HoodConstants {
+        public static final int HOOD_MOTOR_ID = 0;
+        public static final int HOOD_ENCODER_ID = 0;
+
         public static final Current STATOR_LIMIT = Amps.of(60);
         public static final Current SUPPLY_LIMIT = Amps.of(60);
         public static final double GEAR_RATIO = 9;
@@ -96,6 +99,13 @@ public final class Constants {
                 .withFeedback(FEEDBACK_CONFIGS)
                 .withCurrentLimits(CURRENT_LIMITS_CONFIGS)
                 .withSlot0(CLOSED_LOOP);
+
+        public static final CANcoderConfiguration ENCODER_CONFIG = new CANcoderConfiguration();
+
+        public enum HoodMode{
+                Static,
+                Dynamic
+        }
     }
 
     public static final class TurretConstants {

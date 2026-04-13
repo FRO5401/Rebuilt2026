@@ -1,75 +1,75 @@
 {
-    "name" : "AurorusEX",
-    "rotations" : [
+  "name": "AurorusEX",
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": 90
+    }
+  ],
+  "position": [
+    0,
+    0,
+    0.025
+  ],
+  "components": [
+    {
+      "zeroedRotations": [
         {
-            "axis" : "x",
-            "degrees" : 90
+          "axis": "x",
+          "degrees": 90
         },
         {
-            "axis" : "z",
-            "degrees" : 90
+          "axis": "z",
+          "degrees": 90
         }
-    ],
-    "position" : [
+      ],
+      "zeroedPosition": [
+        -0.217,
         0,
-        0,
-        0.025
-    ],
-    "components" : [
+        -0.182
+      ]
+    },
+    {
+      "zeroedRotations": [
         {
-            "zeroedRotations" : [
-                {
-                    "axis" : "x",
-                    "degrees" : 90
-                },
-                {
-                    "axis" : "z",
-                    "degrees" : 90
-                }
-            ],
-            "zeroedPosition": [
-                -0.217,
-                0,
-                -0.182
-            ]
-        },        
-        {
-            "zeroedRotations" : [
-                {
-                    "axis" : "x",
-                    "degrees" : 90
-                },
-                {
-                    "axis" : "z",
-                    "degrees" : 90
-                },
-                {"axis" : "y",
-                 "degrees" : 0
-                }
-            ],
-            "zeroedPosition": [
-                0.12,
-                0.0,
-                -0.315
-            ]
+          "axis": "x",
+          "degrees": 90
         },
-                {
-            "zeroedRotations" : [
-                {
-                    "axis" : "x",
-                    "degrees" : 90
-                },
-                {
-                    "axis" : "z",
-                    "degrees" : 90
-                }
-            ],
-            "zeroedPosition": [
-                0.09,
-                0.0,
-                -0.415
-            ]
+        {
+          "axis": "z",
+          "degrees": 90
+        },
+        {
+          "axis": "y",
+          "degrees": 0
         }
-    ]
-
+      ],
+      "zeroedPosition": [
+        0.12,
+        0.0,
+        -0.315
+      ]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        0.09,
+        0.0,
+        -0.415
+      ]
+    }
+  ]
 }
