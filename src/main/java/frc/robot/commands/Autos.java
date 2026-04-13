@@ -186,14 +186,14 @@ public class Autos {
                 Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
-                Commands.waitSeconds(.3).andThen(indexer.setIndexerCommand(() -> .8,
+                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
                         () -> 11.0))).andThen(
-                intake.setPivotPositionCommand(
-                        IntakeConstants.INTAKE_OUT_POSE))
+                intake.setInfeedVelocityCommand(
+                        IntakeConstants.INTAKE_SPEED))
                 .andThen(Commands.waitSeconds(4))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
-                        * .3)));
+                        * .4)));
 
         return routine;
     }
