@@ -3,12 +3,12 @@ package frc.robot.Utils;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 
 public class HubTracker {
     // TODO Find this value after I charge my phone
-    public static final double HUB_PROCESS_TIME = 0.05;
+    public static final double HUB_PROCESS_TIME = 13.6-12.56; 
     public static HubTracker instance;
     private Timer matchTimer = new Timer();
     private Shift closestActiveShift = Shift.AUTO;
