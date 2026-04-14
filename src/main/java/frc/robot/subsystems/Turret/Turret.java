@@ -146,7 +146,7 @@ public class Turret extends SubsystemBase {
                         Rotation2d.kZero);
             }
 
-            Logger.recordOutput("Scoring/Will Shots Count", HubTracker.getInstance().willShotsCount(tof.doubleValue()));
+            Logger.recordOutput("Scoring/Will Shots Count", willShotCount(tof));
 
             Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
@@ -266,5 +266,9 @@ public class Turret extends SubsystemBase {
 
     public void changeTurretMode(TurretMode turretMode) {
         this.turretMode = turretMode;
+    }
+
+    public boolean willShotCount(double toF){
+        return HubTracker.getInstance().willShotsCount(toF);
     }
 }
