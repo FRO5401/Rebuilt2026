@@ -7,8 +7,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class HubTracker {
+    // TODO Find this value after I charge my phone
+    public static final double HUB_PROCESS_TIME = 0.05;
     public static HubTracker instance;
     private Timer matchTimer = new Timer();
+    private Shift closestActiveShift = Shift.AUTO;
 
     private HubTracker() {}
 
@@ -34,10 +37,26 @@ public class HubTracker {
         return 140 - matchTimer.get();
     }
 
+    /**
+     * 
+     * @return Returns the more accurate match time between driverstation and custom timer
+     */
     public double getMatchTime() {
         // checks if the timers are within a second and return the more accurate time
-        return (getDriverStationTime() % 3 == 0 && !MathHelp.epsilonEquals(getDriverStationTime(), getTimerTime(), 1.01)) ? 
-            getDriverStationTime() : getTimerTime();
+        return (isTimerCorrect()) ? getTimerTime() : getDriverStationTime();
+    }
+    
+    /**
+     * Checks if Timers are between a second of each other or if the custom timer is ahead due to Driverstation relay time
+     * @return if the Custom Timer is truly correct return true else false
+     */
+    protected boolean isTimerCorrect(){
+        return (
+            MathHelp.epsilonEquals(getDriverStationTime(), getTimerTime(), 1.01) || 
+            (getTimerTime() > getDriverStationTime() && 
+            getTimerTime() >= 0 && 
+            getTimerTime() <= 140)
+        );
     }
 
     public double getShiftTimeCountdown() {
@@ -84,6 +103,27 @@ public class HubTracker {
         }
     }
 
+    public Shift getTimeShift(double time) {
+        if (DriverStation.isAutonomous() && time >= Shift.AUTO.getEndTime()) {
+            return Shift.AUTO;
+        }
+        if (time >= Shift.TRANSITION.getEndTime()) {
+            return Shift.TRANSITION;
+        } else if (time >= Shift.SHIFT_1.getEndTime()) {
+            return Shift.SHIFT_1;
+        } else if (time >= Shift.SHIFT_2.getEndTime()) {
+            return Shift.SHIFT_2;
+        } else if (time >= Shift.SHIFT_3.getEndTime()) {
+            return Shift.SHIFT_3;
+        } else if (time >= Shift.SHIFT_4.getEndTime()) {
+            return Shift.SHIFT_4;
+        } else if (time >= Shift.END_GAME.getEndTime()) {
+            return Shift.END_GAME;
+        } else {
+            return Shift.UNKNOWN;
+        }
+    }
+
     public boolean isHubActive() {
         if (getAutoWinner().isEmpty()) {
             return false;
@@ -95,6 +135,23 @@ public class HubTracker {
             return getCurrentShift().getActiveType().equals(ActiveType.AUTO_LOSER)
                     || getCurrentShift().getActiveType().equals(ActiveType.BOTH);
         }
+    }
+
+    public Shift getClosestActiveShift(){
+        if (isHubActive()) {
+            closestActiveShift = getCurrentShift();
+        } else if (getTimeShift(getMatchTime()+((getCurrentShift().startTime - getCurrentShift().endTime)/2)).equals(closestActiveShift)) {
+            closestActiveShift = getTimeShift(getMatchTime()+((getCurrentShift().startTime - getCurrentShift().endTime)/2));
+        } else {
+            closestActiveShift = getTimeShift(getMatchTime()-((getCurrentShift().startTime - getCurrentShift().endTime)/2));
+        }
+        return closestActiveShift;
+    }
+
+    public boolean willShotsCount(double tof){
+        tof = tof + HUB_PROCESS_TIME;
+        // Time counts down
+        return (getMatchTime() - tof <= getClosestActiveShift().startTime) && (getMatchTime() - tof >= getClosestActiveShift().endTime - 3);
     }
 
     public enum ActiveType {
