@@ -33,6 +33,7 @@ import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.TurretConstants.TurretMode;
+import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
 import frc.robot.Utils.ZoneGetter;
@@ -145,6 +146,11 @@ public class Turret extends SubsystemBase {
                         fieldSpeeds.vyMetersPerSecond * tof,
                         Rotation2d.kZero);
             }
+
+            Logger.recordOutput("Scoring/Will Shots Count", HubTracker.getInstance().willShotsCount(tof.doubleValue()));
+            Logger.recordOutput("Scoring/ToF", tof.doubleValue());
+            Logger.recordOutput("Scoring/Will Shots Count", HubTracker.getInstance().getClosestActiveShift());
+
 
             Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
