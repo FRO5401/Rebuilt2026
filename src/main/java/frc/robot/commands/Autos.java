@@ -133,12 +133,12 @@ public class Autos {
         routine.active().onTrue(
                 Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
 
-        firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
-                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
+      firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> -.5,() -> -11.0)),
+                Commands.waitSeconds(.2).andThen(indexer.setIndexerCommand(() -> .8,
                         () -> 11.0))).andThen(
                 intake.setInfeedVelocityCommand(
                         IntakeConstants.INTAKE_SPEED))
-                .andThen(Commands.waitSeconds(4))
+                .andThen(Commands.waitSeconds(2))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
                         * .4)));

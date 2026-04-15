@@ -82,7 +82,7 @@ public final class Constants {
         public static final double KD = 3.7;
 
         public static final double KS = 0;
-        public static final double KV = 5.5;
+        public static final double KV = 10.5;
 
         public static final double KP_SIM = 10;
         public static final double KI_SIM = 0.0;
@@ -217,13 +217,13 @@ public final class Constants {
         FLYWHEEL_MAP.put(1.6172356882170904, 39.5);
         FLYWHEEL_MAP.put(1.977663678422591, 40.7);
         FLYWHEEL_MAP.put(2.2378909448326656, 43.0);
-        FLYWHEEL_MAP.put(2.5213633269563562, 44.7);
-        FLYWHEEL_MAP.put(3.091547381937533, 49.5);
+        FLYWHEEL_MAP.put(2.5213633269563562, 44.7-.5);
+        FLYWHEEL_MAP.put(3.091547381937533, 49.5-.5);
         FLYWHEEL_MAP.put(3.6371098950713048, 54d-.5);
         FLYWHEEL_MAP.put(3.8381558375194516, 55.9-.6);
         FLYWHEEL_MAP.put(4.228989917893823, 57.9-.8);
-        FLYWHEEL_MAP.put(4.611644034532603, 60.4-.8);
-        FLYWHEEL_MAP.put(4.806505964322358, 63.5-.8);
+        FLYWHEEL_MAP.put(4.611644034532603, 60.4-1);
+        FLYWHEEL_MAP.put(4.806505964322358, 63.5-1);
         FLYWHEEL_MAP.put(5.0866738021581, 64.8d-.8);
         FLYWHEEL_MAP.put(5.843456367540876, 73d-.3);
 
