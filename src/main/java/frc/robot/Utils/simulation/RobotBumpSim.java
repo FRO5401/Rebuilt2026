@@ -7,7 +7,7 @@
 //
 // Claude Sonnet 4.6 is used for code generation and refactoring.
 
-package frc.robot.utils.simulation;
+package frc.robot.Utils.simulation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;

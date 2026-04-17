@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems.Intake;
 
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.utils.TunableNumber;
+import frc.robot.Utils.TunableNumber;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO io;
@@ -27,7 +26,6 @@ public class Intake extends SubsystemBase {
     private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
     private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
 
-    /** Creates a new Intake. */
     public Intake(IntakeIO m_io) {
         this.io = m_io;
         io.setPivotPID(IntakeConstants.kp, 0, IntakeConstants.kd, IntakeConstants.kv, IntakeConstants.ks);
@@ -35,7 +33,6 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
         io.updateIntakeInputs(pivotInputs, infeedInputs);
         Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
         Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
@@ -43,7 +40,7 @@ public class Intake extends SubsystemBase {
 
         Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
 
-        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged()|| kv.hasChanged() || ks.hasChanged()) {
+        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || kv.hasChanged() || ks.hasChanged()) {
             io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
         }
 
@@ -72,7 +69,6 @@ public class Intake extends SubsystemBase {
         return pivotInputs.angle;
     }
 
-    // TODO: may change naming format
     public Command setPivotPositionCommand(double angle) {
         return runOnce(() -> setPivotPosition(angle));
     }
@@ -81,11 +77,11 @@ public class Intake extends SubsystemBase {
         return runOnce(() -> setInfeedVelocity(percent));
     }
 
-    public double getDesiredAngle(){
+    public double getDesiredAngle() {
         return desiredAngle;
     }
 
-    public Boolean isNotStartingPose(){
+    public Boolean isNotStartingPose() {
         return (getDesiredAngle() != 0);
     }
 }

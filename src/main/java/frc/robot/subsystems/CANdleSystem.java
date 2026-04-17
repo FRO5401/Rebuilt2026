@@ -72,11 +72,7 @@ public class CANdleSystem extends SubsystemBase {
     private final CANdle m_candle = new CANdle(19);
     // private XboxController joystick;
     private int m_candleChannel = 8;
-    private boolean m_clearAllAnims = false;
-    private boolean m_last5V = false;
     private boolean m_animDirection = false;
-    private boolean m_setAnim = false;
-
 
     public enum AnimationTypes {
         ColorFlow,
@@ -94,7 +90,6 @@ public class CANdleSystem extends SubsystemBase {
         Climb
     }
 
-    private AnimationTypes mAnimationTypes;
 
     public CANdleSystem() {
         // this.joystick = joy;
@@ -109,9 +104,9 @@ public class CANdleSystem extends SubsystemBase {
     }
 
     // public void toggle5VOverride() {
-    //     System.out.println("State is: " + m_last5V);
-    //     m_candle.configV5Enabled(m_last5V);
-    //     m_last5V = !m_last5V;
+    // System.out.println("State is: " + m_last5V);
+    // m_candle.configV5Enabled(m_last5V);
+    // m_last5V = !m_last5V;
     // }
 
     public void toggleAnimDirection() {
@@ -139,20 +134,17 @@ public class CANdleSystem extends SubsystemBase {
         return m_candle.getDeviceTemp().getValueAsDouble();
     }
 
-
-
-
     public void changeAnimation(AnimationTypes toChange) {
-        mAnimationTypes = toChange;
 
         switch (toChange) {
             default:
             case ColorFlow:
-                m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
+                m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION));
                 break;
 
             case Larson:
-                m_candle.setControl(new LarsonAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#042698").get()));
+                m_candle.setControl(new LarsonAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#042698").get()));
                 break;
 
             case Rainbow:
@@ -168,7 +160,8 @@ public class CANdleSystem extends SubsystemBase {
                 break;
 
             case Strobe:
-                m_candle.setControl(new StrobeAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#9000FF").get()));
+                m_candle.setControl(new StrobeAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#9000ffff").get()));
                 break;
 
             case Twinkle:
@@ -183,9 +176,9 @@ public class CANdleSystem extends SubsystemBase {
                 m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
                 break;
 
-
             case Looking:
-                m_candle.setControl(new SingleFadeAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(RGBWColor.fromHex("#000000").get()));
+                m_candle.setControl(new SingleFadeAnimation(m_candleChannel, LEDS_PER_ANIMATION)
+                        .withColor(RGBWColor.fromHex("#000000").get()));
                 break;
 
             case Align:
@@ -195,18 +188,17 @@ public class CANdleSystem extends SubsystemBase {
             case SetAll:
                 m_candle.setControl(new ColorFlowAnimation(m_candleChannel, LEDS_PER_ANIMATION).withColor(null));
                 break;
-            
-                
+
         }
     }
 
     public void clearAllAnims() {
-        m_clearAllAnims = true;
+
     }
 
     @Override
     public void periodic() {
-       
+
     }
 
     public Command setLights(AnimationTypes toChange) {

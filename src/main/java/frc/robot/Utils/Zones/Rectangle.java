@@ -1,4 +1,4 @@
-package frc.robot.utils.Zones;
+package frc.robot.Utils.Zones;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
@@ -12,8 +12,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldZones;
-import frc.robot.utils.Zones.ZoneBases.PredictiveZone;
-import frc.robot.utils.Zones.ZoneBases.Zone;
+import frc.robot.Utils.Zones.ZoneBases.PredictiveZone;
+import frc.robot.Utils.Zones.ZoneBases.Zone;
 
 public class Rectangle {
     
@@ -102,7 +102,7 @@ public class Rectangle {
         
         protected boolean checkFutureX(Translation2d robotPose, ChassisSpeeds velocity, Time time){
             return (robotPose.getX() < xMin && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)>xMin) 
-            || (robotPose.getX()> xMax && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)<xMax);
+                || (robotPose.getX()> xMax && robotPose.getX() + velocity.vxMetersPerSecond * time.in(Seconds)<xMax);
         }
 
         public PredictiveRectangleX getMirrorX(){

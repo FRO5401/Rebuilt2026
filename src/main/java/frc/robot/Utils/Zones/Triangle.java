@@ -1,6 +1,5 @@
-package frc.robot.utils.Zones;
+package frc.robot.Utils.Zones;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import java.util.function.Supplier;
@@ -10,8 +9,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldZones;
-import frc.robot.utils.MathHelp;
-import frc.robot.utils.Zones.ZoneBases.Zone;
+import frc.robot.Utils.MathHelp;
+import frc.robot.Utils.Zones.ZoneBases.Zone;
 
 public class Triangle {
     public static class TriangleBound implements Zone{
@@ -69,12 +68,5 @@ public class Triangle {
             return new TriangleBound(FieldZones.FIELD_LENGTH.in(Meters) - x3, FieldZones.FIELD_WIDTH.in(Meters) - y3, FieldZones.FIELD_LENGTH.in(Meters) - x2, FieldZones.FIELD_WIDTH.in(Meters) - y2, FieldZones.FIELD_LENGTH.in(Meters) - x1, FieldZones.FIELD_WIDTH.in(Meters) - y1);
         }
     }
-
-    public static final TriangleBound turtly = new TriangleBound(
-        new Translation2d(Inches.of(205.6), Inches.of(135.35)), 
-        new Translation2d(Inches.of(205.6), Inches.of(182.1)), 
-        new Translation2d(Inches.of(245.6), Inches.of((182.1+135.35)/2))
-    );
-
 
 }

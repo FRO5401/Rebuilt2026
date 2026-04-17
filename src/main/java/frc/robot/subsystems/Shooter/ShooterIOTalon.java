@@ -12,50 +12,51 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants.ShooterConstants;
 
-/** Add your docs here. */
 public class ShooterIOTalon implements ShooterIO {
-    TalonFX shooterMotor = new TalonFX(ShooterConstants.MOTOR_ID);
+    private final TalonFX shooterMotor = new TalonFX(ShooterConstants.MOTOR_ID);
 
-    TalonFX shooterFollowerMotor = new TalonFX(ShooterConstants.SHOOTER2_MOTOR_ID);
-    
-    VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
+    private final TalonFX shooterFollowerMotor = new TalonFX(ShooterConstants.SHOOTER2_MOTOR_ID);
 
-    VoltageOut voltageRequest = new VoltageOut(0.0);
+    private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
-    
-    
-    public ShooterIOTalon(){
+    private final VoltageOut voltageRequest = new VoltageOut(0.0);
+
+    public ShooterIOTalon() {
         shooterMotor.getConfigurator().apply(ShooterConstants.CONFIG);
 
         shooterFollowerMotor.getConfigurator().apply(ShooterConstants.CONFIG);
 
         shooterFollowerMotor.setControl(new Follower(ShooterConstants.MOTOR_ID, MotorAlignmentValue.Aligned));
-
-        
     }
-    public void updateInputs(ShooterIOInputs inputs){
+
+    @Override
+    public void updateInputs(ShooterIOInputs inputs) {
         inputs.voltage = shooterMotor.getMotorVoltage().getValueAsDouble();
         inputs.current = shooterMotor.getSupplyCurrent().getValueAsDouble();
         inputs.velocity = shooterMotor.getVelocity().getValueAsDouble();
     };
 
-    public void applyVoltage(double voltage){
+    @Override
+    public void applyVoltage(double voltage) {
         shooterMotor.setControl(voltageRequest.withOutput(voltage));
     };
 
-    public void setVelocity(double velocity, ShooterIOInputs inputs){
+    @Override
+    public void setVelocity(double velocity) {
         shooterMotor.setControl(velocityRequest.withVelocity(velocity).withEnableFOC(true));
     };
-    
-    public void stop(){};
 
-    public void applyPID(double P, double I, double D, double S, double V){
+    @Override
+    public void stop() {};
+
+    @Override
+    public void applyPID(double P, double I, double D, double S, double V) {
         ShooterConstants.CLOSED_LOOP.kP = P;
         ShooterConstants.CLOSED_LOOP.kI = I;
         ShooterConstants.CLOSED_LOOP.kD = D;
         ShooterConstants.CLOSED_LOOP.kS = S;
         ShooterConstants.CLOSED_LOOP.kV = V;
-        
+
         shooterMotor.getConfigurator().apply(ShooterConstants.CONFIG);
     }
 

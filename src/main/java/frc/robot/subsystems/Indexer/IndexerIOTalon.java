@@ -8,9 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerIOTalon implements IndexerIO {
-    
-    private TalonFX spindexer;
-    private TalonFX kicker;
+
+    private final TalonFX spindexer;
+    private final TalonFX kicker;
 
     public IndexerIOTalon() {
         spindexer = new TalonFX(IndexerConstants.SPINDEXER_ID);
