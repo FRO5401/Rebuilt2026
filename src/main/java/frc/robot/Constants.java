@@ -85,12 +85,12 @@ public final class Constants {
 
         public static final double KP = 70;
         public static final double KI = 0;
-        public static final double KD = 3.7;
+        public static final double KD = 3.7;    
 
         public static final double KS = 0;
         public static final double KV = 5.5;
 
-        public static final double KP_SIM = 10;
+        public static final double KP_SIM = 5;
         public static final double KI_SIM = 0.0;
         public static final double KD_SIM = 0.5;
 
@@ -547,13 +547,17 @@ public final class Constants {
     public static final class RobotDimensionConstants {
         public static final Distance WIDTH_WBUMPERS = Inches.of(34.56);
         public static final Distance LENGTH_WBUMPERS = Inches.of(34.560082);
-        public static final Distance HEIGHT_OF_BUMPERS = Inches.of(5.858);
+        public static final Distance HEIGHT_OF_BUMPERS = Inches.of(4);
         public static final Distance INTAKE_LENGTH = Inches.of(8.345);
 
         public static final Distance INTAKE_XMIN = LENGTH_WBUMPERS.div(2);
-        public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2);
-        public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2).times(-1);
+        public static final Distance INTAKE_XMAX = LENGTH_WBUMPERS.div(2).plus(INTAKE_LENGTH);
+        public static final Distance INTAKE_YMIN = WIDTH_WBUMPERS.div(2);
         public static final Distance INTAKE_YMAX = WIDTH_WBUMPERS.div(2);
+
+        public static final Distance HOPPER_LENGTH = Inches.of(25.33);
+        public static final Distance HOPPER_WIDTH = Inches.of(22.75);
+        public static final Distance HOPPER_SHIFT = Inches.of(16);
 
         public static final Transform2d FRONT_LEFT_CORNER = new Transform2d(INTAKE_XMAX, INTAKE_YMAX,
                 Rotation2d.kZero);

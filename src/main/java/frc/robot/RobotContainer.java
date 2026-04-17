@@ -17,7 +17,10 @@ import choreo.auto.AutoChooser;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -146,6 +149,8 @@ public class RobotContainer {
                 break;
 
             case SIM:
+
+                drivetrain.resetPose(new Pose2d(3, 3, new Rotation2d()));
                 configureFuelSim();
                 intake = new Intake(new IntakeIOSim());
                 shooter = new Shooter(new ShooterIOSim());
@@ -154,10 +159,9 @@ public class RobotContainer {
                 indexer = new Indexer(new IndexerIOTalon());
 
 
-            visulization = new Visulization(fuelSim, drivetrain::getPose3d, turret, shooter, intake);
-        configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
-        drivetrain.resetPose(new Pose2d(3, 3, Rotation2d.kZero));
-        ShooterConstants.initializeTreeMap();
+                visulization = new Visulization(fuelSim, drivetrain::getPose3d, turret, shooter, intake, operator);
+
+                configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         break;
 
             default:
@@ -363,21 +367,23 @@ public class RobotContainer {
                 RobotDimensionConstants.WIDTH_WBUMPERS,
                 RobotDimensionConstants.LENGTH_WBUMPERS,
                 RobotDimensionConstants.HEIGHT_OF_BUMPERS,
-                drivetrain::getPose,
-                drivetrain::getFieldRelativeChassisSpeeds);
+                ()-> drivetrain.getPose3d().toPose2d(),
+                ()-> drivetrain.mapleSimSwerveDrivetrain.mapleSimDrive.getDriveTrainSimulatedChassisSpeedsFieldRelative());
+
         fuelSim.registerIntake(
-                RobotDimensionConstants.INTAKE_XMIN,
-                RobotDimensionConstants.INTAKE_XMAX,
-                RobotDimensionConstants.INTAKE_YMIN,
-                RobotDimensionConstants.INTAKE_YMAX,
-                () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
+                RobotDimensionConstants.INTAKE_XMIN.in(Meters),
+                RobotDimensionConstants.INTAKE_XMAX.in(Meters),
+                -RobotDimensionConstants.INTAKE_YMIN.in(Meters),
+                RobotDimensionConstants.INTAKE_YMAX.in(Meters),
+                ()-> ableToIntake.getAsBoolean(),
                 intakeCallback);
     }
 
     public void updateSimulation(){
     if (RobotMode.currentMode != Mode.SIM) return;
-    SimulatedArena.getInstance().simulationPeriodic();
-    fuelSim.updateSim();
+        SimulatedArena.getInstance().simulationPeriodic();
+        fuelSim.updateSim();
+
 
   }
 }

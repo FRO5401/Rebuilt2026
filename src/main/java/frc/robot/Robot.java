@@ -136,15 +136,14 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
 
-    m_robotContainer.fuelSim.updateSim();
     m_robotContainer.updateSimulation();
-    Logger.recordOutput("Zones/Field", FieldZones.FIELD_ZONE.getCorners());
-    Logger.recordOutput("Zones/Blue", FieldZones.BLUE_ZONE.getCorners());
-    Logger.recordOutput("Zones/Red", FieldZones.RED_ZONE.getCorners());
-    Logger.recordOutput("Zones/Nuetral", new Translation2d[][]{FieldZones.NUETRAL_BLUE_DEPO.getCorners(), FieldZones.NUETRAL_BLUE_OUTPOST.getCorners()});
-    Logger.recordOutput("Zones/Trenches", new Translation2d[][]{FieldZones.BLUE_TRENCH_DEPO_ZONE.getCorners(), FieldZones.BLUE_TRENCH_OUTPOST_ZONE.getCorners(),FieldZones.RED_TRENCH_DEPO_ZONE.getCorners(), FieldZones.RED_TRENCH_OUTPOST_ZONE.getCorners()});
-    Logger.recordOutput("Zones/Bumps", new Translation2d[][]{FieldZones.BLUE_BUMP_DEPO_ZONE.getCorners(), FieldZones.BLUE_BUMP_OUTPOST_ZONE.getCorners(),FieldZones.RED_BUMP_DEPO_ZONE.getCorners(), FieldZones.RED_BUMP_OUTPOST_ZONE.getCorners()});
-    Logger.recordOutput("Zones/Turtle", new Translation2d[][]{FieldZones.BLUE_TURTLE_ZONE.getCorners(), FieldZones.RED_TURTLE_ZONE.getCorners()});
+    // Logger.recordOutput("Zones/Field", FieldZones.FIELD_ZONE.getCorners());
+    // Logger.recordOutput("Zones/Blue", FieldZones.BLUE_ZONE.getCorners());
+    // Logger.recordOutput("Zones/Red", FieldZones.RED_ZONE.getCorners());
+    // Logger.recordOutput("Zones/Nuetral", new Translation2d[][]{FieldZones.NUETRAL_BLUE_DEPO.getCorners(), FieldZones.NUETRAL_BLUE_OUTPOST.getCorners()});
+    // Logger.recordOutput("Zones/Trenches", new Translation2d[][]{FieldZones.BLUE_TRENCH_DEPO_ZONE.getCorners(), FieldZones.BLUE_TRENCH_OUTPOST_ZONE.getCorners(),FieldZones.RED_TRENCH_DEPO_ZONE.getCorners(), FieldZones.RED_TRENCH_OUTPOST_ZONE.getCorners()});
+    // Logger.recordOutput("Zones/Bumps", new Translation2d[][]{FieldZones.BLUE_BUMP_DEPO_ZONE.getCorners(), FieldZones.BLUE_BUMP_OUTPOST_ZONE.getCorners(),FieldZones.RED_BUMP_DEPO_ZONE.getCorners(), FieldZones.RED_BUMP_OUTPOST_ZONE.getCorners()});
+    // Logger.recordOutput("Zones/Turtle", new Translation2d[][]{FieldZones.BLUE_TURTLE_ZONE.getCorners(), FieldZones.RED_TURTLE_ZONE.getCorners()});
     
   }
   

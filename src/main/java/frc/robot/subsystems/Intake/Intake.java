@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean isIntakeDeployed() {
-        return pivotInputs.angle < 10;
+        return isNotStartingPose() && desiredAngle == IntakeConstants.INTAKE_OUT_POSE;
     }
 
     public double getPivotPosition() {

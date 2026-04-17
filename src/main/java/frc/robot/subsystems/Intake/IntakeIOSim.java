@@ -16,13 +16,14 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOSim implements IntakeIO {
     private final SingleJointedArmSim pivotSim;
     private final DCMotorSim intakeSim;
     private final DCMotor pivotMotor;
     private final DCMotor intakeMotor;
-    private PIDController pivotController = new PIDController(0, 0, 0);
+    private PIDController pivotController = new PIDController(25, 0, 0);
     private double pivotVoltage = 0;
     private double intakeVoltage = 0;
     private double desiredAngle;
@@ -38,10 +39,10 @@ public class IntakeIOSim implements IntakeIO {
                         pivotMotor,
                         SingleJointedArmSim.estimateMOI(
                                 Inches.of(17).in(Meters),
-                                Pounds.of(7).in(Kilograms)),
-                        27),
+                                Pounds.of(8).in(Kilograms)),
+                        45),
                 pivotMotor,
-                27,
+                45,
                 Inches.of(17).in(Meters),
                 Degrees.of(0).in(Radians),
                 Degrees.of(90).in(Radians),
@@ -62,7 +63,7 @@ public class IntakeIOSim implements IntakeIO {
     public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs) {
         Logger.recordOutput("Intake/Pivot Desired Angle", desiredAngle);
 
-        pivotController.setPID(kp, ki, kd);
+        //pivotController.setPID(kp, ki, kd);
 
         if (isPositionControl) {
             pivotVoltage = pivotController.calculate(pivotSim.getAngleRads(), desiredAngle);
