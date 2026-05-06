@@ -90,7 +90,7 @@ public class Visulization extends SubsystemBase {
         Logger.recordOutput("Visulization/Robot Components", new Pose3d[] { intakePose, turretPose });
         Logger.recordOutput("Visulization/Zeroed Components", new Pose3d[] { new Pose3d(), new Pose3d() });
         Logger.recordOutput("Current Fuel Count", fuelStored);
-        Logger.recordOutput("Fuel in Hopper", getHopperFuelFieldPositions(robotPose.get()));
+        Logger.recordOutput("Fuel in Hopper", getHopperFuel(robotPose.get()));
 
         if (shootTimer.advanceIfElapsed(1/BPS) && DriverStation.isEnabled() && (operator.rightTrigger().getAsBoolean() || DriverStation.isAutonomousEnabled())) {
             launchFuel();
@@ -121,7 +121,7 @@ public class Visulization extends SubsystemBase {
                 turretTransform.getMeasureZ());
     }
 
-    public Translation3d[] getHopperFuelFieldPositions(Pose3d robotPose) {
+    public Translation3d[] getHopperFuel(Pose3d robotPose) {
         if(robotPose == null) return new Translation3d[]{};
         Translation3d[] positions = new Translation3d[fuelStored];
         
