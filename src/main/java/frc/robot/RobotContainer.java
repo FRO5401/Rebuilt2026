@@ -256,15 +256,13 @@ public class RobotContainer {
 
     public void configureAutoChooser() {
         autos = new Autos(drivetrain, turret, intake, shooter, indexer);
-        autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
-        autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
-        autoChooser.addRoutine("DepotBumpSwipe", autos::DepotBumpSwipe);
-        autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
-        autoChooser.addRoutine("DepotSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
+        autoChooser.addRoutine("LeftDoubleTrench", autos::leftDoubleTrenchAuto);
+        autoChooser.addRoutine("LeftSingleTrench", autos::leftSingleTrenchAuto);
+        autoChooser.addRoutine("LeftSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
         autoChooser.addRoutine("RightSingleTrench", autos::rightSingleTrenchAuto);
         autoChooser.addRoutine("DepotThenSwipe", autos::depotWithSwipe);
         autoChooser.addRoutine("DepotGrab", autos::depotWithoutSwipe);
-
+        autoChooser.addRoutine("LeftTrenchThenDepot", autos::leftTrenchThenDepot);
 
         SmartDashboard.putData("Chooser", autoChooser);
     }

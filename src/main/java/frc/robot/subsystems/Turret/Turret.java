@@ -53,6 +53,7 @@ public class Turret extends SubsystemBase {
   private double turretFeedForward;
 
     private final TurretIO io;
+    @SuppressWarnings("FieldMayBeFinal")
     private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
     private Translation3d[] trajectory = new Translation3d[50];
     // :)
