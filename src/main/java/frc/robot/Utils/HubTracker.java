@@ -52,8 +52,8 @@ public class HubTracker {
      */
     protected boolean isTimerCorrect(){
         return (
-            MathHelp.epsilonEquals(getDriverStationTime(), getTimerTime(), 1.01) || 
-            (getTimerTime() > getDriverStationTime() && 
+            MathHelp.epsilonEquals(getDriverStationTime(), getTimerTime(), 1.05) || 
+            (getTimerTime() <= getDriverStationTime() && 
             getTimerTime() >= 0 && 
             getTimerTime() <= 140)
         );
