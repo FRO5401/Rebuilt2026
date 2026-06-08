@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -40,12 +38,20 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Pound;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
-import frc.robot.Utils.Zones.Triangle.TriangleBound;
 import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
 import frc.robot.Utils.Zones.Triangle.TriangleBound;
 import frc.robot.Utils.Zones.ZoneBases.ZoneGroup;
@@ -111,7 +117,7 @@ public final class Constants {
         public static final double KD = 3.7;
 
         public static final double KS = 0;
-        public static final double KV = 5.5;
+        public static final double KV = 8;
 
         public static final double KP_SIM = 10;
         public static final double KI_SIM = 0.0;
@@ -224,19 +230,22 @@ public final class Constants {
 
         public static void initializeTreeMap() {
 
-            // Flywheel Velocity Interpolating Map
-            FLYWHEEL_MAP.put(1.6172356882170904, 39.5);
-            FLYWHEEL_MAP.put(1.977663678422591, 40.7);
-            FLYWHEEL_MAP.put(2.2378909448326656, 43.0);
-            FLYWHEEL_MAP.put(2.5213633269563562, 44.7);
-            FLYWHEEL_MAP.put(3.091547381937533, 49.5);
-            FLYWHEEL_MAP.put(3.6371098950713048, 54d - .5);
-            FLYWHEEL_MAP.put(3.8381558375194516, 55.9 - .6);
-            FLYWHEEL_MAP.put(4.228989917893823, 57.9 - .8);
-            FLYWHEEL_MAP.put(4.611644034532603, 60.4 - .8);
-            FLYWHEEL_MAP.put(4.806505964322358, 63.5 - .8);
-            FLYWHEEL_MAP.put(5.0866738021581, 64.8d - .8);
-            FLYWHEEL_MAP.put(5.843456367540876, 73d - .3);
+        // Flywheel Velocity Interpolating Map
+        FLYWHEEL_MAP.put(1.6172356882170904, 39.5);
+        FLYWHEEL_MAP.put(1.977663678422591, 40.7);
+        FLYWHEEL_MAP.put(2.2378909448326656, 43.0);
+        FLYWHEEL_MAP.put(2.5213633269563562, 44.7-.5);
+        FLYWHEEL_MAP.put(3.091547381937533, 49.5-.5);
+        FLYWHEEL_MAP.put(3.6371098950713048, 54d-.8);
+        FLYWHEEL_MAP.put(3.8381558375194516, 55.9-.4);
+        FLYWHEEL_MAP.put(4.228989917893823, 58.2);
+        FLYWHEEL_MAP.put(4.611644034532603, 63.4);
+        FLYWHEEL_MAP.put(4.806505964322358, 68d); 
+        FLYWHEEL_MAP.put(5.0866738021581, 69.5d); // Corner
+        FLYWHEEL_MAP.put(5.5766738021581, 75.8d); // Corner
+
+        FLYWHEEL_MAP.put(5.843456367540876, 78d); // Corner
+        FLYWHEEL_MAP.put(6.1, 80.0); // Theoretical Passing
 
             TOF_MAP.put(1.6149594667137919, 6.81 - 5.64);
             TOF_MAP.put(1.9867200766826991, 3.55 - 2.7);
@@ -435,13 +444,13 @@ public final class Constants {
 
         public static final Pose2d RED_HUB_TARGET = new Pose2d(11.75, 4, new Rotation2d());
 
-        public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2, new Rotation2d());
+        public static final Pose2d BLUE_RIGHT_PASSING_TARGET = new Pose2d(1, 2.5, new Rotation2d());
 
-        public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 7, new Rotation2d());
+        public static final Pose2d BLUE_LEFT_PASSING_TARGET = new Pose2d(1, 6.5, new Rotation2d());
 
-        public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 7, new Rotation2d());
+        public static final Pose2d RED_LEFT_PASSING_TARGET = new Pose2d(15, 6.5, new Rotation2d());
 
-        public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2, new Rotation2d());
+        public static final Pose2d RED_RIGHT_PASSING_TARGET = new Pose2d(15, 2.5, new Rotation2d());
 
         public enum CurrentZone {
             RED, RED_TRENCH, RED_BUMP, BLUE, BLUE_TRENCH, BLUE_BUMP, NUETRAL_LEFT, NUETRAL_RIGHT, PHASING, OUTSIDE_BOUNDS

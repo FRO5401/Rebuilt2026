@@ -4,11 +4,6 @@
 
 package frc.robot.subsystems.Turret;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Seconds;
-
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -23,6 +18,10 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -33,10 +32,11 @@ import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.TurretConstants.TurretMode;
+import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
-import frc.robot.Utils.ZoneGetter;
 import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.ZoneGetter;
 
 public class Turret extends SubsystemBase {
 
@@ -53,6 +53,7 @@ public class Turret extends SubsystemBase {
   private double turretFeedForward;
 
     private final TurretIO io;
+    @SuppressWarnings("FieldMayBeFinal")
     private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
     private Translation3d[] trajectory = new Translation3d[50];
     // :)
@@ -145,6 +146,8 @@ public class Turret extends SubsystemBase {
                         fieldSpeeds.vyMetersPerSecond * tof,
                         Rotation2d.kZero);
             }
+
+            Logger.recordOutput("Scoring/Will Shots Count", willShotCount(tof));
 
             Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
@@ -263,5 +266,9 @@ public class Turret extends SubsystemBase {
 
     public void changeTurretMode(TurretMode turretMode) {
         this.turretMode = turretMode;
+    }
+
+    public boolean willShotCount(double toF){
+        return HubTracker.getInstance().willShotsCount(toF);
     }
 }

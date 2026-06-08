@@ -193,7 +193,7 @@ public class RobotContainer {
         // This is for the real robot
         turret.setDefaultCommand(turret.setSmartTarget());
 
-        shooter.setDefaultCommand(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+        operator.rightTrigger().onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
         // // this is for tuning
         // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
@@ -214,7 +214,7 @@ public class RobotContainer {
                 new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0), Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
         );
 
-        operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
+        operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0).andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
 
         operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
         operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
@@ -256,14 +256,13 @@ public class RobotContainer {
 
     public void configureAutoChooser() {
         autos = new Autos(drivetrain, turret, intake, shooter, indexer);
-        autoChooser.addRoutine("DepotDoubleTrench", autos::leftDoubleTrenchAuto);
-        autoChooser.addRoutine("DepotBumpSweep", autos::leftBumpAuto);
-        autoChooser.addRoutine("DepotBumpSwipe", autos::DepotBumpSwipe);
-        autoChooser.addRoutine("DepotSingleTrench", autos::leftSingleTrenchAuto);
-        autoChooser.addRoutine("DepotSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
+        autoChooser.addRoutine("LeftDoubleTrench", autos::leftDoubleTrenchAuto);
+        autoChooser.addRoutine("LeftSingleTrench", autos::leftSingleTrenchAuto);
+        autoChooser.addRoutine("LeftSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
+        autoChooser.addRoutine("RightSingleTrench", autos::rightSingleTrenchAuto);
         autoChooser.addRoutine("DepotThenSwipe", autos::depotWithSwipe);
         autoChooser.addRoutine("DepotGrab", autos::depotWithoutSwipe);
-
+        autoChooser.addRoutine("LeftTrenchThenDepot", autos::leftTrenchThenDepot);
 
         SmartDashboard.putData("Chooser", autoChooser);
     }
