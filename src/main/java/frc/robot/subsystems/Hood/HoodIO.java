@@ -11,7 +11,6 @@ public interface HoodIO {
     public double temperature = 0;
     public double voltage;
     public double current = 0;
-    public double applied = 0;
 
     public double encoderPosition = 0;
     public double encoderVelocity = 0;
@@ -25,5 +24,5 @@ public interface HoodIO {
 
   public default void stop() {}
 
-  public default void setPID(double p, double i, double d, double ff) {}
+  public default void setPID(double p, double i, double d, double ks, double ff) {}
 }

@@ -69,8 +69,8 @@ import frc.robot.generated.TunerConstants;
 public final class Constants {
 
     public static final class HoodConstants {
-        public static final int HOOD_MOTOR_ID = 0;
-        public static final int HOOD_ENCODER_ID = 0;
+        public static final int HOOD_MOTOR_ID = 30;
+        public static final int HOOD_ENCODER_ID = 31;
 
         public static final Current STATOR_LIMIT = Amps.of(60);
         public static final Current SUPPLY_LIMIT = Amps.of(60);
@@ -79,6 +79,7 @@ public final class Constants {
         public static final double KP = 0;
         public static final double KI = 0;
         public static final double KD = 0;
+        public static final double KS = 0;
 
         public static final double KFF = 0;
 
@@ -87,17 +88,21 @@ public final class Constants {
                         .withNeutralMode(NeutralModeValue.Brake);
 
         public static final FeedbackConfigs FEEDBACK_CONFIGS =
-                new FeedbackConfigs().withSensorToMechanismRatio(GEAR_RATIO);
+                new FeedbackConfigs().withRotorToSensorRatio(GEAR_RATIO);
 
         public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIGS = new CurrentLimitsConfigs()
                 .withStatorCurrentLimit(STATOR_LIMIT).withSupplyCurrentLimit(SUPPLY_LIMIT);
 
         public static final Slot0Configs CLOSED_LOOP =
-                new Slot0Configs().withKP(KP).withKI(KI).withKD(KD);
+                new Slot0Configs().withKP(KP).withKI(KI).withKD(KD).withKS(KS);
+        
+        public static final ClosedLoopGeneralConfigs CLOSED_LOOP_GENERAL_CONFIGS = new ClosedLoopGeneralConfigs()
+                .withContinuousWrap(false);
 
         public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration()
                 .withMotorOutput(OUTPUT_CONFIGS).withFeedback(FEEDBACK_CONFIGS)
-                .withCurrentLimits(CURRENT_LIMITS_CONFIGS).withSlot0(CLOSED_LOOP);
+                .withCurrentLimits(CURRENT_LIMITS_CONFIGS).withSlot0(CLOSED_LOOP)
+                .withClosedLoopGeneral(CLOSED_LOOP_GENERAL_CONFIGS);
 
         public static final CANcoderConfiguration ENCODER_CONFIG = new CANcoderConfiguration();
 

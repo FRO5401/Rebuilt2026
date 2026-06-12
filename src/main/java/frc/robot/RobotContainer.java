@@ -53,6 +53,8 @@ import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.subsystems.Visualization;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hood.HoodIOTalonFX;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -88,6 +90,7 @@ public class RobotContainer {
     private static Intake intake;
     private static Indexer indexer;
     private static CANdleSystem candle = new CANdleSystem();
+    private static Hood hood;
     private static Visualization visulization = null;
 
     // Time stamps
@@ -134,6 +137,7 @@ public class RobotContainer {
                         new TurretIOTalonFX(), drivetrain::getPose,
                         drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
                 indexer = new Indexer(new IndexerIOTalon());
+                hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
 
                 break;
 
@@ -242,6 +246,9 @@ public class RobotContainer {
         endGame.onTrue(candle.setLights(AnimationTypes.Rainbow));
 
         rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
+
+        operator.povDown().onTrue(hood.setHoodCommand(0.00));
+        operator.povUp().onTrue(hood.setHoodCommand(0.00));
 
     }
 

@@ -30,7 +30,7 @@ public class IntakeIOSim implements IntakeIO {
     private double kp, ki, kd;
 
     public IntakeIOSim() {
-        pivotMotor = DCMotor.getKrakenX60(1);
+        pivotMotor = DCMotor.getKrakenX44(2);
         intakeMotor = DCMotor.getKrakenX44(1);
 
         pivotSim = new SingleJointedArmSim(

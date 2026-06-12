@@ -8,12 +8,14 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.HoodConstants.HoodMode;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.TurretConstants.TurretMode;
 import frc.robot.Utils.TunableNumber;
 import frc.robot.subsystems.Hood.HoodIO.HoodIOInputs;
@@ -30,7 +32,10 @@ public class Hood extends SubsystemBase {
   private TunableNumber kp = new TunableNumber("Hood/kp", HoodConstants.KP);
   private TunableNumber ki = new TunableNumber("Hood/ki", HoodConstants.KI);
   private TunableNumber kd = new TunableNumber("Hood/kd", HoodConstants.KD);
+  private TunableNumber ks = new TunableNumber("Hood/ks", HoodConstants.KS);
   private TunableNumber kff = new TunableNumber("Hood/kff", HoodConstants.KFF);
+
+  private double desiredPosition = 0;
 
   /** Creates a new Hood. */
   public Hood(HoodIO io, Supplier<Pose2d> robotPose, Supplier<Boolean> isIntakeDeployed) {
@@ -44,17 +49,19 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hood/", inputs);
 
-    if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || kff.hasChanged()){
-      io.setPID(kp.get(), ki.get(), kd.get(), kff.get());
+    if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged() || kff.hasChanged()){
+      io.setPID(kp.get(), ki.get(), kd.get(), ks.get(), kff.get());
     }
 
     if(isIntakeDeployed.get() && hoodMode.equals(HoodMode.Dynamic)){
       io.setPosition(0);
     }
     
+    Logger.recordOutput("Hood/Disired Position", desiredPosition);
   }
 
   public Command setHoodCommand(double position){
+    desiredPosition = position;
     return Commands.runOnce(()->io.setPosition(position));
   }
 
