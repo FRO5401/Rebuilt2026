@@ -72,26 +72,30 @@ public final class Constants {
         public static final int HOOD_MOTOR_ID = 30;
         public static final int HOOD_ENCODER_ID = 31;
 
-        public static final Current STATOR_LIMIT = Amps.of(60);
-        public static final Current SUPPLY_LIMIT = Amps.of(60);
+        public static final Current STATOR_LIMIT = Amps.of(30);
+        public static final Current SUPPLY_LIMIT = Amps.of(30);
         public static final double GEAR_RATIO = 9;
 
-        public static final double KP = 0;
+        public static final double KP = 43.3;
         public static final double KI = 0;
-        public static final double KD = 0;
-        public static final double KS = 0;
+        public static final double KD = 0.01;
+        public static final double KS = 0.29;
 
         public static final double KFF = 0;
+
+        public static final Angle MIN_ANGLE = Degrees.of(GEAR_RATIO);
+        public static final Angle MAX_ANGLE = Degrees.of(GEAR_RATIO);
 
         public static final MotorOutputConfigs OUTPUT_CONFIGS =
                 new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Brake);
 
         public static final FeedbackConfigs FEEDBACK_CONFIGS =
-                new FeedbackConfigs().withRotorToSensorRatio(GEAR_RATIO);
+                new FeedbackConfigs().withRotorToSensorRatio(GEAR_RATIO).withSensorToMechanismRatio(1);
 
         public static final CurrentLimitsConfigs CURRENT_LIMITS_CONFIGS = new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(STATOR_LIMIT).withSupplyCurrentLimit(SUPPLY_LIMIT);
+                //.withStatorCurrentLimit(STATOR_LIMIT)
+                .withSupplyCurrentLimit(SUPPLY_LIMIT);
 
         public static final Slot0Configs CLOSED_LOOP =
                 new Slot0Configs().withKP(KP).withKI(KI).withKD(KD).withKS(KS);
@@ -104,7 +108,9 @@ public final class Constants {
                 .withCurrentLimits(CURRENT_LIMITS_CONFIGS).withSlot0(CLOSED_LOOP)
                 .withClosedLoopGeneral(CLOSED_LOOP_GENERAL_CONFIGS);
 
-        public static final CANcoderConfiguration ENCODER_CONFIG = new CANcoderConfiguration();
+        public static final MagnetSensorConfigs ENCODER_CONFIG = new MagnetSensorConfigs()
+                .withMagnetOffset(0)
+                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
 
         public enum HoodMode {
             Static, Dynamic

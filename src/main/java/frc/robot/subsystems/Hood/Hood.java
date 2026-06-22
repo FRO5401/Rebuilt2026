@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems.Hood;
 
+import static edu.wpi.first.units.Units.Rotations;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,7 +59,8 @@ public class Hood extends SubsystemBase {
     //   io.setPosition(0);
     // }
     
-    Logger.recordOutput("Hood/Disired Position", desiredPosition);
+    Logger.recordOutput("Hood/Disired Angle", desiredPosition);
+    Logger.recordOutput("Hood/Hood Angle", inputs.motorAngle.in(Rotations));
   }
 
   public Command setHoodCommand(double position){
@@ -68,6 +71,15 @@ public class Hood extends SubsystemBase {
     desiredPosition = position;
 
     io.setPosition(position);
+  }
+
+  public void setHoodAngle(Angle angle){
+    desiredPosition = angle.in(Rotations);
+    io.setPosition(angle);
+  }
+
+  public Command setHoodAngleCommand(Angle angle){
+    return Commands.runOnce(()->setHoodAngle(angle));
   }
   
   

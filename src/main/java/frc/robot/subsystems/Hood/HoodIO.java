@@ -1,16 +1,21 @@
 package frc.robot.subsystems.Hood;
 
+import static edu.wpi.first.units.Units.Degrees;
 import org.littletonrobotics.junction.AutoLog;
+import edu.wpi.first.units.measure.Angle;
 
 public interface HoodIO {
 
   @AutoLog
   public static class HoodIOInputs {
     public double motorPosition = 0;
+    public Angle motorAngle;
     public double motorVelocity = 0;
     public double temperature = 0;
     public double voltage;
     public double current = 0;
+
+    public double wantedPosition = 0;
 
     public double encoderPosition = 0;
     public double encoderVelocity = 0;
@@ -19,6 +24,8 @@ public interface HoodIO {
   public default void updateInputs(HoodIOInputs inputs) {}
 
   public default void setPosition(double position) {}
+
+  public default void setPosition(Angle position) {}
 
   public default void setVoltage(double voltage) {}
 
