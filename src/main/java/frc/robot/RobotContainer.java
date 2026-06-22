@@ -248,7 +248,8 @@ public class RobotContainer {
         rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
 
         operator.povDown().onTrue(hood.setHoodCommand(0.00));
-        operator.povUp().onTrue(hood.setHoodCommand(0.00));
+        operator.povUp().onTrue(hood.setHoodCommand(0.53125/2));
+
 
     }
 

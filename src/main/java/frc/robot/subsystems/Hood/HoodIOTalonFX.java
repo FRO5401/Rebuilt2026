@@ -26,8 +26,7 @@ public class HoodIOTalonFX implements HoodIO {
   public HoodIOTalonFX() {
     hoodCANcoder.setPosition(0);
     hoodCANcoder.getConfigurator().apply(new MagnetSensorConfigs().withMagnetOffset(0)
-                            .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
-                            .withAbsoluteSensorDiscontinuityPoint(1));
+                            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive));
 
     feedbackConfig.withSensorToMechanismRatio(1).withRemoteCANcoder(hoodCANcoder)
                 .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
@@ -46,16 +45,20 @@ public class HoodIOTalonFX implements HoodIO {
     inputs.temperature = hoodMotor.getDeviceTemp().getValueAsDouble();
     inputs.motorVelocity = hoodMotor.getVelocity().getValueAsDouble();
 
+    inputs.encoderPosition = hoodCANcoder.getPosition().getValueAsDouble();
   }
 
   @Override
   public void setPosition(double position) {
-    hoodMotor.setControl(positionRequest.withPosition(position).withFeedForward(feedForward));
+    hoodMotor.setControl(positionRequest.withPosition(position));
+    
+    
+    
   }
 
   @Override
   public void setVoltage(double voltage) {
-    hoodMotor.setControl(voltageRequest.withOutput(voltage).withEnableFOC(true));
+    hoodMotor.setControl(voltageRequest.withOutput(voltage));
   }
 
   @Override
@@ -68,7 +71,7 @@ public class HoodIOTalonFX implements HoodIO {
     HoodConstants.CLOSED_LOOP.kP = p;
     HoodConstants.CLOSED_LOOP.kI = i;
     HoodConstants.CLOSED_LOOP.kD = d;
-    HoodConstants.CLOSED_LOOP.kS = ks;
+    //HoodConstants.CLOSED_LOOP.kS = ks;
     feedForward = ff;
     hoodMotor.getConfigurator().apply(HoodConstants.CLOSED_LOOP);
   }

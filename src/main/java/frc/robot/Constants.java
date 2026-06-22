@@ -84,7 +84,7 @@ public final class Constants {
         public static final double KFF = 0;
 
         public static final MotorOutputConfigs OUTPUT_CONFIGS =
-                new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive)
+                new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Brake);
 
         public static final FeedbackConfigs FEEDBACK_CONFIGS =

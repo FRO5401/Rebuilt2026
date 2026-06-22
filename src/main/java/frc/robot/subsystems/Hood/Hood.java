@@ -53,18 +53,22 @@ public class Hood extends SubsystemBase {
       io.setPID(kp.get(), ki.get(), kd.get(), ks.get(), kff.get());
     }
 
-    if(isIntakeDeployed.get() && hoodMode.equals(HoodMode.Dynamic)){
-      io.setPosition(0);
-    }
+    // if(isIntakeDeployed.get() && hoodMode.equals(HoodMode.Dynamic)){
+    //   io.setPosition(0);
+    // }
     
     Logger.recordOutput("Hood/Disired Position", desiredPosition);
   }
 
   public Command setHoodCommand(double position){
-    desiredPosition = position;
-    return Commands.runOnce(()->io.setPosition(position));
+    return Commands.runOnce(()->setHoodPosition(position));
   }
 
+  public void setHoodPosition(double position){
+    desiredPosition = position;
+
+    io.setPosition(position);
+  }
   
   
 }
