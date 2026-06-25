@@ -83,24 +83,7 @@ public class HubTracker {
     }
 
     public Shift getCurrentShift() {
-        if (DriverStation.isAutonomous() && getMatchTime() >= Shift.AUTO.getEndTime()) {
-            return Shift.AUTO;
-        }
-        if (getMatchTime() >= Shift.TRANSITION.getEndTime()) {
-            return Shift.TRANSITION;
-        } else if (getMatchTime() >= Shift.SHIFT_1.getEndTime()) {
-            return Shift.SHIFT_1;
-        } else if (getMatchTime() >= Shift.SHIFT_2.getEndTime()) {
-            return Shift.SHIFT_2;
-        } else if (getMatchTime() >= Shift.SHIFT_3.getEndTime()) {
-            return Shift.SHIFT_3;
-        } else if (getMatchTime() >= Shift.SHIFT_4.getEndTime()) {
-            return Shift.SHIFT_4;
-        } else if (getMatchTime() >= Shift.END_GAME.getEndTime()) {
-            return Shift.END_GAME;
-        } else {
-            return Shift.UNKNOWN;
-        }
+        return getTimeShift(getMatchTime());
     }
 
     public Shift getTimeShift(double time) {
