@@ -70,7 +70,6 @@ public class Hood extends SubsystemBase {
     // }
     
     Logger.recordOutput("Hood/Disired Angle", desiredPosition);
-    Logger.recordOutput("Hood/Hood Angle", inputs.motorAngle.in(Rotations));
   }
 
   public Command setHoodCommand(double position){
@@ -87,9 +86,9 @@ public class Hood extends SubsystemBase {
 
       return runOnce(() -> {
           if (intakePose.getAsDouble() != 0) {
-              io.setPosition(hoodPosition.getAsDouble());
+              setHoodPosition(hoodPosition.getAsDouble());
           } else {
-              io.setPosition(0);
+              setHoodPosition(0);
           }
       });
 
