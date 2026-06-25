@@ -1,14 +1,11 @@
 package frc.robot.subsystems.Hood;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-import edu.wpi.first.units.measure.Angle;
 import frc.robot.Constants.HoodConstants;
 
 public class HoodIOTalonFX implements HoodIO {
@@ -42,7 +39,6 @@ public class HoodIOTalonFX implements HoodIO {
     inputs.voltage = hoodMotor.getMotorVoltage().getValueAsDouble();
     inputs.current = hoodMotor.getSupplyCurrent().getValueAsDouble();
     inputs.motorPosition = hoodMotor.getPosition().getValueAsDouble();
-    inputs.motorAngle = hoodMotor.getPosition().getValue();
     inputs.temperature = hoodMotor.getDeviceTemp().getValueAsDouble();
     inputs.motorVelocity = hoodMotor.getVelocity().getValueAsDouble();
 
@@ -55,10 +51,6 @@ public class HoodIOTalonFX implements HoodIO {
   public void setPosition(double position) {
     hoodMotor.setControl(positionRequest.withPosition(position));
     
-  }
-
-  public void setPosition(Angle position){
-    hoodMotor.setControl(positionRequest.withPosition(position));
   }
 
   @Override

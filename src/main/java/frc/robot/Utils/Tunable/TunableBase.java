@@ -3,11 +3,9 @@ package frc.robot.Utils.Tunable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
-
 import frc.robot.Utils.RobotMode;
 
-public abstract class TunableBase<V> {
+public abstract class TunableBase<V>{
   protected static final String DIRECTORY = "/Tunable";
   protected final String key;
 

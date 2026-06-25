@@ -94,14 +94,4 @@ public class Hood extends SubsystemBase {
 
   }
 
-  public void setHoodAngle(Angle angle){
-    desiredPosition = angle.in(Rotations);
-    io.setPosition(angle);
-  }
-
-  public Command setHoodAngleCommand(Angle angle){
-    return Commands.runOnce(()->setHoodAngle(angle));
-  }
-  
-  
 }

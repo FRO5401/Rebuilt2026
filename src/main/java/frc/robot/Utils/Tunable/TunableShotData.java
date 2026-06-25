@@ -1,8 +1,9 @@
 package frc.robot.Utils.Tunable;
 
+import java.util.function.Supplier;
 import frc.robot.Utils.FireControl.ShotData;
 
-public class TunableShotData extends TunableBase<ShotData> {
+public class TunableShotData extends TunableBase<ShotData> implements Supplier<ShotData>{
 
   private TunableNumber flywheelRPS;
   private TunableNumber hoodRotations;
@@ -34,6 +35,11 @@ public class TunableShotData extends TunableBase<ShotData> {
     } else {
       return new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get());
     }
+  }
+
+  @Override
+  public ShotData get() {
+    return getValue();
   }
 
 }
