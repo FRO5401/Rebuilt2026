@@ -5,6 +5,7 @@
 package frc.robot.subsystems.Hood;
 
 import static edu.wpi.first.units.Units.Rotations;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
@@ -68,9 +69,21 @@ public class Hood extends SubsystemBase {
   }
 
   public void setHoodPosition(double position){
+    position = MathUtil.clamp(position, 0, 0.53125);
     desiredPosition = position;
-
     io.setPosition(position);
+  }
+
+  public Command setHoodCommandwIntake(DoubleSupplier hoodPosition, DoubleSupplier intakePose){
+
+      return runOnce(() -> {
+          if (intakePose.getAsDouble() != 0) {
+              io.setPosition(hoodPosition.getAsDouble());
+          } else {
+              io.setPosition(0);
+          }
+      });
+
   }
 
   public void setHoodAngle(Angle angle){

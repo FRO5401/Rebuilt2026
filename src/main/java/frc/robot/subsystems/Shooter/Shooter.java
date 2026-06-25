@@ -5,7 +5,7 @@
 package frc.robot.subsystems.Shooter;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -52,6 +52,20 @@ public class Shooter extends SubsystemBase {
             if (intakePose.get() != 0) {
                 io.setVelocity(-vel.get().in(RotationsPerSecond));
                 desiredVel = -vel.get().in(RotationsPerSecond);
+            } else {
+                io.stop();
+                desiredVel = 0;
+            }
+        });
+
+    }
+
+    public Command setVelocityDouble(DoubleSupplier vel, DoubleSupplier intakePose) {
+
+        return runOnce(() -> {
+            if (intakePose.getAsDouble() != 0) {
+                io.setVelocity(-vel.getAsDouble());
+                desiredVel = -vel.getAsDouble();
             } else {
                 io.stop();
                 desiredVel = 0;

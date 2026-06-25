@@ -68,6 +68,43 @@ import frc.robot.generated.TunerConstants;
  */
 public final class Constants {
 
+    public static final class LutTables{
+        public static final InterpolatingDoubleTreeMap FLYWHEEL_MAP = new InterpolatingDoubleTreeMap();
+        public static final InterpolatingDoubleTreeMap HOOD_MAP = new InterpolatingDoubleTreeMap();
+
+        static{
+            FLYWHEEL_MAP.put(null, null);
+            HOOD_MAP.put(null, null);
+
+            FLYWHEEL_MAP.put(2.0304514451335125, 39.5);
+            HOOD_MAP.put(2.0304514451335125, 0.02);
+
+            FLYWHEEL_MAP.put(2.5020489294406167, 41.0);
+            HOOD_MAP.put(2.5020489294406167, 0.03);
+
+            FLYWHEEL_MAP.put(3.0030580918722576, 45.0);
+            HOOD_MAP.put(3.0030580918722576, 0.04);
+
+            FLYWHEEL_MAP.put(3.506777939722516, 48.5);
+            HOOD_MAP.put(3.506777939722516, 0.066);
+
+            FLYWHEEL_MAP.put(4.015143090882259, 50.7);
+            HOOD_MAP.put(4.015143090882259, 0.085);
+
+            FLYWHEEL_MAP.put(4.56487156916269, 54.3);
+            HOOD_MAP.put(4.56487156916269, 0.123);
+
+            FLYWHEEL_MAP.put(5.042263904994418, 56.1);
+            HOOD_MAP.put(5.042263904994418, 0.14);
+
+            FLYWHEEL_MAP.put(5.57003187750096, 59.4);
+            HOOD_MAP.put(5.57003187750096, 0.175);
+
+            FLYWHEEL_MAP.put(6.027289938016063, 61.9);
+            HOOD_MAP.put(6.027289938016063, 0.2);
+        }
+    }
+
     public static final class HoodConstants {
         public static final int HOOD_MOTOR_ID = 30;
         public static final int HOOD_ENCODER_ID = 31;

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -66,8 +67,12 @@ import frc.robot.subsystems.Hood.HoodIOTalonFX;
 public class RobotContainer {
 
     // Leave these here god forbid we have to retune
+    // We've since had to retune, including at comp...
     @SuppressWarnings("unused")
     private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0, false);
+    
+    @SuppressWarnings("unused")
+    private TunableNumber HoodPosition = new TunableNumber("Hood/Position", 0, false);
 
     @SuppressWarnings("unused")
     private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
@@ -195,28 +200,47 @@ public class RobotContainer {
         driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
 
         // This is for the real robot
-        turret.setDefaultCommand(turret.setSmartTarget());
+        //turret.setDefaultCommand(turret.setSmartTarget());
 
         operator.rightTrigger().onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
         // // this is for tuning
-        // turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+        turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+        
         // // this is for sim
         // turret.setDefaultCommand(turret.setSmartTarget()
         //     .andThen(Commands.runOnce(() -> turret.updateFuel(
         //         MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))))
         // );
         // // // this is for tuning
-        // operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-        //     () -> RotationsPerSecond.of(ShooterRPM.get()), intake::getDesiredAngle)),
-        //     new SequentialCommandGroup(Commands.waitSeconds(.2), indexer.setIndexerCommand(()-> .9, () -> 11.0)))
-        // );
-        operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-                () -> RotationsPerSecond
-                        .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-                intake::getDesiredAngle)),
-                new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0), Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
+        operator.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                Commands.repeatingSequence(shooter.setVelocityDouble(
+                    ShooterRPM::get, 
+                        intake::getDesiredAngle)
+                ),
+                Commands.repeatingSequence(hood.setHoodCommandwIntake(
+                    HoodPosition::get, 
+                    intake::getDesiredAngle
+                    )
+                ),
+
+
+            new SequentialCommandGroup(
+                Commands.waitSeconds(.2), 
+                indexer.setIndexerCommand(
+                    ()-> .9, 
+                    () -> 11.0)
+            )
+            )
         );
+
+        // operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
+        //         () -> RotationsPerSecond
+        //                 .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+        //         intake::getDesiredAngle)),
+        //         new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0), Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
+        // );
 
         operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0).andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
 
