@@ -1,9 +1,10 @@
-package frc.robot.Utils;
+package frc.robot.Utils.Tunable;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+import frc.robot.Utils.RobotMode;
 
 public class TunableNumber implements DoubleSupplier {
     private static final String DIRECTORY = "/Tunable";

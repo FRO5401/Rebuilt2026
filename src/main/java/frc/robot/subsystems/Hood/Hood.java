@@ -20,7 +20,9 @@ import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.HoodConstants.HoodMode;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.TurretConstants.TurretMode;
-import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.FireControl.ShotData;
+import frc.robot.Utils.Tunable.TunableNumber;
+import frc.robot.Utils.Tunable.TunableShotData;
 import frc.robot.subsystems.Hood.HoodIO.HoodIOInputs;
 
 public class Hood extends SubsystemBase {
@@ -37,6 +39,8 @@ public class Hood extends SubsystemBase {
   private TunableNumber kd = new TunableNumber("Hood/kd", HoodConstants.KD);
   private TunableNumber ks = new TunableNumber("Hood/ks", HoodConstants.KS);
   private TunableNumber kff = new TunableNumber("Hood/kff", HoodConstants.KFF);
+
+  private TunableShotData shotData = new TunableShotData("ShotData", ShotData.ZEROED);
 
   private double desiredPosition = 0;
 
@@ -55,6 +59,11 @@ public class Hood extends SubsystemBase {
     if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged() || kff.hasChanged()){
       io.setPID(kp.get(), ki.get(), kd.get(), ks.get(), kff.get());
     }
+
+    if(shotData.hasChanged(hashCode())){
+      Logger.recordOutput("Hood/Changed", true);
+    }
+    Logger.recordOutput("ShotData/Values", shotData.getValue());
 
     // if(isIntakeDeployed.get() && hoodMode.equals(HoodMode.Dynamic)){
     //   io.setPosition(0);

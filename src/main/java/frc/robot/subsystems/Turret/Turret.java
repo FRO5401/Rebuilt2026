@@ -35,8 +35,8 @@ import frc.robot.Constants.TurretConstants.TurretMode;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
-import frc.robot.Utils.TunableNumber;
 import frc.robot.Utils.ZoneGetter;
+import frc.robot.Utils.Tunable.TunableNumber;
 
 public class Turret extends SubsystemBase {
 

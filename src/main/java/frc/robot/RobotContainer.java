@@ -36,7 +36,7 @@ import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
 import frc.robot.Utils.RobotMode.Mode;
-import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
@@ -154,6 +154,7 @@ public class RobotContainer {
                         drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
                 indexer = new Indexer(new IndexerIOTalon());
                 visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake);
+                hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
 
                 configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
                 break;

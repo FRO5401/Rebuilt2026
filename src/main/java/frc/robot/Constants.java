@@ -73,8 +73,6 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap HOOD_MAP = new InterpolatingDoubleTreeMap();
 
         static{
-            FLYWHEEL_MAP.put(null, null);
-            HOOD_MAP.put(null, null);
 
             FLYWHEEL_MAP.put(2.0304514451335125, 39.5);
             HOOD_MAP.put(2.0304514451335125, 0.02);

@@ -9,7 +9,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Utils.TunableNumber;
+import frc.robot.Utils.Tunable.TunableNumber;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO io;
