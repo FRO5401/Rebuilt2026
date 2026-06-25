@@ -5,7 +5,6 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 public class ShotLUT {
   private InterpolatingTreeMap<Double, ShotData> shotMap;
-  private boolean hasEntry;
 
   public ShotLUT(){
     shotMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData.interpolate());
