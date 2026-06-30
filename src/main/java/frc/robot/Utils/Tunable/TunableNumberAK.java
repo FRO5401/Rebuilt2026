@@ -23,20 +23,20 @@ public class TunableNumberAK implements DoubleSupplier {
 
     public TunableNumberAK(String m_key, double m_defaultValue) {
         this(m_key);
-        initalizeDefault(m_defaultValue);
+        initializeDefault(m_defaultValue);
     }
 
     public TunableNumberAK(String m_key, double m_defaultValue, boolean m_disableTuning) {
         this(m_key);
         this.isTuningDisabled = m_disableTuning;
-        initalizeDefault(m_defaultValue);
+        initializeDefault(m_defaultValue);
     }
 
     public void disableTuning(boolean m_disable) {
         this.isTuningDisabled = m_disable;
     }
 
-    public void initalizeDefault(double m_defaultValue) {
+    public void initializeDefault(double m_defaultValue) {
         if (!hasDefault) {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;

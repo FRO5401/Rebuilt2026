@@ -30,21 +30,21 @@ public class TunableNumber implements DoubleSupplier {
 
     public TunableNumber(String m_key, double m_defaultValue) {
         this(m_key);
-        initalizeDefault(m_defaultValue);
+        initializeDefault(m_defaultValue);
     }
 
     public TunableNumber(String m_key, double m_defaultValue, boolean m_disableTuning) {
         this(m_key);
         this.isTuningDisabled = m_disableTuning;
-        initalizeDefault(m_defaultValue);
+        initializeDefault(m_defaultValue);
     }
 
     public TunableNumber(String m_key, double m_defaultValue, NetworkTable netTable) {
         this(m_key);
-        initalizeDefault(m_defaultValue, netTable);
+        initializeDefault(m_defaultValue, netTable);
     }
 
-    public void initalizeDefault(double m_defaultValue) {
+    public void initializeDefault(double m_defaultValue) {
         if (!hasDefault) {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
@@ -59,7 +59,7 @@ public class TunableNumber implements DoubleSupplier {
         }
     }
 
-    public void initalizeDefault(double m_defaultValue, NetworkTable netTable) {
+    public void initializeDefault(double m_defaultValue, NetworkTable netTable) {
         if (!hasDefault) {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
@@ -107,7 +107,7 @@ public class TunableNumber implements DoubleSupplier {
     }
 
     public void close(){
-        pub.close();
-        sub.close();
+        if(pub != null) pub.close();
+        if(sub != null) sub.close();
     }
 }
