@@ -50,6 +50,11 @@ public class TunableNumber implements DoubleSupplier {
     private boolean hasDefault = false;
     private boolean isTuningDisabled = false;
 
+    /**
+   * Returns whether tuning is currently active.
+   *
+   * <p>Tuning is active only when robot mode allows it and this tunable is not disabled.
+   */
     private boolean isTuningEnabled(){
         return RobotMode.isTuningMode ? !isTuningDisabled : false;
     }

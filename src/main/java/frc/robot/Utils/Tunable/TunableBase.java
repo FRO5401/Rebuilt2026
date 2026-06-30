@@ -47,9 +47,15 @@ public abstract class TunableBase<V> {
 
   protected boolean isTuningDisabled = false;
  
+  /**
+   * Returns whether tuning is currently active.
+   *
+   * <p>Tuning is active only when robot mode allows it and this tunable is not disabled.
+   */
   protected boolean isTuningEnabled(){
     return RobotMode.isTuningMode ? !isTuningDisabled : false;
   }
+  
   /**
    * Creates a tunable value with the given key.
    *
