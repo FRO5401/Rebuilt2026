@@ -6,8 +6,8 @@
 // the root directory of this project.
 
 // Contributors:
-// 2026 Soccertoad Ben Reinert
-// 2026 Ace-h121 Ace Hathaway
+//  2026 Soccertoad Ben Reinert
+//  2026 Ace-h121 Ace Hathaway
 
 package frc.robot.Utils.Tunable;
 
