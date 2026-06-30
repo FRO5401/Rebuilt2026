@@ -13,11 +13,8 @@ package frc.robot.Utils.Tunable;
 
 import java.util.Arrays;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Utils.RobotMode;
