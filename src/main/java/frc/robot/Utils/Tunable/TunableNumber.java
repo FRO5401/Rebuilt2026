@@ -94,7 +94,7 @@ public class TunableNumber implements DoubleSupplier {
         return false;
     }
 
-    public static boolean hasChanged(TunableNumberAK... tunables) {
+    public static boolean hasChanged(TunableNumber... tunables) {
         if (Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())) {
             return true;
         }
