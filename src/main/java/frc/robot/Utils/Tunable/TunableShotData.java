@@ -38,7 +38,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
     if(!hasDefault){
       return ShotData.ZEROED;
     } else {
-      return isMasterTuningEnabled() ? new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get()) : defaultValue;
+      return isTuningEnabled() ? new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get()) : defaultValue;
     }
   }
 

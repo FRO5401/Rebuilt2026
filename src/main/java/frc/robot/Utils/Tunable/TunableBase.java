@@ -47,7 +47,7 @@ public abstract class TunableBase<V> {
 
   protected boolean isTuningDisabled = false;
  
-  protected boolean isMasterTuningEnabled(){
+  protected boolean isTuningEnabled(){
     return RobotMode.isTuningMode ? !isTuningDisabled : false;
   }
   /**
@@ -116,7 +116,7 @@ public abstract class TunableBase<V> {
       this.hasDefault = true;
       this.defaultValue = m_defaultValue;
 
-      if (isMasterTuningEnabled()) initTunable();
+      if (isTuningEnabled()) initTunable();
     }
 
   }
@@ -132,7 +132,7 @@ public abstract class TunableBase<V> {
    * @return {@code true} if the value has changed since the previous call for this identifier.
    */
   public boolean hasChanged(int id) {
-    if (!isMasterTuningEnabled()) return false;
+    if (!isTuningEnabled()) return false;
 
     V currentValue = getValue();
     V lastValue = lastValueMap.get(id);

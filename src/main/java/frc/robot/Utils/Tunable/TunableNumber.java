@@ -50,7 +50,7 @@ public class TunableNumber implements DoubleSupplier {
     private boolean hasDefault = false;
     private boolean isTuningDisabled = false;
 
-    private boolean isMasterTuningEnabled(){
+    private boolean isTuningEnabled(){
         return RobotMode.isTuningMode ? !isTuningDisabled : false;
     }
 
@@ -117,7 +117,7 @@ public class TunableNumber implements DoubleSupplier {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if (isMasterTuningEnabled()) {
+            if (isTuningEnabled()) {
                 pub = DATA_TABLE.getDoubleTopic(key).publish();
                 pub.set(defaultValue);
 
@@ -141,7 +141,7 @@ public class TunableNumber implements DoubleSupplier {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if (isMasterTuningEnabled()) {
+            if (isTuningEnabled()) {
                 pub = netTable.getDoubleTopic(key).publish();
                 pub.set(defaultValue);
 
@@ -164,7 +164,7 @@ public class TunableNumber implements DoubleSupplier {
         if (!hasDefault) {
             return 0.0;
         } else {
-            return isMasterTuningEnabled() ? sub.get() : defaultValue;
+            return isTuningEnabled() ? sub.get() : defaultValue;
         }
     }
 
@@ -178,7 +178,7 @@ public class TunableNumber implements DoubleSupplier {
      * @return {@code true} if the value changed, otherwise {@code false}.
      */
     public boolean hasChanged() {
-        if (!isMasterTuningEnabled()) return false;
+        if (!isTuningEnabled()) return false;
 
         double currentValue = this.get();
         if (currentValue != defaultValue) {
