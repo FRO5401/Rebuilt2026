@@ -3,11 +3,14 @@ package frc.robot.Utils.Tunable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Utils.RobotMode;
 
 public abstract class TunableBase<V>{
+  protected static final NetworkTableInstance INSTANCE = NetworkTableInstance.getDefault();
+
   protected static final String DIRECTORY = "/Tunable";
-  protected final String key;
+  protected String key;
 
   protected V defaultValue;
   protected boolean hasDefault = false;
@@ -18,7 +21,7 @@ public abstract class TunableBase<V>{
   protected boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
 
   protected TunableBase(String key){
-    this.key = DIRECTORY.concat(key);
+    this.key = DIRECTORY + "/" + key;
   }
 
   protected TunableBase(String key, V defaultValue){
@@ -36,7 +39,6 @@ public abstract class TunableBase<V>{
 
   protected abstract void initTunable();
 
-
   public void setDefaultValue(V defaultValue){
     if(!hasDefault){
       this.hasDefault = true;
@@ -48,6 +50,8 @@ public abstract class TunableBase<V>{
   }
 
   public boolean hasChanged(int id) {
+    if (!masterTuningEnabled) return false;
+
     V currentValue = getValue();
     V lastValue = lastValueMap.get(id);
     if (lastValue != null && !lastValue.equals(currentValue)) {

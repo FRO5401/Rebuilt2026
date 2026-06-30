@@ -1,6 +1,7 @@
 package frc.robot.Utils.Tunable;
 
 import java.util.function.Supplier;
+import edu.wpi.first.networktables.NetworkTable;
 import frc.robot.Utils.FireControl.ShotData;
 
 public class TunableShotData extends TunableBase<ShotData> implements Supplier<ShotData>{
@@ -8,6 +9,8 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
   private TunableNumber flywheelRPS;
   private TunableNumber hoodRotations;
   private TunableNumber tof;
+
+  private NetworkTable netTable;
 
   public TunableShotData(String key){
     super(key);
@@ -23,9 +26,11 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
 
   @Override
   protected void initTunable() {
-    flywheelRPS = new TunableNumber(key.concat("RPS"), defaultValue.rps());
-    hoodRotations = new TunableNumber(key.concat("HoodRotations"), defaultValue.hoodRotations());
-    tof = new TunableNumber(key.concat("ToF"), defaultValue.tof());
+    this.netTable = INSTANCE.getTable(key);
+    this.flywheelRPS = new TunableNumber("RPS", defaultValue.rps(), netTable);
+    this.hoodRotations = new TunableNumber("HoodRotations", defaultValue.hoodRotations(), netTable);
+    this.tof = new TunableNumber("ToF", defaultValue.tof(), netTable);
+
   }
 
   @Override
@@ -33,7 +38,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
     if(!hasDefault){
       return ShotData.ZEROED;
     } else {
-      return new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get());
+      return masterTuningEnabled ? new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get()) : defaultValue;
     }
   }
 

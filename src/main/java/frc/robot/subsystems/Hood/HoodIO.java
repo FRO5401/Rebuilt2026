@@ -26,5 +26,5 @@ public interface HoodIO {
 
   public default void stop() {}
 
-  public default void setPID(double p, double i, double d, double ks, double ff) {}
+  public default void setPID(double p, double i, double d, double ks) {}
 }

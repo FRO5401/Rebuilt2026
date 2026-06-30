@@ -17,9 +17,6 @@ public class HoodIOTalonFX implements HoodIO {
   private final CANcoder hoodCANcoder = new CANcoder(HoodConstants.HOOD_ENCODER_ID);
   private final FeedbackConfigs feedbackConfig = HoodConstants.FEEDBACK_CONFIGS;
 
-
-  private double feedForward = HoodConstants.KFF;
-
   public HoodIOTalonFX() {
     hoodCANcoder.setPosition(0);
     hoodCANcoder.getConfigurator().apply(HoodConstants.ENCODER_CONFIG);
@@ -64,12 +61,11 @@ public class HoodIOTalonFX implements HoodIO {
   }
 
   @Override
-  public void setPID(double p, double i, double d, double ks, double ff) {
+  public void setPID(double p, double i, double d, double ks) {
     HoodConstants.CLOSED_LOOP.kP = p;
     HoodConstants.CLOSED_LOOP.kI = i;
     HoodConstants.CLOSED_LOOP.kD = d;
     HoodConstants.CLOSED_LOOP.kS = ks;
-    feedForward = ff;
     hoodMotor.getConfigurator().apply(HoodConstants.CLOSED_LOOP);
   }
 

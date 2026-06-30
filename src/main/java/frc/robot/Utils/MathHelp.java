@@ -17,10 +17,10 @@ import edu.wpi.first.units.measure.Time;
 import frc.robot.Robot;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Utils.Tunable.TunableNumber;
+import frc.robot.Utils.Tunable.TunableNumberAK;
 
 public class MathHelp {
-    public static TunableNumber RPM = new TunableNumber("/Shooter/FlyWheel", 0);
+    public static TunableNumberAK RPM = new TunableNumberAK("Shooter/FlyWheel", 0);
 
     public static LinearVelocity findFlyWheelVelocity(Transform2d poseDifference) {
         // Im gonna slip up the math despite it not being optimal for memory its so much

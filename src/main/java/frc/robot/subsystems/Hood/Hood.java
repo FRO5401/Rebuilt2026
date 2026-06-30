@@ -4,26 +4,19 @@
 
 package frc.robot.subsystems.Hood;
 
-import static edu.wpi.first.units.Units.Rotations;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.HoodConstants.HoodMode;
-import frc.robot.Constants.TurretConstants;
-import frc.robot.Constants.TurretConstants.TurretMode;
 import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.Utils.Tunable.TunableShotData;
-import frc.robot.subsystems.Hood.HoodIO.HoodIOInputs;
 
 public class Hood extends SubsystemBase {
   private final HoodIO io;
@@ -38,7 +31,6 @@ public class Hood extends SubsystemBase {
   private TunableNumber ki = new TunableNumber("Hood/ki", HoodConstants.KI);
   private TunableNumber kd = new TunableNumber("Hood/kd", HoodConstants.KD);
   private TunableNumber ks = new TunableNumber("Hood/ks", HoodConstants.KS);
-  private TunableNumber kff = new TunableNumber("Hood/kff", HoodConstants.KFF);
 
   private TunableShotData shotData = new TunableShotData("ShotData", ShotData.ZEROED);
 
@@ -54,10 +46,10 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Hood/", inputs);
+    Logger.processInputs("Hood", inputs);
 
-    if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged() || kff.hasChanged()){
-      io.setPID(kp.get(), ki.get(), kd.get(), ks.get(), kff.get());
+    if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged()){
+      io.setPID(kp.get(), ki.get(), kd.get(), ks.get());
     }
 
     if(shotData.hasChanged(hashCode())){
@@ -68,7 +60,7 @@ public class Hood extends SubsystemBase {
     // if(isIntakeDeployed.get() && hoodMode.equals(HoodMode.Dynamic)){
     //   io.setPosition(0);
     // }
-    
+
     Logger.recordOutput("Hood/Disired Angle", desiredPosition);
   }
 

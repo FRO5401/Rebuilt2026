@@ -3,14 +3,21 @@ package frc.robot.Utils.Tunable;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Utils.RobotMode;
 
 public class TunableNumber implements DoubleSupplier {
+    private static final NetworkTableInstance INSTANCE = NetworkTableInstance.getDefault();
     private static final String DIRECTORY = "/Tunable";
-    private final String key;
 
-    private LoggedNetworkNumber networkNumber;
+    private String key;
+
+    private static final NetworkTable DATA_TABLE = INSTANCE.getTable(DIRECTORY);
+    private DoubleSubscriber sub;
+    private DoublePublisher pub;
 
     private double defaultValue;
     private boolean hasDefault = false;
@@ -18,7 +25,7 @@ public class TunableNumber implements DoubleSupplier {
     private boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
 
     public TunableNumber(String m_key) {
-        this.key = DIRECTORY + m_key;
+        this.key = m_key;
     }
 
     public TunableNumber(String m_key, double m_defaultValue) {
@@ -32,8 +39,9 @@ public class TunableNumber implements DoubleSupplier {
         initalizeDefault(m_defaultValue);
     }
 
-    public void disableTuning(boolean m_disable) {
-        this.isTuningDisabled = m_disable;
+    public TunableNumber(String m_key, double m_defaultValue, NetworkTable netTable) {
+        this(m_key);
+        initalizeDefault(m_defaultValue, netTable);
     }
 
     public void initalizeDefault(double m_defaultValue) {
@@ -42,7 +50,25 @@ public class TunableNumber implements DoubleSupplier {
             this.defaultValue = m_defaultValue;
 
             if (masterTuningEnabled) {
-                networkNumber = new LoggedNetworkNumber(key, defaultValue);
+                pub = DATA_TABLE.getDoubleTopic(key).publish();
+                pub.set(defaultValue);
+
+                sub = DATA_TABLE.getDoubleTopic(key).subscribe(defaultValue);
+            }
+
+        }
+    }
+
+    public void initalizeDefault(double m_defaultValue, NetworkTable netTable) {
+        if (!hasDefault) {
+            this.hasDefault = true;
+            this.defaultValue = m_defaultValue;
+
+            if (masterTuningEnabled) {
+                pub = netTable.getDoubleTopic(key).publish();
+                pub.set(defaultValue);
+
+                sub = netTable.getDoubleTopic(key).subscribe(defaultValue);
             }
 
         }
@@ -52,22 +78,23 @@ public class TunableNumber implements DoubleSupplier {
         if (!hasDefault) {
             return 0.0;
         } else {
-            return masterTuningEnabled ? networkNumber.get() : defaultValue;
+            return masterTuningEnabled ? sub.get() : defaultValue;
         }
     }
 
     public boolean hasChanged() {
+        if (!masterTuningEnabled) return false;
 
         double currentValue = this.get();
         if (currentValue != defaultValue) {
-            networkNumber.set(currentValue);
+            pub.set(currentValue);
             defaultValue = currentValue;
             return true;
         }
         return false;
     }
 
-    public static boolean hasChanged(TunableNumber... tunables) {
+    public static boolean hasChanged(TunableNumberAK... tunables) {
         if (Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())) {
             return true;
         }
@@ -77,5 +104,10 @@ public class TunableNumber implements DoubleSupplier {
     @Override
     public double getAsDouble() {
         return get();
+    }
+
+    public void close(){
+        pub.close();
+        sub.close();
     }
 }

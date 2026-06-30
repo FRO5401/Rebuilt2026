@@ -5,10 +5,11 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 public class ShotLUT {
   private InterpolatingTreeMap<Double, ShotData> shotMap;
+  private double velocityScalar = 1;
+  private double tunableVelocityScalar = 1;
 
   public ShotLUT(){
     shotMap = new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData.interpolate());
-
   }
 
   public void put(double distance, ShotData shotParms){
@@ -19,11 +20,24 @@ public class ShotLUT {
     put(distance, new ShotData(rps, hoodAngle, tof));
   }
 
-  public ShotData get(double distance){
-    return shotMap.get(distance) != null ? shotMap.get(distance) : ShotData.ZEROED;
+  public ShotData getRawShotData(double distance){
+    return getInterpolatedShotData(distance);
+  }
+
+  public ShotData getScaleredData(double distance){
+    var data = getInterpolatedShotData(distance);
+    return new ShotData(data.rps() * velocityScalar * tunableVelocityScalar, data.hoodRotations(), data.tof());
   }
 
   public void clear(){
     shotMap.clear();
+  }
+
+  private ShotData getInterpolatedShotData(double distance){
+    return shotMap.get(distance) != null ? shotMap.get(distance) : ShotData.ZEROED;
+  }
+
+  public void updateVelocityScalar(double scalar){
+    tunableVelocityScalar = scalar;
   }
 }
