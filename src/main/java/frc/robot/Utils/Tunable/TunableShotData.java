@@ -12,16 +12,16 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
 
   private NetworkTable netTable;
 
-  public TunableShotData(String key){
-    super(key);
+  public TunableShotData(String m_key){
+    super(m_key);
   }
 
-  public TunableShotData(String key, ShotData defaultValue){
-    super(key, defaultValue);
+  public TunableShotData(String m_key, ShotData m_defaultValue){
+    super(m_key, m_defaultValue);
   }
 
-  public TunableShotData(String key, ShotData defaultValue, boolean disableTuning){
-    super(key, defaultValue, disableTuning);
+  public TunableShotData(String m_key, ShotData m_defaultValue, boolean m_disableTuning){
+    super(m_key, m_defaultValue, m_disableTuning);
   }
 
   @Override
@@ -38,7 +38,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
     if(!hasDefault){
       return ShotData.ZEROED;
     } else {
-      return masterTuningEnabled ? new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get()) : defaultValue;
+      return isMasterTuningEnabled() ? new ShotData(flywheelRPS.get(), hoodRotations.get(), tof.get()) : defaultValue;
     }
   }
 

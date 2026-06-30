@@ -46,39 +46,41 @@ public abstract class TunableBase<V> {
   protected Map<Integer, V> lastValueMap = new HashMap<>();
 
   protected boolean isTuningDisabled = false;
-  protected boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
-
+ 
+  protected boolean isMasterTuningEnabled(){
+    return RobotMode.isTuningMode ? !isTuningDisabled : false;
+  }
   /**
    * Creates a tunable value with the given key.
    *
-   * @param key Name of the tunable entry relative to the tunable directory.
+   * @param m_key Name of the tunable entry relative to the tunable directory.
    */
-  protected TunableBase(String key) {
-    this.key = DIRECTORY + "/" + key;
+  protected TunableBase(String m_key) {
+    this.key = formatKey(m_key);
   }
 
   /**
    * Creates a tunable value with the specified default value.
    *
-   * @param key Name of the tunable entry.
-   * @param defaultValue Default value when tuning is disabled.
+   * @param m_key Name of the tunable entry.
+   * @param m_defaultValue Default value when tuning is disabled.
    */
-  protected TunableBase(String key, V defaultValue) {
-    this(key);
-    setDefaultValue(defaultValue);
+  protected TunableBase(String m_key, V m_defaultValue) {
+    this(m_key);
+    setDefaultValue(m_defaultValue);
   }
 
   /**
    * Creates a tunable value with an option to disable tuning.
    *
-   * @param key Name of the tunable entry.
-   * @param defaultValue Default value.
-   * @param disableTuning If true, this value will never be tunable.
+   * @param m_key Name of the tunable entry.
+   * @param m_defaultValue Default value.
+   * @param m_disableTuning If true, this value will never be tunable.
    */
-  protected TunableBase(String key, V defaultValue, boolean disableTuning) {
-    this(key);
-    setDefaultValue(defaultValue);
-    this.isTuningDisabled = disableTuning;
+  protected TunableBase(String m_key, V m_defaultValue, boolean m_disableTuning) {
+    this(m_key);
+    setDefaultValue(m_defaultValue);
+    this.isTuningDisabled = m_disableTuning;
   }
 
   /**
@@ -107,15 +109,14 @@ public abstract class TunableBase<V> {
    * <p>
    * The default value may only be assigned once. Subsequent calls have no effect.
    *
-   * @param defaultValue Default value to store.
+   * @param m_defaultValue Default value to store.
    */
-  public void setDefaultValue(V defaultValue) {
+  public void setDefaultValue(V m_defaultValue) {
     if (!hasDefault) {
       this.hasDefault = true;
-      this.defaultValue = defaultValue;
+      this.defaultValue = m_defaultValue;
 
-      if (masterTuningEnabled)
-        initTunable();
+      if (isMasterTuningEnabled()) initTunable();
     }
 
   }
@@ -131,8 +132,7 @@ public abstract class TunableBase<V> {
    * @return {@code true} if the value has changed since the previous call for this identifier.
    */
   public boolean hasChanged(int id) {
-    if (!masterTuningEnabled)
-      return false;
+    if (!isMasterTuningEnabled()) return false;
 
     V currentValue = getValue();
     V lastValue = lastValueMap.get(id);
@@ -158,4 +158,11 @@ public abstract class TunableBase<V> {
     return false;
   }
 
+  private static String formatKey(String m_key){
+    if (m_key.startsWith("/")) {
+      return DIRECTORY.concat(m_key);
+    } else {
+      return DIRECTORY.concat("/").concat(m_key);
+    }
+  }
 }

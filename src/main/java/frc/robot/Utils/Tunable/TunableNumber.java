@@ -49,7 +49,10 @@ public class TunableNumber implements DoubleSupplier {
     private double defaultValue;
     private boolean hasDefault = false;
     private boolean isTuningDisabled = false;
-    private boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
+
+    private boolean isMasterTuningEnabled(){
+        return RobotMode.isTuningMode ? !isTuningDisabled : false;
+    }
 
     /**
      * Creates a tunable number without a default value.
@@ -114,7 +117,7 @@ public class TunableNumber implements DoubleSupplier {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if (masterTuningEnabled) {
+            if (isMasterTuningEnabled()) {
                 pub = DATA_TABLE.getDoubleTopic(key).publish();
                 pub.set(defaultValue);
 
@@ -138,7 +141,7 @@ public class TunableNumber implements DoubleSupplier {
             this.hasDefault = true;
             this.defaultValue = m_defaultValue;
 
-            if (masterTuningEnabled) {
+            if (isMasterTuningEnabled()) {
                 pub = netTable.getDoubleTopic(key).publish();
                 pub.set(defaultValue);
 
@@ -161,7 +164,7 @@ public class TunableNumber implements DoubleSupplier {
         if (!hasDefault) {
             return 0.0;
         } else {
-            return masterTuningEnabled ? sub.get() : defaultValue;
+            return isMasterTuningEnabled() ? sub.get() : defaultValue;
         }
     }
 
@@ -175,8 +178,7 @@ public class TunableNumber implements DoubleSupplier {
      * @return {@code true} if the value changed, otherwise {@code false}.
      */
     public boolean hasChanged() {
-        if (!masterTuningEnabled)
-            return false;
+        if (!isMasterTuningEnabled()) return false;
 
         double currentValue = this.get();
         if (currentValue != defaultValue) {
@@ -218,9 +220,7 @@ public class TunableNumber implements DoubleSupplier {
      * resources.
      */
     public void close() {
-        if (pub != null)
-            pub.close();
-        if (sub != null)
-            sub.close();
+        if (pub != null) pub.close();
+        if (sub != null) sub.close();
     }
 }
