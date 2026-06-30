@@ -7,7 +7,6 @@
 
 // Contributors:
 //  2026 Soccertoad Ben Reinert
-//  2026 Ace-h121 Ace Hathaway
 
 package frc.robot.Utils.Tunable;
 

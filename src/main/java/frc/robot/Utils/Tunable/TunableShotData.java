@@ -30,7 +30,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
   private NetworkTable netTable;
 
   /**
-   * Creates a tunable number without a default value.
+   * Creates a tunable ShotData without a default value.
    *
    * <p>
    * {@link #setDefaultValue(ShotData)} must be called before the value can be used.
@@ -42,7 +42,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
   }
 
   /**
-   * Creates a tunable number with the specified default value.
+   * Creates a tunable ShotData with the specified default value.
    *
    * @param m_key NetworkTables key.
    * @param m_defaultValue Default ShotData.
@@ -54,7 +54,7 @@ public class TunableShotData extends TunableBase<ShotData> implements Supplier<S
   }
 
   /**
-   * Creates a tunable number with an option to disable tuning.
+   * Creates a tunable ShotData with an option to disable tuning.
    *
    * @param m_key NetworkTables key.
    * @param m_defaultValue Default ShotData.
