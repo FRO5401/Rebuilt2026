@@ -10,20 +10,16 @@
 // the root directory of this project.
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
-import org.photonvision.PhotonCamera;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
-
-import choreo.auto.AutoChooser;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import choreo.auto.AutoChooser;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,6 +45,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.CANdleSystem.AnimationTypes;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Hood.Hood;
+import frc.robot.subsystems.Hood.HoodIOTalonFX;
 import frc.robot.subsystems.Indexer.Indexer;
 import frc.robot.subsystems.Indexer.IndexerIOTalon;
 import frc.robot.subsystems.Intake.Intake;
@@ -61,346 +59,370 @@ import frc.robot.subsystems.Turret.Turret;
 import frc.robot.subsystems.Turret.TurretIOSim;
 import frc.robot.subsystems.Turret.TurretIOTalonFX;
 import frc.robot.subsystems.Visualization;
-import frc.robot.subsystems.Hood.Hood;
-import frc.robot.subsystems.Hood.HoodIOTalonFX;
+import java.util.function.BooleanSupplier;
+import org.photonvision.PhotonCamera;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a "declarative" paradigm, very little robot logic should
- * actually be handled in the {@link Robot} periodic methods (other than the
- * scheduler calls). Instead, the structure of the robot (including subsystems,
- * commands, and trigger mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
-    // Leave these here god forbid we have to retune
-    // We've since had to retune, including at comp...
-    @SuppressWarnings("unused")
-    private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0, false);
-    
-    @SuppressWarnings("unused")
-    private TunableNumber HoodPosition = new TunableNumber("Hood/Position", 0, false);
+  // Leave these here god forbid we have to retune
+  // We've since had to retune, including at comp...
+  @SuppressWarnings("unused")
+  private TunableNumber ShooterRPM = new TunableNumber("Shooter/RPM", 0, false);
 
-    @SuppressWarnings("unused")
-    private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
+  @SuppressWarnings("unused")
+  private TunableNumber HoodPosition = new TunableNumber("Hood/Position", 0, false);
 
-    // drivetrain thetaController
-    private static final PIDController thetaController = new PIDController(1.687, 0, 0);
+  @SuppressWarnings("unused")
+  private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
-    public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
-    public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
-    public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
+  // drivetrain thetaController
+  private static final PIDController thetaController = new PIDController(1.687, 0, 0);
 
-    private AutoChooser autoChooser = new AutoChooser("DoNothing");
+  public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
+  public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
+  public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
 
-    public final static CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain(
-            backRightCamera, backLeftCamera, frontCamera);
+  private AutoChooser autoChooser = new AutoChooser("DoNothing");
 
-    // Subsystem Declaration
-    private static Turret turret;
-    private static Shooter shooter;
-    private static Intake intake;
-    private static Indexer indexer;
-    private static CANdleSystem candle = new CANdleSystem();
-    private static Hood hood;
-    private static Visualization visulization = null;
+  public static final CommandSwerveDrivetrain drivetrain =
+      TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
 
-    // Time stamps
-    private Trigger gameShift;
-    private Trigger endGame;
-    private Trigger rainbow;
+  // Subsystem Declaration
+  private static Turret turret;
+  private static Shooter shooter;
+  private static Intake intake;
+  private static Indexer indexer;
+  private static CANdleSystem candle = new CANdleSystem();
+  private static Hood hood;
+  private static Visualization visulization = null;
 
-    private static double shootingSpeed = 1;
+  // Time stamps
+  private Trigger gameShift;
+  private Trigger endGame;
+  private Trigger rainbow;
 
-    // Command Declaration
-    private static Autos autos;
+  private static double shootingSpeed = 1;
 
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    public static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  // Command Declaration
+  private static Autos autos;
 
-    public static final RobotCentric robotCentricDrive = new RobotCentric()
-            .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  public static final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+          .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+          .withDriveRequestType(
+              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
-    @SuppressWarnings("unused")
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  public static final RobotCentric robotCentricDrive =
+      new RobotCentric()
+          .withDeadband(Constants.Swerve.MaxSpeed * 0.01)
+          .withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.01) // Add a 10% deadband
+          .withDriveRequestType(
+              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
-    // Controllers
-    private CommandXboxController driver = new CommandXboxController(0);
-    private CommandXboxController operator = new CommandXboxController(1);
+  @SuppressWarnings("unused")
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    // Simulation Visulization
-    public FuelSim fuelSim = null;
+  // Controllers
+  private CommandXboxController driver = new CommandXboxController(0);
+  private CommandXboxController operator = new CommandXboxController(1);
 
-    /**
-     * The container for the robot. Contains subsystems, IO devices, and
-     * commands.
-     */
-    public RobotContainer() {
-        switch (RobotMode.currentMode) {
-            case REAL:
-                intake = new Intake(new IntakeIOTalonFX());
-                shooter = new Shooter(new ShooterIOTalon());
-                turret = new Turret(
-                        new TurretIOTalonFX(), drivetrain::getPose,
-                        drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
-                indexer = new Indexer(new IndexerIOTalon());
-                hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
+  // Simulation Visulization
+  public FuelSim fuelSim = null;
 
-                break;
+  /** The container for the robot. Contains subsystems, IO devices, and commands. */
+  public RobotContainer() {
+    switch (RobotMode.currentMode) {
+      case REAL:
+        intake = new Intake(new IntakeIOTalonFX());
+        shooter = new Shooter(new ShooterIOTalon());
+        turret =
+            new Turret(
+                new TurretIOTalonFX(),
+                drivetrain::getPose,
+                drivetrain::getFieldRelativeChassisSpeeds,
+                intake::isNotStartingPose);
+        indexer = new Indexer(new IndexerIOTalon());
+        hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
 
-            case SIM:
-                configureFuelSim();
-                intake = new Intake(new IntakeIOSim());
-                shooter = new Shooter(new ShooterIOSim());
-                turret = new Turret(new TurretIOSim(), drivetrain::getPose,
-                        drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
-                indexer = new Indexer(new IndexerIOTalon());
-                visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake);
-                hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
+        break;
 
-                configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
-                break;
+      case SIM:
+        configureFuelSim();
+        intake = new Intake(new IntakeIOSim());
+        shooter = new Shooter(new ShooterIOSim());
+        turret =
+            new Turret(
+                new TurretIOSim(),
+                drivetrain::getPose,
+                drivetrain::getFieldRelativeChassisSpeeds,
+                intake::isNotStartingPose);
+        indexer = new Indexer(new IndexerIOTalon());
+        visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake);
+        hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
 
-            default:
-                intake = new Intake(null);
-                shooter = new Shooter(null);
-                turret = new Turret(null, drivetrain::getPose,
-                drivetrain::getFieldRelativeChassisSpeeds, intake::isNotStartingPose);
-                indexer = new Indexer(null);
-                break;
-        }
+        configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
+        break;
 
-        ShooterConstants.initializeTreeMap();
-
-        gameShift = new Trigger(() -> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
-        endGame = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 30);
-        rainbow = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 1);
-
-        configureAutoChooser();
-
-        // Configure the controller bindings
-        configureBindings();
-
+      default:
+        intake = new Intake(null);
+        shooter = new Shooter(null);
+        turret =
+            new Turret(
+                null,
+                drivetrain::getPose,
+                drivetrain::getFieldRelativeChassisSpeeds,
+                intake::isNotStartingPose);
+        indexer = new Indexer(null);
+        break;
     }
 
-    private void configureBindings() {
+    ShooterConstants.initializeTreeMap();
 
-        // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> getDriveRequest(DriveType.FIELD_CENTRIC)));
+    gameShift = new Trigger(() -> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
+    endGame = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 30);
+    rainbow = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 1);
 
-        driver.x().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.TRENCH)));
-        driver.a().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BUMP)));
+    configureAutoChooser();
 
-        driver.leftBumper().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BRAKE)));
+    // Configure the controller bindings
+    configureBindings();
+  }
 
-        driver.rightBumper().whileTrue(Commands.runOnce(() -> shootingSpeed = 0.2))
-                .whileFalse(Commands.runOnce(() -> shootingSpeed = 1));
+  private void configureBindings() {
 
-        driver.povUp().onTrue(candle.setLights(AnimationTypes.Rainbow));
-        driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
+    // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    drivetrain.setDefaultCommand(
+        drivetrain.applyRequest(() -> getDriveRequest(DriveType.FIELD_CENTRIC)));
 
-        // This is for the real robot
-        //turret.setDefaultCommand(turret.setSmartTarget());
+    driver.x().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.TRENCH)));
+    driver.a().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BUMP)));
 
-        operator.rightTrigger().onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+    driver.leftBumper().whileTrue(drivetrain.applyRequest(() -> getDriveRequest(DriveType.BRAKE)));
 
-        // // this is for tuning
-        turret.setDefaultCommand(turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
-        
-        // // this is for sim
-        // turret.setDefaultCommand(turret.setSmartTarget()
-        //     .andThen(Commands.runOnce(() -> turret.updateFuel(
-        //         MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))))
-        // );
-        // // // this is for tuning
-        operator.rightTrigger().whileTrue(
+    driver
+        .rightBumper()
+        .whileTrue(Commands.runOnce(() -> shootingSpeed = 0.2))
+        .whileFalse(Commands.runOnce(() -> shootingSpeed = 1));
+
+    driver.povUp().onTrue(candle.setLights(AnimationTypes.Rainbow));
+    driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
+
+    // This is for the real robot
+    // turret.setDefaultCommand(turret.setSmartTarget());
+
+    operator
+        .rightTrigger()
+        .onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+
+    // // this is for tuning
+    turret.setDefaultCommand(
+        turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+
+    // // this is for sim
+    // turret.setDefaultCommand(turret.setSmartTarget()
+    //     .andThen(Commands.runOnce(() -> turret.updateFuel(
+    //         MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))))
+    // );
+    // // // this is for tuning
+    operator
+        .rightTrigger()
+        .whileTrue(
             new ParallelCommandGroup(
-                Commands.repeatingSequence(shooter.setVelocityDouble(
-                    ShooterRPM::get, 
-                        intake::getDesiredAngle)
-                ),
-                Commands.repeatingSequence(hood.setHoodCommandwIntake(
-                    HoodPosition::get, 
-                    intake::getDesiredAngle
-                    )
-                ),
+                Commands.repeatingSequence(
+                    shooter.setVelocityDouble(ShooterRPM::get, intake::getDesiredAngle)),
+                Commands.repeatingSequence(
+                    hood.setHoodCommandwIntake(HoodPosition::get, intake::getDesiredAngle)),
+                new SequentialCommandGroup(
+                    Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
 
+    // operator.rightTrigger().whileTrue(new
+    // ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
+    //         () -> RotationsPerSecond
+    //
+    // .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
+    //         intake::getDesiredAngle)),
+    //         new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0),
+    // Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
+    // );
 
-            new SequentialCommandGroup(
-                Commands.waitSeconds(.2), 
-                indexer.setIndexerCommand(
-                    ()-> .9, 
-                    () -> 11.0)
-            )
-            )
-        );
+    operator
+        .rightTrigger()
+        .onFalse(
+            indexer
+                .setIndexerCommand(() -> 0.0, () -> 0.0)
+                .andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
 
-        // operator.rightTrigger().whileTrue(new ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-        //         () -> RotationsPerSecond
-        //                 .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-        //         intake::getDesiredAngle)),
-        //         new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0), Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
-        // );
+    operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
+    operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
+    operator.a().onTrue(intake.setPivotPositionCommand(0));
+    operator.b().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .91));
 
-        operator.rightTrigger().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0).andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
+    operator
+        .leftTrigger()
+        .whileTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED))
+        .onFalse(intake.setInfeedVelocityCommand(0));
+    operator
+        .leftBumper()
+        .whileTrue(intake.setInfeedVelocityCommand(-IntakeConstants.INTAKE_SPEED))
+        .onFalse(intake.setInfeedVelocityCommand(0));
 
-        operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
-        operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
-        operator.a().onTrue(intake.setPivotPositionCommand(0));
-        operator.b().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .91));
+    operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
+    operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
 
-        operator.leftTrigger().whileTrue(intake.setInfeedVelocityCommand(IntakeConstants.INTAKE_SPEED))
-                .onFalse(intake.setInfeedVelocityCommand(0));
-        operator.leftBumper().whileTrue(intake.setInfeedVelocityCommand(-IntakeConstants.INTAKE_SPEED)).onFalse(intake.setInfeedVelocityCommand(0));
+    operator
+        .start()
+        .onTrue(Commands.runOnce(() -> turret.changeTurretMode(TurretMode.Static), turret));
+    operator
+        .back()
+        .onTrue(Commands.runOnce(() -> turret.changeTurretMode(TurretMode.Turret), turret));
 
-        operator.rightBumper().onTrue(indexer.setIndexerCommand(() -> -.5, () -> -4.0));
-        operator.rightBumper().onFalse(indexer.setIndexerCommand(() -> 0.0, () -> 0.0));
-
-        operator.start().onTrue(Commands.runOnce(() -> turret.changeTurretMode(TurretMode.Static), turret));
-        operator.back().onTrue(Commands.runOnce(() -> turret.changeTurretMode(TurretMode.Turret), turret));
-
-        gameShift.onTrue((Commands.parallel(
+    gameShift
+        .onTrue(
+            (Commands.parallel(
                 candle.setLights(AnimationTypes.Strobe),
                 Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, .5)))))
-                .onFalse((Commands.parallel(
-                        candle.setLights(AnimationTypes.Looking),
-                        Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0))))
-                );
+        .onFalse(
+            (Commands.parallel(
+                candle.setLights(AnimationTypes.Looking),
+                Commands.run(() -> operator.setRumble(RumbleType.kBothRumble, 0)))));
 
-        endGame.onTrue(candle.setLights(AnimationTypes.Rainbow));
+    endGame.onTrue(candle.setLights(AnimationTypes.Rainbow));
 
-        rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
+    rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
 
-        operator.povDown().onTrue(hood.setHoodCommand(0.00));
-        operator.povUp().onTrue(hood.setHoodCommand(0.53125/2));
+    operator.povDown().onTrue(hood.setHoodCommand(0.00));
+    operator.povUp().onTrue(hood.setHoodCommand(0.53125 / 2));
+  }
 
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return autoChooser.selectedCommand();
+  }
 
+  public void configureAutoChooser() {
+    autos = new Autos(drivetrain, turret, intake, shooter, indexer);
+    autoChooser.addRoutine("LeftDoubleTrench", autos::leftDoubleTrenchAuto);
+    autoChooser.addRoutine("LeftSingleTrench", autos::leftSingleTrenchAuto);
+    autoChooser.addRoutine("LeftSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
+    autoChooser.addRoutine("RightSingleTrench", autos::rightSingleTrenchAuto);
+    autoChooser.addRoutine("DepotThenSwipe", autos::depotWithSwipe);
+    autoChooser.addRoutine("DepotGrab", autos::depotWithoutSwipe);
+    autoChooser.addRoutine("LeftTrenchThenDepot", autos::leftTrenchThenDepot);
+
+    SmartDashboard.putData("Chooser", autoChooser);
+  }
+
+  private double getClosest90(Pose2d pose) {
+    return MathHelp.nearest90(pose.getRotation().getDegrees());
+  }
+
+  private double getClosest45(Pose2d pose) {
+    return MathHelp.nearest45(pose.getRotation().getDegrees());
+  }
+
+  private SwerveRequest getDriveRequest(DriveType driveType) {
+    switch (driveType) {
+      case BUMP -> {
+        drive.withRotationalRate(
+            Radians.convertFrom(
+                thetaController.calculate(
+                    drivetrain.getPose().getRotation().getDegrees(),
+                    getClosest90(drivetrain.getPose())),
+                Degrees));
+      }
+
+      case TRENCH -> {
+        drive.withRotationalRate(
+            Radians.convertFrom(
+                thetaController.calculate(
+                    drivetrain.getPose().getRotation().getDegrees(),
+                    getClosest45(drivetrain.getPose())),
+                Degrees));
+      }
+
+      case ROBOT_CENTRIC -> {
+        return robotCentricDrive
+            .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
+            .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
+            .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
+            .withDesaturateWheelSpeeds(true);
+      }
+
+      case BRAKE -> {
+        return new SwerveRequest.SwerveDriveBrake();
+      }
+
+      default -> {
+        drive.withRotationalRate(
+            shootingSpeed * -driver.getRightX() * Constants.Swerve.MaxAngularRate);
+      }
     }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return autoChooser.selectedCommand();
+    drive
+        .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
+        .withDesaturateWheelSpeeds(true);
+
+    return drive;
+  }
+
+  /* Team 5000 Fuel Sim Set up */
+  private void configureFuelSim() {
+    if (RobotMode.currentMode != Mode.SIM) {
+      return;
     }
 
-    public void configureAutoChooser() {
-        autos = new Autos(drivetrain, turret, intake, shooter, indexer);
-        autoChooser.addRoutine("LeftDoubleTrench", autos::leftDoubleTrenchAuto);
-        autoChooser.addRoutine("LeftSingleTrench", autos::leftSingleTrenchAuto);
-        autoChooser.addRoutine("LeftSingleTrenchClose", autos::leftSingleTrenchCloseAuto);
-        autoChooser.addRoutine("RightSingleTrench", autos::rightSingleTrenchAuto);
-        autoChooser.addRoutine("DepotThenSwipe", autos::depotWithSwipe);
-        autoChooser.addRoutine("DepotGrab", autos::depotWithoutSwipe);
-        autoChooser.addRoutine("LeftTrenchThenDepot", autos::leftTrenchThenDepot);
+    fuelSim = new FuelSim("Fuel-Pose");
+    fuelSim.spawnStartingFuel();
+    fuelSim.enableAirResistance();
 
-        SmartDashboard.putData("Chooser", autoChooser);
+    fuelSim.start();
+    SmartDashboard.putData(
+        Commands.runOnce(
+                () -> {
+                  fuelSim.clearFuel();
+                  fuelSim.spawnStartingFuel();
+                })
+            .withName("Reset Fuel")
+            .ignoringDisable(true));
+  }
+
+  private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
+    if (RobotMode.currentMode != Mode.SIM) {
+      return;
     }
 
-    private double getClosest90(Pose2d pose) {
-        return MathHelp.nearest90(pose.getRotation().getDegrees());
-    }
+    fuelSim.registerRobot(
+        RobotDimensionConstants.WIDTH_WBUMPERS,
+        RobotDimensionConstants.LENGTH_WBUMPERS,
+        RobotDimensionConstants.HEIGHT_OF_BUMPERS,
+        drivetrain::getPose,
+        drivetrain::getFieldRelativeChassisSpeeds);
+    fuelSim.registerIntake(
+        RobotDimensionConstants.INTAKE_XMIN,
+        RobotDimensionConstants.INTAKE_XMAX,
+        RobotDimensionConstants.INTAKE_YMIN,
+        RobotDimensionConstants.INTAKE_YMAX,
+        () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
+        intakeCallback);
+  }
 
-    private double getClosest45(Pose2d pose) {
-        return MathHelp.nearest45(pose.getRotation().getDegrees());
-    }
-
-    private SwerveRequest getDriveRequest(DriveType driveType) {
-        switch (driveType) {
-            case BUMP -> {
-                drive.withRotationalRate(
-                        Radians.convertFrom(
-                                thetaController.calculate(
-                                        drivetrain.getPose().getRotation().getDegrees(),
-                                        getClosest90(drivetrain.getPose())),
-                                Degrees));
-            }
-
-            case TRENCH -> {
-                drive.withRotationalRate(
-                        Radians.convertFrom(
-                                thetaController.calculate(
-                                        drivetrain.getPose().getRotation().getDegrees(),
-                                        getClosest45(drivetrain.getPose())),
-                                Degrees));
-            }
-
-            case ROBOT_CENTRIC -> {
-                return robotCentricDrive
-                        .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
-                        .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
-                        .withRotationalRate(-driver.getRightX() * Constants.Swerve.MaxAngularRate)
-                        .withDesaturateWheelSpeeds(true);
-            }
-
-            case BRAKE -> {
-                return new SwerveRequest.SwerveDriveBrake();
-            }
-
-            default -> {
-                drive.withRotationalRate(shootingSpeed * -driver.getRightX() * Constants.Swerve.MaxAngularRate);
-            }
-        }
-
-        drive
-                .withVelocityX(shootingSpeed * -driver.getLeftY() * Constants.Swerve.MaxSpeed)
-                .withVelocityY(shootingSpeed * -driver.getLeftX() * Constants.Swerve.MaxSpeed)
-                .withDesaturateWheelSpeeds(true);
-
-        return drive;
-
-    }
-
-    /* Team 5000 Fuel Sim Set up */
-    private void configureFuelSim() {
-        if (RobotMode.currentMode != Mode.SIM) {
-            return;
-        }
-
-        fuelSim = new FuelSim("Fuel-Pose");
-        fuelSim.spawnStartingFuel();
-        fuelSim.enableAirResistance();
-
-        fuelSim.start();
-        SmartDashboard.putData(Commands.runOnce(() -> {
-            fuelSim.clearFuel();
-            fuelSim.spawnStartingFuel();
-        })
-                .withName("Reset Fuel")
-                .ignoringDisable(true));
-    }
-
-    private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
-        if (RobotMode.currentMode != Mode.SIM) {
-            return;
-        }
-
-        fuelSim.registerRobot(
-                RobotDimensionConstants.WIDTH_WBUMPERS,
-                RobotDimensionConstants.LENGTH_WBUMPERS,
-                RobotDimensionConstants.HEIGHT_OF_BUMPERS,
-                drivetrain::getPose,
-                drivetrain::getFieldRelativeChassisSpeeds);
-        fuelSim.registerIntake(
-                RobotDimensionConstants.INTAKE_XMIN,
-                RobotDimensionConstants.INTAKE_XMAX,
-                RobotDimensionConstants.INTAKE_YMIN,
-                RobotDimensionConstants.INTAKE_YMAX,
-                () -> intake.isIntakeDeployed() && ableToIntake.getAsBoolean(),
-                intakeCallback);
-    }
-
-    public void updateSimulation() {
-        fuelSim.updateSim();
-    }
+  public void updateSimulation() {
+    fuelSim.updateSim();
+  }
 }

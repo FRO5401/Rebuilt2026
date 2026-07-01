@@ -11,9 +11,10 @@
 
 package frc.robot.subsystems.Turret;
 
-import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.Logger;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -25,10 +26,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -42,240 +39,283 @@ import frc.robot.Constants.TurretConstants.TurretMode;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.PhysicsSolver;
-import frc.robot.Utils.ZoneGetter;
 import frc.robot.Utils.Tunable.TunableNumber;
+import frc.robot.Utils.ZoneGetter;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
 
-    private TurretMode turretMode = TurretMode.Turret;
+  private TurretMode turretMode = TurretMode.Turret;
 
-    private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, false);
-    private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, false);
-    private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, false);
+  private TunableNumber kP = new TunableNumber("Turret/kp", TurretConstants.KP, false);
+  private TunableNumber kI = new TunableNumber("Turret/ki", TurretConstants.KI, false);
+  private TunableNumber kD = new TunableNumber("Turret/kd", TurretConstants.KD, false);
 
   private TunableNumber kS = new TunableNumber("Turret/kS", TurretConstants.KS, false);
   private TunableNumber kV = new TunableNumber("Turret/kV", TurretConstants.KV, false);
 
-  //need this for rotational feedforward
+  // need this for rotational feedforward
   private double turretFeedForward;
 
-    private final TurretIO io;
-    @SuppressWarnings("FieldMayBeFinal")
-    private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
-    private Translation3d[] trajectory = new Translation3d[50];
-    // :)
-    // Checks if the robot is real or fake, and uses the correct PID controller
-    private PIDController controller = RobotBase.isReal()
-            ? new PIDController(TurretConstants.KP, TurretConstants.KI, TurretConstants.KD)
-            : new PIDController(TurretConstants.KP_SIM, TurretConstants.KI_SIM, TurretConstants.KD_SIM);
+  private final TurretIO io;
 
-    // target on the field
-    private Pose2d target;
+  @SuppressWarnings("FieldMayBeFinal")
+  private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
 
-    // I like having a supplier as the function already exists for auto and it makes
-    // the code cleaner.
-    private Supplier<Pose2d> robotPose;
+  private Translation3d[] trajectory = new Translation3d[50];
+  // :)
+  // Checks if the robot is real or fake, and uses the correct PID controller
+  private PIDController controller =
+      RobotBase.isReal()
+          ? new PIDController(TurretConstants.KP, TurretConstants.KI, TurretConstants.KD)
+          : new PIDController(
+              TurretConstants.KP_SIM, TurretConstants.KI_SIM, TurretConstants.KD_SIM);
 
-    // The difference of the turret post to the desired pose
-    private Transform2d poseDifference;
+  // target on the field
+  private Pose2d target;
 
-    // Robot Velocity that will affect the shot
-    private Transform2d robotVelocities;
+  // I like having a supplier as the function already exists for auto and it makes
+  // the code cleaner.
+  private Supplier<Pose2d> robotPose;
 
-    // The current angle the turret is set too
-    private double currentAngle = 0;
+  // The difference of the turret post to the desired pose
+  private Transform2d poseDifference;
 
-    // TOF used for transforming the target
-    private Double tof;
+  // Robot Velocity that will affect the shot
+  private Transform2d robotVelocities;
 
-    private Pose2d turretPose;
+  // The current angle the turret is set too
+  private double currentAngle = 0;
 
-    // Chassis speeds
-    private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+  // TOF used for transforming the target
+  private Double tof;
 
-    private Supplier<Boolean> isIntakeDeployed;
+  private Pose2d turretPose;
 
-    ChassisSpeeds fieldSpeeds;
+  // Chassis speeds
+  private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
-    public Turret(TurretIO io, Supplier<Pose2d> robotPose, Supplier<ChassisSpeeds> fieldSpeedsSupplier,
-            Supplier<Boolean> isIntakeDeployed) {
+  private Supplier<Boolean> isIntakeDeployed;
 
-        this.fieldSpeedsSupplier = fieldSpeedsSupplier;
-        this.isIntakeDeployed = isIntakeDeployed;
+  ChassisSpeeds fieldSpeeds;
 
-        this.io = io;
-        this.robotPose = robotPose;
+  public Turret(
+      TurretIO io,
+      Supplier<Pose2d> robotPose,
+      Supplier<ChassisSpeeds> fieldSpeedsSupplier,
+      Supplier<Boolean> isIntakeDeployed) {
 
-    turretFeedForward = (-this.fieldSpeedsSupplier.get().omegaRadiansPerSecond / (2.0 * Math.PI)) * TurretConstants.GEAR_RATIO;
+    this.fieldSpeedsSupplier = fieldSpeedsSupplier;
+    this.isIntakeDeployed = isIntakeDeployed;
+
+    this.io = io;
+    this.robotPose = robotPose;
+
+    turretFeedForward =
+        (-this.fieldSpeedsSupplier.get().omegaRadiansPerSecond / (2.0 * Math.PI))
+            * TurretConstants.GEAR_RATIO;
 
     // controller.enableContinuousInput(0, 1);
   }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        turretPose = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM);
-        io.updateInputs(inputs);
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    turretPose = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM);
+    io.updateInputs(inputs);
 
-        if (getCurrentCommand() != null) {
-            Logger.recordOutput("Commands/Turret Command", getCurrentCommand().getName());
-        }
+    if (getCurrentCommand() != null) {
+      Logger.recordOutput("Commands/Turret Command", getCurrentCommand().getName());
+    }
 
-        if (turretPose != null && target != null) {
+    if (turretPose != null && target != null) {
 
       fieldSpeeds = fieldSpeedsSupplier.get();
 
-      turretFeedForward = (-this.fieldSpeeds.omegaRadiansPerSecond / (2.0 * Math.PI)) * TurretConstants.GEAR_RATIO;
+      turretFeedForward =
+          (-this.fieldSpeeds.omegaRadiansPerSecond / (2.0 * Math.PI)) * TurretConstants.GEAR_RATIO;
 
-            Logger.recordOutput("SOTM/Chassis Speeds", fieldSpeeds);
+      Logger.recordOutput("SOTM/Chassis Speeds", fieldSpeeds);
 
-      //SOTM!!!
+      // SOTM!!!
       poseDifference = turretPose.minus(target);
-      robotVelocities = new Transform2d(
-          (fieldSpeeds.vxMetersPerSecond + (1*fieldSpeeds.omegaRadiansPerSecond) * (
-                TurretConstants.TURRET_TRANSFORM.getY() * Math.sin(robotPose.get().getRotation().getRadians()) - 
-                TurretConstants.TURRET_TRANSFORM.getX() * Math.cos(robotPose.get().getRotation().getRadians())
-            )) * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
-          (fieldSpeeds.vyMetersPerSecond  + (1*fieldSpeeds.omegaRadiansPerSecond) * (
-                TurretConstants.TURRET_TRANSFORM.getY() * Math.sin(robotPose.get().getRotation().getRadians()) - 
-                TurretConstants.TURRET_TRANSFORM.getX() * Math.cos(robotPose.get().getRotation().getRadians())
-            )) * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
-        new Rotation2d(fieldSpeeds.omegaRadiansPerSecond * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
+      robotVelocities =
+          new Transform2d(
+              (fieldSpeeds.vxMetersPerSecond
+                      + (1 * fieldSpeeds.omegaRadiansPerSecond)
+                          * (TurretConstants.TURRET_TRANSFORM.getY()
+                                  * Math.sin(robotPose.get().getRotation().getRadians())
+                              - TurretConstants.TURRET_TRANSFORM.getX()
+                                  * Math.cos(robotPose.get().getRotation().getRadians())))
+                  * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+              (fieldSpeeds.vyMetersPerSecond
+                      + (1 * fieldSpeeds.omegaRadiansPerSecond)
+                          * (TurretConstants.TURRET_TRANSFORM.getY()
+                                  * Math.sin(robotPose.get().getRotation().getRadians())
+                              - TurretConstants.TURRET_TRANSFORM.getX()
+                                  * Math.cos(robotPose.get().getRotation().getRadians())))
+                  * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds),
+              new Rotation2d(
+                  fieldSpeeds.omegaRadiansPerSecond
+                      * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
 
-            for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-                tof = ShooterConstants.TOF_MAP
-                        .get(MathHelp.findDistance(poseDifference).in(Meters));
-                poseDifference = robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM)
-                        .minus(target.plus(robotVelocities.inverse()));
+      for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
+        tof = ShooterConstants.TOF_MAP.get(MathHelp.findDistance(poseDifference).in(Meters));
+        poseDifference =
+            robotPose
+                .get()
+                .transformBy(TurretConstants.TURRET_TRANSFORM)
+                .minus(target.plus(robotVelocities.inverse()));
 
-                robotVelocities = new Transform2d(
-                        fieldSpeeds.vxMetersPerSecond * tof,
-                        fieldSpeeds.vyMetersPerSecond * tof,
-                        Rotation2d.kZero);
-            }
+        robotVelocities =
+            new Transform2d(
+                fieldSpeeds.vxMetersPerSecond * tof,
+                fieldSpeeds.vyMetersPerSecond * tof,
+                Rotation2d.kZero);
+      }
 
-            Logger.recordOutput("Scoring/Will Shots Count", willShotCount(tof));
+      Logger.recordOutput("Scoring/Will Shots Count", willShotCount(tof));
 
-            Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
+      Logger.recordOutput("Poses/target", target.plus(robotVelocities.inverse()));
 
-            Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
+      Logger.recordOutput("Poses/DifferenceFromTarget", poseDifference);
 
-            setTurretAngle(((Math.atan2(poseDifference.getY(), poseDifference.getX()))
-                    - poseDifference.getRotation().getRadians()) + Math.PI);
+      setTurretAngle(
+          ((Math.atan2(poseDifference.getY(), poseDifference.getX()))
+                  - poseDifference.getRotation().getRadians())
+              + Math.PI);
+    }
 
-        }
+    Logger.recordOutput(
+        "Turret/Turret Desired Position",
+        MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
 
-        Logger.recordOutput("Turret/Turret Desired Position",
-                MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1));
+    Logger.recordOutput("Turret/Robot Pose", robotPose.get());
 
-        Logger.recordOutput("Turret/Robot Pose", robotPose.get());
-
-        Logger.recordOutput("Turret/Error",
-                (MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1) - (inputs.position))
-                        * TurretConstants.GEAR_RATIO);
+    Logger.recordOutput(
+        "Turret/Error",
+        (MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1) - (inputs.position))
+            * TurretConstants.GEAR_RATIO);
 
     Logger.recordOutput("Turret/Position", inputs.position);
 
     // Logger.recordOutput("Turret/Turret angle pose", new Pose3d(-0.11, 0, 0.345,
     // new Rotation3d(0, 0, Units.rotationsToRadians(inputs.position))));
 
-    Logger.recordOutput("Turret/Turret Pose", new Pose3d(-0.11, 0, 0.345, new Rotation3d(0, 0,
-        (-2 * robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position))));
-      
-    
-    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Turret)){
-      io.setPosition(MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1), turretFeedForward);
+    Logger.recordOutput(
+        "Turret/Turret Pose",
+        new Pose3d(
+            -0.11,
+            0,
+            0.345,
+            new Rotation3d(
+                0,
+                0,
+                (-2 * robotPose.get().getRotation().getRadians())
+                    + Units.rotationsToRadians(inputs.position))));
+
+    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Turret)) {
+      io.setPosition(
+          MathUtil.inputModulus(Units.radiansToRotations(currentAngle), 0, 1), turretFeedForward);
     }
-    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Static)){
+    if (isIntakeDeployed.get() && turretMode.equals(TurretMode.Static)) {
       io.setPosition(.5, 0);
-    }    
-        Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
-
-        Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
-        Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
-        Logger.recordOutput("Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
-
-        Logger.recordOutput("Turret/Applied",
-                inputs.applied);
-
-        if (kP.hasChanged() || kI.hasChanged() || kD.hasChanged() || kS.hasChanged() || kV.hasChanged()) {
-            setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
-
-        }
-
     }
+    Logger.recordOutput("Turret/AtSetpoint", controller.atSetpoint());
 
-    public void setTurretAngle(double angle) {
+    Logger.recordOutput("Current Zone", ZoneGetter.getCurrentZone(robotPose.get()));
+    Logger.recordOutput("Is Shooting Zone", ZoneGetter.isShootingZone(robotPose.get()));
+    Logger.recordOutput(
+        "Current Specific Zone", ZoneGetter.getCurrentZoneSpecific(robotPose.get()));
 
-        if (Double.isNaN(angle)) {
-            return;
-        }
-        currentAngle = angle;
+    Logger.recordOutput("Turret/Applied", inputs.applied);
 
+    if (kP.hasChanged()
+        || kI.hasChanged()
+        || kD.hasChanged()
+        || kS.hasChanged()
+        || kV.hasChanged()) {
+      setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
     }
+  }
 
-    public void setTarget(Pose2d target) {
-        this.target = target;
+  public void setTurretAngle(double angle) {
+
+    if (Double.isNaN(angle)) {
+      return;
     }
+    currentAngle = angle;
+  }
 
-    public Command setSmartTarget() {
-        if (target != ZoneGetter.getShootingTarget(robotPose.get())) {
-            return Commands.runOnce(() -> setTarget(ZoneGetter.getShootingTarget(robotPose.get())), this);
-        } else {
-            return Commands.none();
-        }
+  public void setTarget(Pose2d target) {
+    this.target = target;
+  }
+
+  public Command setSmartTarget() {
+    if (target != ZoneGetter.getShootingTarget(robotPose.get())) {
+      return Commands.runOnce(() -> setTarget(ZoneGetter.getShootingTarget(robotPose.get())), this);
+    } else {
+      return Commands.none();
     }
+  }
 
-    private Translation3d launchVel(LinearVelocity vel) {
-        ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+  private Translation3d launchVel(LinearVelocity vel) {
+    ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
 
-        double horizontalVel = Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
-        double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
-        double xVel = horizontalVel
-                * Math.cos(Units.rotationsToRadians(inputs.position) + robotPose.get().getRotation().getRadians());
-        double yVel = horizontalVel
-                * Math.sin(Units.rotationsToRadians(inputs.position) + robotPose.get().getRotation().getRadians());
+    double horizontalVel =
+        Math.cos(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
+    double verticalVel = Math.sin(MathConstants.LAUNCH_ANGLE.in(Radians)) * vel.in(MetersPerSecond);
+    double xVel =
+        horizontalVel
+            * Math.cos(
+                Units.rotationsToRadians(inputs.position)
+                    + robotPose.get().getRotation().getRadians());
+    double yVel =
+        horizontalVel
+            * Math.sin(
+                Units.rotationsToRadians(inputs.position)
+                    + robotPose.get().getRotation().getRadians());
 
-        xVel += fieldSpeeds.vxMetersPerSecond;
-        yVel += fieldSpeeds.vyMetersPerSecond;
+    xVel += fieldSpeeds.vxMetersPerSecond;
+    yVel += fieldSpeeds.vyMetersPerSecond;
 
-        return new Translation3d(xVel, yVel, verticalVel);
+    return new Translation3d(xVel, yVel, verticalVel);
+  }
+
+  public void updateFuel(LinearVelocity vel) {
+    Pose3d robot = new Pose3d(robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
+    Translation3d trajVel = launchVel(vel);
+    for (int i = 0; i < trajectory.length; i++) {
+      double t = i * 0.08;
+      double x = trajVel.getX() * t + robot.getTranslation().getX();
+      double y = trajVel.getY() * t + robot.getTranslation().getY();
+      double z = trajVel.getZ() * t - 0.5 * 9.81 * t * t + robot.getTranslation().getZ();
+
+      trajectory[i] = new Translation3d(x, y, z + 0.345);
     }
+    Logger.recordOutput("Turret/Trajectory", trajectory);
+  }
 
-    public void updateFuel(LinearVelocity vel) {
-        Pose3d robot = new Pose3d(robotPose.get().transformBy(TurretConstants.TURRET_TRANSFORM));
-        Translation3d trajVel = launchVel(vel);
-        for (int i = 0; i < trajectory.length; i++) {
-            double t = i * 0.08;
-            double x = trajVel.getX() * t + robot.getTranslation().getX();
-            double y = trajVel.getY() * t + robot.getTranslation().getY();
-            double z = trajVel.getZ() * t
-                    - 0.5 * 9.81 * t * t
-                    + robot.getTranslation().getZ();
+  public Transform2d getPoseDifference() {
+    return poseDifference;
+  }
 
-            trajectory[i] = new Translation3d(x, y, z + 0.345);
-        }
-        Logger.recordOutput("Turret/Trajectory", trajectory);
-    }
+  public Angle getTurretAngle() {
+    return Radians.of(
+        (-2 * robotPose.get().getRotation().getRadians())
+            + Units.rotationsToRadians(inputs.position));
+  }
 
-    public Transform2d getPoseDifference() {
-        return poseDifference;
-    }
+  public void setPID(double P, double I, double D, double V, double S) {
+    io.setPID(P, I, D, S, V);
+  }
 
-    public Angle getTurretAngle() {
-        return Radians
-                .of((-2 * robotPose.get().getRotation().getRadians()) + Units.rotationsToRadians(inputs.position));
-    }
+  public void changeTurretMode(TurretMode turretMode) {
+    this.turretMode = turretMode;
+  }
 
-    public void setPID(double P, double I, double D, double V, double S) {
-        io.setPID(P, I, D, S, V);
-    }
-
-    public void changeTurretMode(TurretMode turretMode) {
-        this.turretMode = turretMode;
-    }
-
-    public boolean willShotCount(double toF){
-        return HubTracker.getInstance().willShotsCount(toF);
-    }
+  public boolean willShotCount(double toF) {
+    return HubTracker.getInstance().willShotsCount(toF);
+  }
 }

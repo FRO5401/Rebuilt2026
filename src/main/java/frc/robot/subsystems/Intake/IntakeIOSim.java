@@ -8,113 +8,106 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeIOSim implements IntakeIO {
-    private final SingleJointedArmSim pivotSim;
-    private final DCMotorSim intakeSim;
-    private final DCMotor pivotMotor;
-    private final DCMotor intakeMotor;
-    private PIDController pivotController = new PIDController(0, 0, 0);
-    private double pivotVoltage = 0;
-    private double intakeVoltage = 0;
-    private double desiredAngle;
-    private boolean isPositionControl;
-    private double kp, ki, kd;
+  private final SingleJointedArmSim pivotSim;
+  private final DCMotorSim intakeSim;
+  private final DCMotor pivotMotor;
+  private final DCMotor intakeMotor;
+  private PIDController pivotController = new PIDController(0, 0, 0);
+  private double pivotVoltage = 0;
+  private double intakeVoltage = 0;
+  private double desiredAngle;
+  private boolean isPositionControl;
+  private double kp, ki, kd;
 
-    public IntakeIOSim() {
-        pivotMotor = DCMotor.getKrakenX44(2);
-        intakeMotor = DCMotor.getKrakenX44(1);
+  public IntakeIOSim() {
+    pivotMotor = DCMotor.getKrakenX44(2);
+    intakeMotor = DCMotor.getKrakenX44(1);
 
-        pivotSim = new SingleJointedArmSim(
-                LinearSystemId.createDCMotorSystem(
-                        pivotMotor,
-                        SingleJointedArmSim.estimateMOI(
-                                Inches.of(17).in(Meters),
-                                Pounds.of(7).in(Kilograms)),
-                        27),
+    pivotSim =
+        new SingleJointedArmSim(
+            LinearSystemId.createDCMotorSystem(
                 pivotMotor,
-                27,
-                Inches.of(17).in(Meters),
-                Degrees.of(0).in(Radians),
-                Degrees.of(90).in(Radians),
-                true,
-                Degrees.of(0).in(Radians));
+                SingleJointedArmSim.estimateMOI(
+                    Inches.of(17).in(Meters), Pounds.of(7).in(Kilograms)),
+                27),
+            pivotMotor,
+            27,
+            Inches.of(17).in(Meters),
+            Degrees.of(0).in(Radians),
+            Degrees.of(90).in(Radians),
+            true,
+            Degrees.of(0).in(Radians));
 
-        intakeSim = new DCMotorSim(
-                LinearSystemId.createDCMotorSystem(
-                        intakeMotor,
-                        0.025,
-                        1),
-                intakeMotor);
+    intakeSim =
+        new DCMotorSim(LinearSystemId.createDCMotorSystem(intakeMotor, 0.025, 1), intakeMotor);
 
-        desiredAngle = pivotSim.getAngleRads();
+    desiredAngle = pivotSim.getAngleRads();
+  }
+
+  @Override
+  public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs) {
+    Logger.recordOutput("Intake/Pivot Desired Angle", desiredAngle);
+
+    pivotController.setPID(kp, ki, kd);
+
+    if (isPositionControl) {
+      pivotVoltage = pivotController.calculate(pivotSim.getAngleRads(), desiredAngle);
     }
 
-    @Override
-    public void updateIntakeInputs(PivotIOInputs pivotInputs, InfeedIOInputs infeedInputs) {
-        Logger.recordOutput("Intake/Pivot Desired Angle", desiredAngle);
+    pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
+    intakeVoltage = MathUtil.clamp(intakeVoltage, -12, 12);
 
-        pivotController.setPID(kp, ki, kd);
+    pivotSim.setInputVoltage(pivotVoltage);
+    intakeSim.setInputVoltage(intakeVoltage);
 
-        if (isPositionControl) {
-            pivotVoltage = pivotController.calculate(pivotSim.getAngleRads(), desiredAngle);
-        }
+    pivotSim.update(0.02);
+    intakeSim.update(0.02);
 
-        pivotVoltage = MathUtil.clamp(pivotVoltage, -12, 12);
-        intakeVoltage = MathUtil.clamp(intakeVoltage, -12, 12);
+    pivotInputs.angle = Radians.of(pivotSim.getAngleRads()).in(Rotations);
+    pivotInputs.velocity = pivotSim.getVelocityRadPerSec();
+    pivotInputs.current = pivotSim.getCurrentDrawAmps();
+    pivotInputs.voltage = pivotVoltage;
 
-        pivotSim.setInputVoltage(pivotVoltage);
-        intakeSim.setInputVoltage(intakeVoltage);
+    infeedInputs.velocity = intakeSim.getAngularVelocityRPM();
+    infeedInputs.current = intakeSim.getCurrentDrawAmps();
+    infeedInputs.voltage = intakeVoltage;
+  }
 
-        pivotSim.update(0.02);
-        intakeSim.update(0.02);
+  @Override
+  public void setPivotPosition(double angle) {
+    isPositionControl = true;
+    desiredAngle = Rotations.of(angle).in(Radians);
+  }
 
-        pivotInputs.angle = Radians.of(pivotSim.getAngleRads()).in(Rotations);
-        pivotInputs.velocity = pivotSim.getVelocityRadPerSec();
-        pivotInputs.current = pivotSim.getCurrentDrawAmps();
-        pivotInputs.voltage = pivotVoltage;
+  @Override
+  public void setInfeedVelocity(double percent) {
+    intakeVoltage = percent * 12;
+  }
 
-        infeedInputs.velocity = intakeSim.getAngularVelocityRPM();
-        infeedInputs.current = intakeSim.getCurrentDrawAmps();
-        infeedInputs.voltage = intakeVoltage;
-    }
+  @Override
+  public void setPivotVoltage(double voltage) {
+    isPositionControl = false;
+    pivotVoltage = voltage;
+  }
 
-    @Override
-    public void setPivotPosition(double angle) {
-        isPositionControl = true;
-        desiredAngle = Rotations.of(angle).in(Radians);
-    }
+  @Override
+  public void setInfeedVoltage(double voltage) {
+    intakeVoltage = voltage;
+  }
 
-    @Override
-    public void setInfeedVelocity(double percent) {
-        intakeVoltage = percent * 12;
-
-    }
-
-    @Override
-    public void setPivotVoltage(double voltage) {
-        isPositionControl = false;
-        pivotVoltage = voltage;
-    }
-
-    @Override
-    public void setInfeedVoltage(double voltage) {
-        intakeVoltage = voltage;
-    }
-
-    @Override
-    public void setPivotPID(double kp, double ki, double kd, double kv, double ks) {
-        this.kp = kp;
-        this.ki = ki;
-        this.kd = kd;
-    }
-
+  @Override
+  public void setPivotPID(double kp, double ki, double kd, double kv, double ks) {
+    this.kp = kp;
+    this.ki = ki;
+    this.kd = kd;
+  }
 }

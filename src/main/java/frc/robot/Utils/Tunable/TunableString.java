@@ -10,10 +10,10 @@
 
 package frc.robot.Utils.Tunable;
 
-import java.util.function.Supplier;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StringSubscriber;
+import java.util.function.Supplier;
 
 /**
  * Tunable wrapper for {@link String} stored in NetworkTables.
@@ -24,7 +24,7 @@ import edu.wpi.first.networktables.StringSubscriber;
  *
  * <p>Implements {@link Supplier} so it can be used directly in control code.
  */
-public class TunableString extends TunableBase<String> implements Supplier<String>{
+public class TunableString extends TunableBase<String> implements Supplier<String> {
   private static final NetworkTable DATA_TABLE = INSTANCE.getTable(DIRECTORY);
 
   private NetworkTable netTable;
@@ -35,12 +35,11 @@ public class TunableString extends TunableBase<String> implements Supplier<Strin
   /**
    * Creates a tunable String without a default value.
    *
-   * <p>
-   * {@link #setDefaultValue(String)} must be called before the value can be used.
+   * <p>{@link #setDefaultValue(String)} must be called before the value can be used.
    *
    * @param m_key NetworkTables key for this value.
    */
-  public TunableString(String m_key){
+  public TunableString(String m_key) {
     super(m_key);
   }
 
@@ -49,10 +48,10 @@ public class TunableString extends TunableBase<String> implements Supplier<Strin
    *
    * @param m_key NetworkTables key.
    * @param m_defaultValue Default String.
-   * @param m_disableTuning If true, this value will never be tunable even when robot tuning mode
-   *        is enabled.
+   * @param m_disableTuning If true, this value will never be tunable even when robot tuning mode is
+   *     enabled.
    */
-  public TunableString(String m_key, String m_defaultValue){
+  public TunableString(String m_key, String m_defaultValue) {
     super(m_key, m_defaultValue);
   }
 
@@ -61,10 +60,10 @@ public class TunableString extends TunableBase<String> implements Supplier<Strin
    *
    * @param m_key NetworkTables key.
    * @param m_defaultValue Default String.
-   * @param m_disableTuning If true, this value will never be tunable even when robot tuning mode
-   *        is enabled.
+   * @param m_disableTuning If true, this value will never be tunable even when robot tuning mode is
+   *     enabled.
    */
-  public TunableString(String m_key, String m_defaultValue, boolean m_disableTuning){
+  public TunableString(String m_key, String m_defaultValue, boolean m_disableTuning) {
     super(m_key, m_defaultValue, m_disableTuning);
   }
 
@@ -84,14 +83,14 @@ public class TunableString extends TunableBase<String> implements Supplier<Strin
   /**
    * Returns the current String value.
    *
-   * <p>If tuning is enabled, values are read live from NetworkTables.
-   * Otherwise, the stored default String is returned.
+   * <p>If tuning is enabled, values are read live from NetworkTables. Otherwise, the stored default
+   * String is returned.
    *
    * @return Current String.
    */
   @Override
   public String getValue() {
-    if(!hasDefault){
+    if (!hasDefault) {
       return "";
     } else {
       return isTuningEnabled() ? sub.get() : defaultValue;
@@ -107,5 +106,4 @@ public class TunableString extends TunableBase<String> implements Supplier<Strin
   public String get() {
     return getValue();
   }
-
 }

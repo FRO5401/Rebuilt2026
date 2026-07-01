@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **What is the purpose of this subsystem**
-A clear and concise description of what the subsystem is. Ex. Pivoting intake to collect the game piece 
+A clear and concise description of what the subsystem is. Ex. Pivoting intake to collect the game piece
 
 **How does the subsystem work**
 Clear instructions for how the subsystem will operate Ex. Degrees of freedom

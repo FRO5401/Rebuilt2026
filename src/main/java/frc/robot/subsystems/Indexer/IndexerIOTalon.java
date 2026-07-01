@@ -4,68 +4,67 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerIOTalon implements IndexerIO {
 
-    private final TalonFX spindexer;
-    private final TalonFX kicker;
+  private final TalonFX spindexer;
+  private final TalonFX kicker;
 
-    public IndexerIOTalon() {
-        spindexer = new TalonFX(IndexerConstants.SPINDEXER_ID);
-        kicker = new TalonFX(IndexerConstants.KICKER_ID);
+  public IndexerIOTalon() {
+    spindexer = new TalonFX(IndexerConstants.SPINDEXER_ID);
+    kicker = new TalonFX(IndexerConstants.KICKER_ID);
 
-        spindexer.getConfigurator().apply(IndexerConstants.SPINDEXER_CONFIG);
-        kicker.getConfigurator().apply(IndexerConstants.KICKER_CONFIG);
-    }
+    spindexer.getConfigurator().apply(IndexerConstants.SPINDEXER_CONFIG);
+    kicker.getConfigurator().apply(IndexerConstants.KICKER_CONFIG);
+  }
 
-    @Override
-    public void updateInputs(IndexerIOInputs inputs) {
-        inputs.kickerCurrent = kicker.getSupplyCurrent().getValueAsDouble();
-        inputs.kickerVelocity = kicker.getVelocity().getValueAsDouble();
-        inputs.kickerVoltage = kicker.getMotorVoltage().getValueAsDouble();
-        inputs.kickerTemperature = kicker.getDeviceTemp().getValueAsDouble();
+  @Override
+  public void updateInputs(IndexerIOInputs inputs) {
+    inputs.kickerCurrent = kicker.getSupplyCurrent().getValueAsDouble();
+    inputs.kickerVelocity = kicker.getVelocity().getValueAsDouble();
+    inputs.kickerVoltage = kicker.getMotorVoltage().getValueAsDouble();
+    inputs.kickerTemperature = kicker.getDeviceTemp().getValueAsDouble();
 
-        inputs.spindexerCurrent = spindexer.getSupplyCurrent().getValueAsDouble();
-        inputs.spindexerVelocity = spindexer.getVelocity().getValueAsDouble();
-        inputs.spindexerVoltage = spindexer.getMotorVoltage().getValueAsDouble();
-        inputs.spindexerTemperature = spindexer.getDeviceTemp().getValueAsDouble();
-    }
+    inputs.spindexerCurrent = spindexer.getSupplyCurrent().getValueAsDouble();
+    inputs.spindexerVelocity = spindexer.getVelocity().getValueAsDouble();
+    inputs.spindexerVoltage = spindexer.getMotorVoltage().getValueAsDouble();
+    inputs.spindexerTemperature = spindexer.getDeviceTemp().getValueAsDouble();
+  }
 
-    @Override
-    public void stop() {
-        spindexer.set(0);
-        kicker.set(0);
-    }
+  @Override
+  public void stop() {
+    spindexer.set(0);
+    kicker.set(0);
+  }
 
-    @Override
-    public void setSpindexerVoltage(double voltage) {
-        spindexer.setVoltage(voltage);
-    }
+  @Override
+  public void setSpindexerVoltage(double voltage) {
+    spindexer.setVoltage(voltage);
+  }
 
-    @Override
-    public void setSpindexerVelocity(double velocity) {
-        spindexer.setControl(new VelocityVoltage(velocity));
-    }
+  @Override
+  public void setSpindexerVelocity(double velocity) {
+    spindexer.setControl(new VelocityVoltage(velocity));
+  }
 
-    @Override
-    public void setSpindexerPercent(double percent) {
-        spindexer.setControl(new DutyCycleOut(percent).withEnableFOC(true));
-    }
+  @Override
+  public void setSpindexerPercent(double percent) {
+    spindexer.setControl(new DutyCycleOut(percent).withEnableFOC(true));
+  }
 
-    @Override
-    public void setKickerVoltage(double voltage) {
-        kicker.setControl(new VoltageOut(voltage).withEnableFOC(true));
-    }
+  @Override
+  public void setKickerVoltage(double voltage) {
+    kicker.setControl(new VoltageOut(voltage).withEnableFOC(true));
+  }
 
-    @Override
-    public void setKickerVelocity(double velocity) {
-        kicker.setControl(new VelocityVoltage(velocity).withEnableFOC(true));
-    }
+  @Override
+  public void setKickerVelocity(double velocity) {
+    kicker.setControl(new VelocityVoltage(velocity).withEnableFOC(true));
+  }
 
-    @Override
-    public void setKickerPercent(double percent) {
-        kicker.set(percent);
-    }
+  @Override
+  public void setKickerPercent(double percent) {
+    kicker.set(percent);
+  }
 }

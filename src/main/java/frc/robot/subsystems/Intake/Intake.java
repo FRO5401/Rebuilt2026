@@ -11,83 +11,85 @@
 
 package frc.robot.subsystems.Intake;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Utils.Tunable.TunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-    private final IntakeIO io;
-    private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
-    private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
+  private final IntakeIO io;
+  private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
+  private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
 
-    private double desiredAngle = 0;
+  private double desiredAngle = 0;
 
-    private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true);
-    private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
-    private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
+  private TunableNumber kp = new TunableNumber("Intake/kp", IntakeConstants.kp, true);
+  private TunableNumber ki = new TunableNumber("Intake/ki", 0, true);
+  private TunableNumber kd = new TunableNumber("Intake/kd", IntakeConstants.kd, true);
 
-    private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
-    private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
+  private TunableNumber kv = new TunableNumber("Intake/kv", IntakeConstants.kv, true);
+  private TunableNumber ks = new TunableNumber("Intake/ks", IntakeConstants.ks, true);
 
-    public Intake(IntakeIO m_io) {
-        this.io = m_io;
-        io.setPivotPID(IntakeConstants.kp, 0, IntakeConstants.kd, IntakeConstants.kv, IntakeConstants.ks);
+  public Intake(IntakeIO m_io) {
+    this.io = m_io;
+    io.setPivotPID(
+        IntakeConstants.kp, 0, IntakeConstants.kd, IntakeConstants.kv, IntakeConstants.ks);
+  }
+
+  @Override
+  public void periodic() {
+    io.updateIntakeInputs(pivotInputs, infeedInputs);
+    Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
+    Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
+    Logger.recordOutput("Intake/Desired Position", desiredAngle);
+
+    Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
+
+    if (kp.hasChanged()
+        || ki.hasChanged()
+        || kd.hasChanged()
+        || kv.hasChanged()
+        || ks.hasChanged()) {
+      io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
     }
+  }
 
-    @Override
-    public void periodic() {
-        io.updateIntakeInputs(pivotInputs, infeedInputs);
-        Logger.processInputs("Intake/Pivot Inputs", pivotInputs);
-        Logger.processInputs("Intake/Infeed Inputs", infeedInputs);
-        Logger.recordOutput("Intake/Desired Position", desiredAngle);
+  public void setPivotPosition(double angle) {
+    desiredAngle = angle;
+    io.setPivotPosition(angle);
+  }
 
-        Logger.recordOutput("Intake/IsDeployed", isNotStartingPose());
+  public void setInfeedVelocity(double percent) {
+    io.setInfeedVelocity(percent);
+  }
 
-        if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || kv.hasChanged() || ks.hasChanged()) {
-            io.setPivotPID(kp.get(), ki.get(), kd.get(), kv.get(), ks.get());
-        }
+  public void setIntake(double angle, double percent) {
+    setPivotPosition(angle);
+    setInfeedVelocity(percent);
+  }
 
-    }
+  public boolean isIntakeDeployed() {
+    return pivotInputs.angle < 10;
+  }
 
-    public void setPivotPosition(double angle) {
-        desiredAngle = angle;
-        io.setPivotPosition(angle);
+  public double getPivotPosition() {
+    return pivotInputs.angle;
+  }
 
-    }
+  public Command setPivotPositionCommand(double angle) {
+    return runOnce(() -> setPivotPosition(angle));
+  }
 
-    public void setInfeedVelocity(double percent) {
-        io.setInfeedVelocity(percent);
-    }
+  public Command setInfeedVelocityCommand(double percent) {
+    return runOnce(() -> setInfeedVelocity(percent));
+  }
 
-    public void setIntake(double angle, double percent) {
-        setPivotPosition(angle);
-        setInfeedVelocity(percent);
-    }
+  public double getDesiredAngle() {
+    return desiredAngle;
+  }
 
-    public boolean isIntakeDeployed() {
-        return pivotInputs.angle < 10;
-    }
-
-    public double getPivotPosition() {
-        return pivotInputs.angle;
-    }
-
-    public Command setPivotPositionCommand(double angle) {
-        return runOnce(() -> setPivotPosition(angle));
-    }
-
-    public Command setInfeedVelocityCommand(double percent) {
-        return runOnce(() -> setInfeedVelocity(percent));
-    }
-
-    public double getDesiredAngle() {
-        return desiredAngle;
-    }
-
-    public Boolean isNotStartingPose() {
-        return (getDesiredAngle() != 0);
-    }
+  public Boolean isNotStartingPose() {
+    return (getDesiredAngle() != 0);
+  }
 }

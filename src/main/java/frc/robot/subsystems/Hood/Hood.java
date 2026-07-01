@@ -10,9 +10,6 @@
 // the root directory of this project.
 package frc.robot.subsystems.Hood;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +20,9 @@ import frc.robot.Constants.HoodConstants.HoodMode;
 import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.Utils.Tunable.TunableShotData;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
   private final HoodIO io;
@@ -54,11 +54,11 @@ public class Hood extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
-    if(kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged()){
+    if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged()) {
       io.setPID(kp.get(), ki.get(), kd.get(), ks.get());
     }
 
-    if(shotData.hasChanged(hashCode())){
+    if (shotData.hasChanged(hashCode())) {
       Logger.recordOutput("Hood/Changed", true);
     }
     Logger.recordOutput("ShotData/Values", shotData.getValue());
@@ -70,26 +70,25 @@ public class Hood extends SubsystemBase {
     Logger.recordOutput("Hood/Disired Angle", desiredPosition);
   }
 
-  public Command setHoodCommand(double position){
-    return Commands.runOnce(()->setHoodPosition(position));
+  public Command setHoodCommand(double position) {
+    return Commands.runOnce(() -> setHoodPosition(position));
   }
 
-  public void setHoodPosition(double position){
+  public void setHoodPosition(double position) {
     position = MathUtil.clamp(position, 0, 0.53125);
     desiredPosition = position;
     io.setPosition(position);
   }
 
-  public Command setHoodCommandwIntake(DoubleSupplier hoodPosition, DoubleSupplier intakePose){
+  public Command setHoodCommandwIntake(DoubleSupplier hoodPosition, DoubleSupplier intakePose) {
 
-      return runOnce(() -> {
+    return runOnce(
+        () -> {
           if (intakePose.getAsDouble() != 0) {
-              setHoodPosition(hoodPosition.getAsDouble());
+            setHoodPosition(hoodPosition.getAsDouble());
           } else {
-              setHoodPosition(0);
+            setHoodPosition(0);
           }
-      });
-
+        });
   }
-
 }

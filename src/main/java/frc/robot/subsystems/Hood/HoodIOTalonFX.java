@@ -21,14 +21,14 @@ public class HoodIOTalonFX implements HoodIO {
     hoodCANcoder.setPosition(0);
     hoodCANcoder.getConfigurator().apply(HoodConstants.ENCODER_CONFIG);
 
-    feedbackConfig.withRemoteCANcoder(hoodCANcoder)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
+    feedbackConfig
+        .withRemoteCANcoder(hoodCANcoder)
+        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder);
 
     HoodConstants.CONFIG.withFeedback(feedbackConfig);
 
     hoodMotor.getConfigurator().apply(HoodConstants.CONFIG);
     hoodMotor.setPosition(0);
-
   }
 
   @Override
@@ -43,11 +43,9 @@ public class HoodIOTalonFX implements HoodIO {
     inputs.encoderPosition = hoodCANcoder.getPosition().getValueAsDouble();
   }
 
-
   @Override
   public void setPosition(double position) {
     hoodMotor.setControl(positionRequest.withPosition(position));
-    
   }
 
   @Override
@@ -68,5 +66,4 @@ public class HoodIOTalonFX implements HoodIO {
     HoodConstants.CLOSED_LOOP.kS = ks;
     hoodMotor.getConfigurator().apply(HoodConstants.CLOSED_LOOP);
   }
-
 }

@@ -1,81 +1,79 @@
 package frc.robot.Utils.Tunable;
 
+import frc.robot.Utils.RobotMode;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-import frc.robot.Utils.RobotMode;
 
 public class TunableNumberAK implements DoubleSupplier {
-    private static final String DIRECTORY = "/Tunable";
-    private final String key;
+  private static final String DIRECTORY = "/Tunable";
+  private final String key;
 
-    private LoggedNetworkNumber networkNumber;
+  private LoggedNetworkNumber networkNumber;
 
-    private double defaultValue;
-    private boolean hasDefault = false;
-    private boolean isTuningDisabled = false;
-    private boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
+  private double defaultValue;
+  private boolean hasDefault = false;
+  private boolean isTuningDisabled = false;
+  private boolean masterTuningEnabled = RobotMode.isTuningMode ? !isTuningDisabled : false;
 
-    public TunableNumberAK(String m_key) {
-        this.key = DIRECTORY + "/" + m_key;
+  public TunableNumberAK(String m_key) {
+    this.key = DIRECTORY + "/" + m_key;
+  }
+
+  public TunableNumberAK(String m_key, double m_defaultValue) {
+    this(m_key);
+    initializeDefault(m_defaultValue);
+  }
+
+  public TunableNumberAK(String m_key, double m_defaultValue, boolean m_disableTuning) {
+    this(m_key);
+    this.isTuningDisabled = m_disableTuning;
+    initializeDefault(m_defaultValue);
+  }
+
+  public void disableTuning(boolean m_disable) {
+    this.isTuningDisabled = m_disable;
+  }
+
+  public void initializeDefault(double m_defaultValue) {
+    if (!hasDefault) {
+      this.hasDefault = true;
+      this.defaultValue = m_defaultValue;
+
+      if (masterTuningEnabled) {
+        networkNumber = new LoggedNetworkNumber(key, defaultValue);
+      }
     }
+  }
 
-    public TunableNumberAK(String m_key, double m_defaultValue) {
-        this(m_key);
-        initializeDefault(m_defaultValue);
+  public double get() {
+    if (!hasDefault) {
+      return 0.0;
+    } else {
+      return masterTuningEnabled ? networkNumber.get() : defaultValue;
     }
+  }
 
-    public TunableNumberAK(String m_key, double m_defaultValue, boolean m_disableTuning) {
-        this(m_key);
-        this.isTuningDisabled = m_disableTuning;
-        initializeDefault(m_defaultValue);
+  public boolean hasChanged() {
+
+    double currentValue = this.get();
+    if (currentValue != defaultValue) {
+      networkNumber.set(currentValue);
+      defaultValue = currentValue;
+      return true;
     }
+    return false;
+  }
 
-    public void disableTuning(boolean m_disable) {
-        this.isTuningDisabled = m_disable;
+  public static boolean hasChanged(TunableNumberAK... tunables) {
+    if (Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())) {
+      return true;
     }
+    return false;
+  }
 
-    public void initializeDefault(double m_defaultValue) {
-        if (!hasDefault) {
-            this.hasDefault = true;
-            this.defaultValue = m_defaultValue;
-
-            if (masterTuningEnabled) {
-                networkNumber = new LoggedNetworkNumber(key, defaultValue);
-            }
-
-        }
-    }
-
-    public double get() {
-        if (!hasDefault) {
-            return 0.0;
-        } else {
-            return masterTuningEnabled ? networkNumber.get() : defaultValue;
-        }
-    }
-
-    public boolean hasChanged() {
-
-        double currentValue = this.get();
-        if (currentValue != defaultValue) {
-            networkNumber.set(currentValue);
-            defaultValue = currentValue;
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean hasChanged(TunableNumberAK... tunables) {
-        if (Arrays.stream(tunables).anyMatch(tunable -> tunable.hasChanged())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public double getAsDouble() {
-        return get();
-    }
+  @Override
+  public double getAsDouble() {
+    return get();
+  }
 }

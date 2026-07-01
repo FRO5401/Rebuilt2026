@@ -10,11 +10,11 @@
 
 package frc.robot.Utils.Tunable;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Utils.RobotMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.Utils.RobotMode;
 
 // Java Docs as of 6/30/26 were written by AI
 // All logic and code was created without AI.
@@ -23,13 +23,11 @@ import frc.robot.Utils.RobotMode;
 /**
  * Base class for tunable values backed by NetworkTables.
  *
- * <p>
- * This class provides common functionality for creating tunable robot constants that can be
+ * <p>This class provides common functionality for creating tunable robot constants that can be
  * modified at runtime while the robot is in tuning mode. Subclasses are responsible for
  * implementing the NetworkTables publisher/subscriber logic for their specific value type.
  *
- * <p>
- * Each tunable stores a default value that is used whenever tuning is disabled. When tuning is
+ * <p>Each tunable stores a default value that is used whenever tuning is disabled. When tuning is
  * enabled, subclasses publish the default value and retrieve updates from NetworkTables.
  *
  * @param <V> The type of value stored by this tunable.
@@ -46,16 +44,16 @@ public abstract class TunableBase<V> {
   protected Map<Integer, V> lastValueMap = new HashMap<>();
 
   protected boolean isTuningDisabled = false;
- 
+
   /**
    * Returns whether tuning is currently active.
    *
    * <p>Tuning is active only when robot mode allows it and this tunable is not disabled.
    */
-  protected boolean isTuningEnabled(){
+  protected boolean isTuningEnabled() {
     return RobotMode.isTuningMode ? !isTuningDisabled : false;
   }
-  
+
   /**
    * Creates a tunable value with the given key.
    *
@@ -92,9 +90,8 @@ public abstract class TunableBase<V> {
   /**
    * Returns the current value of this tunable.
    *
-   * <p>
-   * If tuning is enabled, subclasses should return the current value from NetworkTables. Otherwise,
-   * they should return the stored default value.
+   * <p>If tuning is enabled, subclasses should return the current value from NetworkTables.
+   * Otherwise, they should return the stored default value.
    *
    * @return The current value.
    */
@@ -103,17 +100,15 @@ public abstract class TunableBase<V> {
   /**
    * Initializes the NetworkTables publisher and subscriber for this tunable.
    *
-   * <p>
-   * This method is called automatically the first time a default value is assigned while tuning is
-   * enabled.
+   * <p>This method is called automatically the first time a default value is assigned while tuning
+   * is enabled.
    */
   protected abstract void initTunable();
 
   /**
    * Sets the default value of this tunable.
    *
-   * <p>
-   * The default value may only be assigned once. Subsequent calls have no effect.
+   * <p>The default value may only be assigned once. Subsequent calls have no effect.
    *
    * @param m_defaultValue Default value to store.
    */
@@ -124,14 +119,12 @@ public abstract class TunableBase<V> {
 
       if (isTuningEnabled()) initTunable();
     }
-
   }
 
   /**
    * Determines whether the value has changed since the previous check for the given caller.
    *
-   * <p>
-   * The supplied identifier allows multiple independent callers to track changes to the same
+   * <p>The supplied identifier allows multiple independent callers to track changes to the same
    * tunable without interfering with one another.
    *
    * @param id Unique identifier for the caller. "hashCode()"
@@ -164,7 +157,7 @@ public abstract class TunableBase<V> {
     return false;
   }
 
-  private static String formatKey(String m_key){
+  private static String formatKey(String m_key) {
     if (m_key.startsWith("/")) {
       return DIRECTORY.concat(m_key);
     } else {
