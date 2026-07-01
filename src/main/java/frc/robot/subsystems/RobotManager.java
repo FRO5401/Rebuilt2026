@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldZones;
@@ -53,6 +55,57 @@ public class RobotManager extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    
   }
+
+  public Command duckCommand(){
+    return Commands.none();
+  }
+
+  public enum HoodStates{
+    DYNAMIC,
+    STATIC,
+    DUCK,
+    MANUAL
+  }
+
+  public enum TurretState{
+    DYNAMIC,
+    STATIC,
+    MANUAL
+  }
+
+  public enum IntakePivotState{
+    DEPLOYED,
+    AGITATE,
+    RETRACTED
+  }
+
+  public enum IntakeRollerState{
+    INTAKE,
+    OUTTAKE,
+    OFF
+  }
+
+  public enum ShooterState{
+    OFF,
+    DYNAMIC,
+    STATIC
+  }
+
+  public enum IndexerStates{
+    OFF,
+    UNJAM,
+    INDEXING
+  }
+
+  public enum DriveState{
+    FIELD_RELATIVE,
+    ROBOT_CENTRIC,
+    TRENCH,
+    BUMP,
+    SHOOTING,
+    DEFENSE
+  }
+
 }

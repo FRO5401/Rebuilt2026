@@ -342,7 +342,7 @@ public class RobotContainer {
             Radians.convertFrom(
                 thetaController.calculate(
                     drivetrain.getPose().getRotation().getDegrees(),
-                    getClosest90(drivetrain.getPose())),
+                    getClosest45(drivetrain.getPose())),
                 Degrees));
       }
 
@@ -351,7 +351,7 @@ public class RobotContainer {
             Radians.convertFrom(
                 thetaController.calculate(
                     drivetrain.getPose().getRotation().getDegrees(),
-                    getClosest45(drivetrain.getPose())),
+                    getClosest90(drivetrain.getPose())),
                 Degrees));
       }
 

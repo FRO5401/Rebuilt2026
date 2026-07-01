@@ -19,6 +19,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -123,8 +124,8 @@ public final class Constants {
 
     public static final double KFF = 0;
 
-    public static final Angle MIN_ANGLE = Degrees.of(GEAR_RATIO);
-    public static final Angle MAX_ANGLE = Degrees.of(GEAR_RATIO);
+    public static final Angle MIN_ANGLE = Rotations.of(0);
+    public static final Angle MAX_ANGLE = Rotations.of(0.53125);
 
     public static final MotorOutputConfigs OUTPUT_CONFIGS =
         new MotorOutputConfigs()
