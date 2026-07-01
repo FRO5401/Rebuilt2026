@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.HoodConstants.HoodMode;
 import frc.robot.Utils.FireControl.ShotData;
+import frc.robot.Utils.Gains;
+import frc.robot.Utils.Tunable.TunableGains;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.Utils.Tunable.TunableShotData;
 import java.util.function.DoubleSupplier;
