@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.HoodConstants.HoodMode;
 import frc.robot.Utils.FireControl.ShotData;
-import frc.robot.Utils.Gains;
-import frc.robot.Utils.Tunable.TunableGains;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.Utils.Tunable.TunableShotData;
 import java.util.function.DoubleSupplier;
@@ -76,6 +74,10 @@ public class Hood extends SubsystemBase {
     return Commands.runOnce(() -> setHoodPosition(position));
   }
 
+  public Command setHoodCommand(ShotData data) {
+    return Commands.runOnce(() -> setHoodPosition(data.rps()));
+  }
+
   public void setHoodPosition(double position) {
     position = MathUtil.clamp(position, 0, 0.53125);
     desiredPosition = position;
@@ -88,6 +90,18 @@ public class Hood extends SubsystemBase {
         () -> {
           if (intakePose.getAsDouble() != 0) {
             setHoodPosition(hoodPosition.getAsDouble());
+          } else {
+            setHoodPosition(0);
+          }
+        });
+  }
+
+  public Command setHoodCommandwIntake(Supplier<ShotData> hoodPosition, DoubleSupplier intakePose) {
+
+    return runOnce(
+        () -> {
+          if (intakePose.getAsDouble() != 0) {
+            setHoodPosition(hoodPosition.get().hoodRotations());
           } else {
             setHoodPosition(0);
           }

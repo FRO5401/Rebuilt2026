@@ -12,6 +12,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import choreo.auto.AutoChooser;
@@ -29,7 +30,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.LutTables;
 import frc.robot.Constants.RobotDimensionConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.Swerve.DriveType;
@@ -38,8 +41,10 @@ import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.HubTracker;
 import frc.robot.Utils.MathHelp;
 import frc.robot.Utils.RobotMode;
+import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.RobotMode.Mode;
 import frc.robot.Utils.Tunable.TunableNumber;
+import frc.robot.Utils.Tunable.TunableShotData;
 import frc.robot.commands.Autos;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
@@ -80,6 +85,8 @@ public class RobotContainer {
 
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
+
+  private TunableShotData shotData = new TunableShotData("ShotData", ShotData.ZEROED);
 
   // drivetrain thetaController
   private static final PIDController thetaController = new PIDController(1.687, 0, 0);
@@ -221,9 +228,9 @@ public class RobotContainer {
     // This is for the real robot
     // turret.setDefaultCommand(turret.setSmartTarget());
 
-    operator
-        .rightTrigger()
-        .onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
+    // operator
+    //     .rightTrigger()
+    //     .onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
     // // this is for tuning
     turret.setDefaultCommand(
@@ -234,27 +241,45 @@ public class RobotContainer {
     //     .andThen(Commands.runOnce(() -> turret.updateFuel(
     //         MathHelp.findFlyWheelVelocity(turret.getPoseDifference()))))
     // );
+
     // // // this is for tuning
+    // operator
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         new ParallelCommandGroup(
+    //             Commands.repeatingSequence(
+    //               hood.setHoodCommandwIntake(HoodPosition::get, intake::getDesiredAngle),
+    //               shooter.setVelocityDouble(ShooterRPM::get, intake::getDesiredAngle)),
+    
+    //             new SequentialCommandGroup(
+    //                 Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+
     operator
         .rightTrigger()
         .whileTrue(
             new ParallelCommandGroup(
                 Commands.repeatingSequence(
-                    shooter.setVelocityDouble(ShooterRPM::get, intake::getDesiredAngle)),
-                Commands.repeatingSequence(
-                    hood.setHoodCommandwIntake(HoodPosition::get, intake::getDesiredAngle)),
+                    hood.setHoodCommandwIntake(
+                        () ->
+                            LutTables.SHOT_LUT
+                                .getRawShotData(
+                                    MathHelp.findDistance(turret.getPoseDifference())
+                                        .baseUnitMagnitude())
+                                .hoodRotations(),
+                        intake::getDesiredAngle),
+                    shooter.setVelocity(
+                        () ->
+                            RotationsPerSecond.of(
+                                LutTables.SHOT_LUT
+                                    .getRawShotData(
+                                        MathHelp.findDistance(turret.getPoseDifference())
+                                            .baseUnitMagnitude())
+                                    .rps()),
+                        intake::getDesiredAngle)),
                 new SequentialCommandGroup(
-                    Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
-
-    // operator.rightTrigger().whileTrue(new
-    // ParallelCommandGroup(Commands.repeatingSequence(shooter.setVelocity(
-    //         () -> RotationsPerSecond
-    //
-    // .of(ShooterConstants.FLYWHEEL_MAP.get(MathHelp.findDistance(turret.getPoseDifference()).baseUnitMagnitude())),
-    //         intake::getDesiredAngle)),
-    //         new SequentialCommandGroup(indexer.setIndexerCommand(() -> -.5, () -> -4.0),
-    // Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0)))
-    // );
+                    indexer.setIndexerCommand(() -> -.5, () -> -4.0),
+                    Commands.waitSeconds(.2),
+                    indexer.setIndexerCommand(() -> .9, () -> 11.0))));
 
     operator
         .rightTrigger()
@@ -265,7 +290,7 @@ public class RobotContainer {
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
-    operator.a().onTrue(intake.setPivotPositionCommand(0));
+    operator.a().onTrue(Commands.sequence(hood.setHoodCommand(0), intake.setPivotPositionCommand(0)));
     operator.b().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .91));
 
     operator
@@ -302,7 +327,7 @@ public class RobotContainer {
     rainbow.onTrue(candle.setLights(AnimationTypes.Rainbow));
 
     operator.povDown().onTrue(hood.setHoodCommand(0.00));
-    operator.povUp().onTrue(hood.setHoodCommand(0.53125 / 2));
+    operator.povUp().onTrue(hood.setHoodCommand(HoodConstants.MAX_ANGLE.in(Rotations)));
   }
 
   /**

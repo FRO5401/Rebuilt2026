@@ -58,6 +58,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
+import frc.robot.Utils.FireControl.ShotData;
+import frc.robot.Utils.FireControl.ShotLUT;
 import frc.robot.Utils.Zones.Rectangle.PredictiveRectangleX;
 import frc.robot.Utils.Zones.Rectangle.RectangleBounds;
 import frc.robot.Utils.Zones.Triangle.TriangleBound;
@@ -78,6 +80,19 @@ public final class Constants {
   public static final class LutTables {
     public static final InterpolatingDoubleTreeMap FLYWHEEL_MAP = new InterpolatingDoubleTreeMap();
     public static final InterpolatingDoubleTreeMap HOOD_MAP = new InterpolatingDoubleTreeMap();
+
+    public static final ShotLUT SHOT_LUT = new ShotLUT();
+    public static final ShotData Meter1_75_DATA = new ShotData(41.4, 0,  5.48 - 4.87); 
+    public static final ShotData Meter2_DATA = new ShotData(40.6, 0.008,  0.85);
+    public static final ShotData Meter2_5_DATA = new ShotData(44.5, 0.019,  0.96);
+    public static final ShotData Meter3_DATA = new ShotData(46.8, 0.029,  1.04);
+    public static final ShotData Meter3_5_DATA = new ShotData(49.7, 0.115,  1.04);
+    public static final ShotData Meter4_DATA = new ShotData(52.0, 0.225,  1.04);
+    public static final ShotData Meter4_5_DATA = new ShotData(53.3, 0.291,  1.04); //0.93 was 53.6 and 0.299
+    public static final ShotData Meter5_DATA = new ShotData(57.85, 0.31,  1.06);
+    public static final ShotData Meter5_5_DATA = new ShotData(60.1, 0.34,  1.06);
+    
+    public static final ShotData Meter6_DATA = new ShotData(63.0, 0.363,  1.21);
 
     static {
       FLYWHEEL_MAP.put(2.0304514451335125, 39.5);
@@ -106,6 +121,17 @@ public final class Constants {
 
       FLYWHEEL_MAP.put(6.027289938016063, 61.9);
       HOOD_MAP.put(6.027289938016063, 0.2);
+
+      SHOT_LUT.put(1.7556509502873994, Meter1_75_DATA);
+      SHOT_LUT.put(2.0300583004149244, Meter2_DATA);
+      SHOT_LUT.put(2.5144241413688992, Meter2_5_DATA);
+      SHOT_LUT.put(3.0283152070720143, Meter3_DATA);
+      SHOT_LUT.put(3.518861923190466, Meter3_5_DATA);
+      SHOT_LUT.put(4.007780133112161, Meter4_DATA);
+      SHOT_LUT.put(4.56487156916269, Meter4_5_DATA);
+      SHOT_LUT.put(5.021803531795837, Meter5_DATA);
+      SHOT_LUT.put(5.504601180308867, Meter5_5_DATA);
+      SHOT_LUT.put(6.027289938016063, Meter6_DATA);
     }
   }
 

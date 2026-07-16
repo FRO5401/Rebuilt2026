@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.subsystems.Shooter.ShooterIO.ShooterIOInputs;
 import java.util.function.DoubleSupplier;
@@ -75,6 +76,19 @@ public class Shooter extends SubsystemBase {
             desiredVel = 0;
           }
         });
+  }
+
+  public Command setVelocityShotData(Supplier<ShotData> data, DoubleSupplier intakePose){
+    return runOnce(
+      () -> {
+        if (intakePose.getAsDouble() != 0) {
+          io.setVelocity(-data.get().rps());
+          desiredVel = -data.get().rps();
+        } else {
+          io.stop();
+          desiredVel = 0;
+        }
+      });
   }
 
   public AngularVelocity getVelocity() {

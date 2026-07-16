@@ -54,52 +54,50 @@ public class RobotManager extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    
-  }
+  public void periodic() {}
 
-  public Command duckCommand(){
+  public Command duckCommand() {
     return Commands.none();
   }
 
-  public enum HoodStates{
+  public enum HoodStates {
     DYNAMIC,
     STATIC,
     DUCK,
     MANUAL
   }
 
-  public enum TurretState{
+  public enum TurretState {
     DYNAMIC,
     STATIC,
     MANUAL
   }
 
-  public enum IntakePivotState{
+  public enum IntakePivotState {
     DEPLOYED,
     AGITATE,
     RETRACTED
   }
 
-  public enum IntakeRollerState{
+  public enum IntakeRollerState {
     INTAKE,
     OUTTAKE,
     OFF
   }
 
-  public enum ShooterState{
+  public enum ShooterState {
     OFF,
     DYNAMIC,
     STATIC
   }
 
-  public enum IndexerStates{
+  public enum IndexerStates {
     OFF,
     UNJAM,
     INDEXING
   }
 
-  public enum DriveState{
+  public enum DriveState {
     FIELD_RELATIVE,
     ROBOT_CENTRIC,
     TRENCH,
@@ -107,5 +105,4 @@ public class RobotManager extends SubsystemBase {
     SHOOTING,
     DEFENSE
   }
-
 }

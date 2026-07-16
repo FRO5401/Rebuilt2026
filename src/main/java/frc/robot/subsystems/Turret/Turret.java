@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LutTables;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TurretConstants;
@@ -161,7 +162,7 @@ public class Turret extends SubsystemBase {
                       * PhysicsSolver.solveTimeOfFlight(poseDifference).in(Seconds)));
 
       for (int i = 0; i < TurretConstants.ITERATIONS; i++) {
-        tof = ShooterConstants.TOF_MAP.get(MathHelp.findDistance(poseDifference).in(Meters));
+        tof = LutTables.SHOT_LUT.getRawShotData(MathHelp.findDistance(poseDifference).in(Meters)).tof();
         poseDifference =
             robotPose
                 .get()
