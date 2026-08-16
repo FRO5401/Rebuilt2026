@@ -226,15 +226,15 @@ public class RobotContainer {
     driver.povDown().onTrue(candle.setLights(AnimationTypes.Looking));
 
     // This is for the real robot
-    // turret.setDefaultCommand(turret.setSmartTarget());
+    turret.setDefaultCommand(turret.setSmartTarget());
 
     // operator
     //     .rightTrigger()
     //     .onFalse(shooter.setVelocity(() -> RotationsPerSecond.of(0.0), intake::getDesiredAngle));
 
     // // this is for tuning
-    turret.setDefaultCommand(
-        turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
+    // turret.setDefaultCommand(
+    //     turret.runOnce(() -> turret.setTarget(FieldConstants.BLUE_HUB_TARGET)));
 
     // // this is for sim
     // turret.setDefaultCommand(turret.setSmartTarget()

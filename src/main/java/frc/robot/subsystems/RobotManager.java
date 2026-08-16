@@ -29,7 +29,7 @@ public class RobotManager extends SubsystemBase {
   private final HubTracker hubTracker = HubTracker.getInstance();
 
   private final Trigger trenchZone;
-  private final Trigger bumpZone;
+  //private final Trigger bumpZone;
 
   // TODO: Find Time for the hood to lower from max to start
   private final Time hoodDropTime = Seconds.of(0.5);
@@ -52,6 +52,8 @@ public class RobotManager extends SubsystemBase {
     trenchZone =
         FieldZones.PREDICTIVE_TRENCH_GROUP.willContain(
             drivetrain::getPose, drivetrain.getFieldRelativeChassisSpeeds(), hoodDropTime);
+
+    //bumpZone = 
   }
 
   @Override
