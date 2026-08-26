@@ -13,11 +13,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.Constants.LutTables;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Robot;
@@ -49,6 +51,35 @@ public class MathHelp {
       velocity =
           MetersPerSecond.of(
               ShooterConstants.FLYWHEEL_MAP.get(findDistance(poseDifference).in(Meters)));
+    }
+
+    Logger.recordOutput("MathHelp/Flywheel Velocity", velocity.in(MetersPerSecond));
+
+    return velocity;
+  }
+
+  public static LinearVelocity findFlyWheelVelocity(Transform2d poseDifference, Angle launchAngle) {
+    // Im gonna slip up the math despite it not being optimal for memory its so much
+    // better for readability
+    LinearVelocity velocity;
+
+    if (Robot.isSimulation()) {
+      MutDistance targetDistance = findDistance(poseDifference).mutableCopy();
+      double numerator =
+          targetDistance.in(Meters)
+              * Math.sqrt(
+                  9.8
+                      / (2
+                          * (Math.tan(launchAngle.in(Radians))
+                                  * targetDistance.in(Meters)
+                              - MathConstants.HUB_HEIGHT.in(Meters))));
+      double denominator = Math.cos(launchAngle.in(Radians));
+
+      velocity = MetersPerSecond.of((numerator / denominator) / MathConstants.FLYWHEEL_EFFICIENCY);
+    } else {
+      velocity =
+          MetersPerSecond.of(
+              LutTables.SHOT_LUT.getRawShotData(findDistance(poseDifference).in(Meters)).rps() * (2 * Math.PI * MathConstants.FLY_WHEEL_DIAMETER.in(Meters)) * 0.63);
     }
 
     Logger.recordOutput("MathHelp/Flywheel Velocity", velocity.in(MetersPerSecond));

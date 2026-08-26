@@ -21,7 +21,7 @@ import static edu.wpi.first.units.Units.Pound;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
+import static edu.wpi.first.units.Units.Seconds;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -58,6 +58,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
 import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.FireControl.ShotLUT;
 import frc.robot.Utils.Zones.Rectangle.PredictiveRectangleX;
@@ -136,6 +137,12 @@ public final class Constants {
   }
 
   public static final class HoodConstants {
+    //add sensor to mech ratio as 2.9423 and divide PID values by that once implmented
+    // Also change positions to fit the correct rotations
+
+    //TODO: Find the real hood drop time 
+    public static final Time DROP_TIME = Seconds.of(0.4);
+
     public static final int HOOD_MOTOR_ID = 30;
     public static final int HOOD_ENCODER_ID = 31;
 

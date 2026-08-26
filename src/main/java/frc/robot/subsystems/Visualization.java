@@ -13,20 +13,29 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
-
+import java.util.function.BooleanSupplier;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.RobotContainer;
+import frc.robot.Constants.LutTables;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Utils.FuelSim;
 import frc.robot.Utils.MathHelp;
+import frc.robot.subsystems.Hood.Hood;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Turret.Turret;
@@ -42,9 +51,11 @@ public class Visualization extends SubsystemBase {
 
   private Intake intake;
   private CommandSwerveDrivetrain drivetrain;
+  private Hood hood;
 
   private final double CAPACITY = 24;
   private double fuelStored = 8;
+  private final double BPS = 5;
 
   private Timer shootTimer = new Timer();
 
@@ -62,19 +73,20 @@ public class Visualization extends SubsystemBase {
       drivetrainTransform.plus(new Translation3d(-0.09, 0, 0.445));
 
   private Pose3d robotPose, intakePose, turretPose, hoodPose;
-
   /** Creates a new Visualization. */
   public Visualization(
       FuelSim fuelSim,
       CommandSwerveDrivetrain drivetrain,
       Turret turret,
       Shooter shooter,
-      Intake intake) {
+      Intake intake,
+      Hood hood) {
     this.fuelSim = fuelSim;
     this.drivetrain = drivetrain;
     this.turret = turret;
     this.shooter = shooter;
     this.intake = intake;
+    this.hood = hood;
     shootTimer.start();
   }
 
@@ -112,14 +124,11 @@ public class Visualization extends SubsystemBase {
             hoodPoseTransform,
             new Rotation3d(
                 0, Math.sin(Timer.getTimestamp() + 1), turret.getTurretAngle().in(Radians))));
-    Logger.recordOutput(
-        "Visualization/IntakeV2",
-        new Pose3d(intakePoseTransform, new Rotation3d(0, Math.sin(Timer.getTimestamp()) - 1, 0)));
 
     // X: -0.113 Z:0.468
     Logger.recordOutput("Current Fuel Count", fuelStored);
 
-    if (shootTimer.advanceIfElapsed(0.25) && DriverStation.isEnabled()) {
+    if (shootTimer.advanceIfElapsed(1/BPS) && DriverStation.isEnabled()) {
       launchFuel();
     }
   }
@@ -137,9 +146,13 @@ public class Visualization extends SubsystemBase {
     fuelStored--;
 
     fuelSim.launchFuel(
-        MathHelp.findFlyWheelVelocity(turret.getPoseDifference()),
-        MathConstants.LAUNCH_ANGLE,
+        MathHelp.findFlyWheelVelocity(turret.getPoseDifference(), MathConstants.LAUNCH_ANGLE.minus(getExpectedHoodAngle(turret.getPoseDifference()))),
+        MathConstants.LAUNCH_ANGLE.minus(getExpectedHoodAngle(turret.getPoseDifference())),
         turret.getTurretAngle(),
         turretTransform.getMeasureZ());
+  }
+
+  public Angle getExpectedHoodAngle(Transform2d posediff){
+    return Rotations.of(LutTables.SHOT_LUT.getRawShotData(MathHelp.findDistance(posediff).in(Meters)).hoodRotations()/ 2.9423);
   }
 }

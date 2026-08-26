@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Constants.MathConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Utils.RobotMode.Mode;
 
@@ -26,6 +27,9 @@ public class PhysicsSolver {
 
   public static Time solveTimeOfFlight(Transform2d targDistance) {
 
+    if(RobotMode.currentMode == Mode.REAL || RobotMode.currentMode == Mode.SIM){
+      return Seconds.of(Constants.LutTables.SHOT_LUT.getRawShotData(MathHelp.findDistance(targDistance).in(Meters)).tof());
+    }
     if (RobotMode.currentMode == Mode.SIM || Robot.isReal()) {
       return MathHelp.findTOF(targDistance);
     }

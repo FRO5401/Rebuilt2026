@@ -20,13 +20,14 @@ import frc.robot.Constants.HoodConstants.HoodMode;
 import frc.robot.Utils.FireControl.ShotData;
 import frc.robot.Utils.Tunable.TunableNumber;
 import frc.robot.Utils.Tunable.TunableShotData;
+import frc.robot.subsystems.Hood.HoodIO.HoodIOInputs;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
   private final HoodIO io;
-  private final HoodIOInputsAutoLogged inputs = new HoodIOInputsAutoLogged();
+  private final HoodIOInputs inputs = new HoodIOInputs();
 
   private HoodMode hoodMode = HoodMode.Dynamic;
 
@@ -52,7 +53,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Hood", inputs);
+    //Logger.processInputs("Hood", inputs);
 
     if (kp.hasChanged() || ki.hasChanged() || kd.hasChanged() || ks.hasChanged()) {
       io.setPID(kp.get(), ki.get(), kd.get(), ks.get());
@@ -106,5 +107,17 @@ public class Hood extends SubsystemBase {
             setHoodPosition(0);
           }
         });
+  }
+
+  public Command dropHoodCommand() {
+    return runOnce(
+      () -> {
+        setHoodPosition(0);
+      }
+    );
+  }
+
+  public double getHoodPosition() {
+    return desiredPosition;
   }
 }

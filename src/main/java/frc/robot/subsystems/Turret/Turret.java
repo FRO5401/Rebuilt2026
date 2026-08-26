@@ -303,9 +303,10 @@ public class Turret extends SubsystemBase {
   }
 
   public Angle getTurretAngle() {
-    return Radians.of(
-        (-2 * robotPose.get().getRotation().getRadians())
-            + Units.rotationsToRadians(inputs.position));
+    return Radians.of(Units.rotationsToRadians(inputs.position));
+    // return Radians.of(
+    //     (-2 * robotPose.get().getRotation().getRadians())
+    //         + Units.rotationsToRadians(inputs.position));
   }
 
   public void setPID(double P, double I, double D, double V, double S) {

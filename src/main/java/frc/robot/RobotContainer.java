@@ -14,13 +14,14 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-
+import static edu.wpi.first.units.Units.Seconds;
 import choreo.auto.AutoChooser;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldZones;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LutTables;
@@ -113,6 +115,7 @@ public class RobotContainer {
   private Trigger gameShift;
   private Trigger endGame;
   private Trigger rainbow;
+  private Trigger trenchZone;
 
   private static double shootingSpeed = 1;
 
@@ -162,6 +165,7 @@ public class RobotContainer {
         break;
 
       case SIM:
+        drivetrain.resetPose(new Pose2d(2, 2, Rotation2d.kZero));
         configureFuelSim();
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
@@ -172,8 +176,9 @@ public class RobotContainer {
                 drivetrain::getFieldRelativeChassisSpeeds,
                 intake::isNotStartingPose);
         indexer = new Indexer(new IndexerIOTalon());
-        visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake);
         hood = new Hood(new HoodIOTalonFX(), drivetrain::getPose, intake::isNotStartingPose);
+        visulization = new Visualization(fuelSim, drivetrain, turret, shooter, intake, hood);
+
 
         configureFuelSimRobot(visulization::canIntake, visulization::intakeFuel);
         break;
@@ -197,6 +202,7 @@ public class RobotContainer {
     endGame = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 30);
     rainbow = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 1);
 
+    trenchZone = FieldZones.PREDICTIVE_TRENCH_GROUP.willContain(drivetrain::getPose, drivetrain.getFieldRelativeChassisSpeeds(), HoodConstants.DROP_TIME);
     configureAutoChooser();
 
     // Configure the controller bindings
@@ -286,7 +292,8 @@ public class RobotContainer {
         .onFalse(
             indexer
                 .setIndexerCommand(() -> 0.0, () -> 0.0)
-                .andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle)));
+                .andThen(shooter.setVelocity(RotationsPerSecond::zero, intake::getDesiredAngle))
+                .andThen(hood.setHoodCommand(0)));
 
     operator.y().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE));
     operator.x().onTrue(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE * .3));
@@ -328,6 +335,8 @@ public class RobotContainer {
 
     operator.povDown().onTrue(hood.setHoodCommand(0.00));
     operator.povUp().onTrue(hood.setHoodCommand(HoodConstants.MAX_ANGLE.in(Rotations)));
+
+    trenchZone.whileTrue(hood.dropHoodCommand()); 
   }
 
   /**

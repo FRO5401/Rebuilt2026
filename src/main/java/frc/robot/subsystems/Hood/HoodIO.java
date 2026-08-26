@@ -4,7 +4,6 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface HoodIO {
 
-  @AutoLog
   public static class HoodIOInputs {
     public double motorPosition = 0;
     public double motorVelocity = 0;
