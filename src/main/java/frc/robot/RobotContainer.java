@@ -88,10 +88,11 @@ public class RobotContainer {
   @SuppressWarnings("unused")
   private TunableNumber spindexerSpeed = new TunableNumber("Indexer/Spindexer Percent", 0, true);
 
+
   private TunableShotData shotData = new TunableShotData("ShotData", ShotData.ZEROED);
 
   // drivetrain thetaController
-  private static final PIDController thetaController = new PIDController(1.687, 0, 0);
+  private static final PIDController thetaController = new PIDController(5, 0, 0.2);
 
   public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
@@ -249,43 +250,10 @@ public class RobotContainer {
     // );
 
     // // // this is for tuning
-    // operator
-    //     .rightTrigger()
-    //     .whileTrue(
-    //         new ParallelCommandGroup(
-    //             Commands.repeatingSequence(
-    //               hood.setHoodCommandwIntake(HoodPosition::get, intake::getDesiredAngle),
-    //               shooter.setVelocityDouble(ShooterRPM::get, intake::getDesiredAngle)),
-    
-    //             new SequentialCommandGroup(
-    //                 Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+   //configureTuningOperator();
 
-    operator
-        .rightTrigger()
-        .whileTrue(
-            new ParallelCommandGroup(
-                Commands.repeatingSequence(
-                    hood.setHoodCommandwIntake(
-                        () ->
-                            LutTables.SHOT_LUT
-                                .getRawShotData(
-                                    MathHelp.findDistance(turret.getPoseDifference())
-                                        .baseUnitMagnitude())
-                                .hoodRotations(),
-                        intake::getDesiredAngle),
-                    shooter.setVelocity(
-                        () ->
-                            RotationsPerSecond.of(
-                                LutTables.SHOT_LUT
-                                    .getRawShotData(
-                                        MathHelp.findDistance(turret.getPoseDifference())
-                                            .baseUnitMagnitude())
-                                    .rps()),
-                        intake::getDesiredAngle)),
-                new SequentialCommandGroup(
-                    indexer.setIndexerCommand(() -> -.5, () -> -4.0),
-                    Commands.waitSeconds(.2),
-                    indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+    // This is for normal operation
+    configureNormalOperator();
 
     operator
         .rightTrigger()
@@ -337,6 +305,49 @@ public class RobotContainer {
     operator.povUp().onTrue(hood.setHoodCommand(HoodConstants.MAX_ANGLE.in(Rotations)));
 
     trenchZone.whileTrue(hood.dropHoodCommand()); 
+  }
+
+  public void configureTuningOperator(){
+    operator
+    .rightTrigger()
+    .whileTrue(
+        new ParallelCommandGroup(
+            Commands.repeatingSequence(
+              hood.setHoodCommandwIntake(HoodPosition::get, intake::getDesiredAngle),
+              shooter.setVelocityDouble(ShooterRPM::get, intake::getDesiredAngle)),
+
+            new SequentialCommandGroup(
+                Commands.waitSeconds(.2), indexer.setIndexerCommand(() -> .9, () -> 11.0))));
+    
+  }
+
+  public void configureNormalOperator(){
+    operator
+    .rightTrigger()
+    .whileTrue(
+        new ParallelCommandGroup(
+            Commands.repeatingSequence(
+                hood.setHoodCommandwIntake(
+                    () ->
+                        LutTables.SHOT_LUT
+                            .getRawShotData(
+                                MathHelp.findDistance(turret.getPoseDifference())
+                                    .baseUnitMagnitude())
+                            .hoodRotations(),
+                    intake::getDesiredAngle),
+                shooter.setVelocity(
+                    () ->
+                        RotationsPerSecond.of(
+                            LutTables.SHOT_LUT
+                                .getRawShotData(
+                                    MathHelp.findDistance(turret.getPoseDifference())
+                                        .baseUnitMagnitude())
+                                .rps()),
+                    intake::getDesiredAngle)),
+            new SequentialCommandGroup(
+                indexer.setIndexerCommand(() -> -.5, () -> -4.0),
+                Commands.waitSeconds(.2),
+                indexer.setIndexerCommand(() -> .9, () -> 11.0))));
   }
 
   /**

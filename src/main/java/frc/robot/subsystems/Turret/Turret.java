@@ -239,6 +239,8 @@ public class Turret extends SubsystemBase {
         || kV.hasChanged()) {
       setPID(kP.get(), kI.get(), kD.get(), kV.get(), kS.get());
     }
+
+    Logger.recordOutput("Turret/Target Distance", MathHelp.findDistance(getPoseDifference()).in(Meters));
   }
 
   public void setTurretAngle(double angle) {
@@ -299,7 +301,7 @@ public class Turret extends SubsystemBase {
   }
 
   public Transform2d getPoseDifference() {
-    return poseDifference;
+    return poseDifference != null ? poseDifference : new Transform2d();
   }
 
   public Angle getTurretAngle() {
