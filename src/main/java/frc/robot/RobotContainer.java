@@ -94,14 +94,14 @@ public class RobotContainer {
   // drivetrain thetaController
   private static final PIDController thetaController = new PIDController(5, 0, 0.2);
 
-  public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
+  //public static PhotonCamera backRightCamera = new PhotonCamera("backRightCamera");
   public static PhotonCamera backLeftCamera = new PhotonCamera("backLeftCamera");
   public static PhotonCamera frontCamera = new PhotonCamera("frontCamera");
 
   private AutoChooser autoChooser = new AutoChooser("DoNothing");
 
   public static final CommandSwerveDrivetrain drivetrain =
-      TunerConstants.createDrivetrain(backRightCamera, backLeftCamera, frontCamera);
+      TunerConstants.createDrivetrain(backLeftCamera, frontCamera);
 
   // Subsystem Declaration
   private static Turret turret;

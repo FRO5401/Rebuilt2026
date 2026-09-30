@@ -254,10 +254,10 @@ public class TunerConstants {
    * program,.
    */
   public static CommandSwerveDrivetrain createDrivetrain(
-      PhotonCamera backRightCamera, PhotonCamera backLeftCamera, PhotonCamera frontCamera) {
+      /*PhotonCamera backRightCamera,*/ PhotonCamera backLeftCamera, PhotonCamera frontCamera) {
     return new CommandSwerveDrivetrain(
         DrivetrainConstants,
-        backRightCamera,
+        //backRightCamera,
         backLeftCamera,
         frontCamera,
         FrontLeft,

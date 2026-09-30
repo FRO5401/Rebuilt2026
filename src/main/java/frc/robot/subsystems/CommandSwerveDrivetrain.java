@@ -56,15 +56,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
 
-  private final PhotonCamera backRightCamera;
+  //private final PhotonCamera backRightCamera;
   private final PhotonCamera backLeftCamera;
   private final PhotonCamera frontCamera;
 
-  public PhotonPoseEstimator backRightPoseEstimator;
+  //public PhotonPoseEstimator backRightPoseEstimator;
   public PhotonPoseEstimator frontPoseEstimator;
   public PhotonPoseEstimator backLeftPoseEstimator;
 
-  public List<PhotonPipelineResult> backRightResults;
+  //public List<PhotonPipelineResult> backRightResults;
   public List<PhotonPipelineResult> backLeftResults;
   public List<PhotonPipelineResult> frontResults;
 
@@ -193,7 +193,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public CommandSwerveDrivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
-      PhotonCamera backRightCamera,
+      //PhotonCamera backRightCamera,
       PhotonCamera backLeftCamera,
       PhotonCamera frontCamera,
       SwerveModuleConstants<?, ?, ?>... modules) {
@@ -202,13 +202,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       startSimThread();
     }
 
-    this.backRightCamera = backRightCamera;
+    //this.backRightCamera = backRightCamera;
     this.backLeftCamera = backLeftCamera;
     this.frontCamera = frontCamera;
 
-    backRightPoseEstimator =
-        new PhotonPoseEstimator(
-            VisionConstants.APRIL_TAG_FIELD_LAYOUT, VisionConstants.BACK_RIGHT_CAMERA_POSE);
+    // backRightPoseEstimator =
+    //     new PhotonPoseEstimator(
+    //         VisionConstants.APRIL_TAG_FIELD_LAYOUT, VisionConstants.BACK_RIGHT_CAMERA_POSE);
     frontPoseEstimator =
         new PhotonPoseEstimator(
             VisionConstants.APRIL_TAG_FIELD_LAYOUT, VisionConstants.FRONT_CAMERA_POSE);
@@ -234,7 +234,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public CommandSwerveDrivetrain(
       SwerveDrivetrainConstants drivetrainConstants,
       double odometryUpdateFrequency,
-      PhotonCamera backRightCamera,
+      //PhotonCamera backRightCamera,
       PhotonCamera backLeftCamera,
       PhotonCamera frontCamera,
       SwerveModuleConstants<?, ?, ?>... modules) {
@@ -243,7 +243,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       startSimThread();
     }
     this.frontCamera = frontCamera;
-    this.backRightCamera = backRightCamera;
+    //this.backRightCamera = backRightCamera;
     this.backLeftCamera = backLeftCamera;
 
     headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -282,7 +282,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (Utils.isSimulation()) {
       startSimThread();
     }
-    this.backRightCamera = backRightCamera;
+    //this.backRightCamera = backRightCamera;
     this.backLeftCamera = backLeftCamera;
     this.frontCamera = frontCamera;
     headingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -399,9 +399,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // Logger.recordOutput("SOTM/Measured Chassis Speeds", findChassisSpeeds());
     // Logger.recordOutput("SOTM/Chassis Speeds", getFieldRelativeChassisSpeeds());
 
-    backRightResults = backRightCamera.getAllUnreadResults();
+    //backRightResults = backRightCamera.getAllUnreadResults();
     backLeftResults = backLeftCamera.getAllUnreadResults();
-    // frontResults = frontCamera.getAllUnreadResults();
+    frontResults = frontCamera.getAllUnreadResults();
 
     if (getCurrentCommand() != null) {
       Logger.recordOutput("Commands/RobotPose", getPose());
@@ -430,8 +430,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               });
     }
 
-    // getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
-    getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
+    getEstimatedGlobalPose(frontPoseEstimator, frontCamera, frontResults);
+    //getEstimatedGlobalPose(backRightPoseEstimator, backRightCamera, backRightResults);
     getEstimatedGlobalPose(backLeftPoseEstimator, backLeftCamera, backLeftResults);
   }
 
