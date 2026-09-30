@@ -116,7 +116,7 @@ public class RobotContainer {
   private Trigger gameShift;
   private Trigger endGame;
   private Trigger rainbow;
-  private Trigger trenchZone;
+  //private Trigger trenchZone;
 
   private static double shootingSpeed = 1;
 
@@ -197,13 +197,13 @@ public class RobotContainer {
         break;
     }
 
-    ShooterConstants.initializeTreeMap();
+    //ShooterConstants.initializeTreeMap();
 
     gameShift = new Trigger(() -> HubTracker.getInstance().getShiftTimeCountdown() <= 5);
     endGame = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 30);
     rainbow = new Trigger(() -> HubTracker.getInstance().getMatchTime() <= 1);
 
-    trenchZone = FieldZones.PREDICTIVE_TRENCH_GROUP.willContain(drivetrain::getPose, drivetrain.getFieldRelativeChassisSpeeds(), HoodConstants.DROP_TIME);
+    //trenchZone = FieldZones.PREDICTIVE_TRENCH_GROUP.willContain(drivetrain::getPose, drivetrain.getFieldRelativeChassisSpeeds(), HoodConstants.DROP_TIME);
     configureAutoChooser();
 
     // Configure the controller bindings
@@ -304,7 +304,7 @@ public class RobotContainer {
     operator.povDown().onTrue(hood.setHoodCommand(0.00));
     operator.povUp().onTrue(hood.setHoodCommand(HoodConstants.MAX_ANGLE.in(Rotations)));
 
-    trenchZone.whileTrue(hood.dropHoodCommand()); 
+    //trenchZone.whileTrue(hood.dropHoodCommand()); 
   }
 
   public void configureTuningOperator(){
