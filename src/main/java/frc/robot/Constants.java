@@ -137,7 +137,7 @@ public final class Constants {
         static {
             encoder.getConfigurator()
                     .apply(new MagnetSensorConfigs()
-                            .withMagnetOffset(0)
+                            .withMagnetOffset(0.00)
                             .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
                             .withAbsoluteSensorDiscontinuityPoint(1));
         }
@@ -223,12 +223,12 @@ public final class Constants {
         FLYWHEEL_MAP.put(3.8381558375194516, 55.9-.4);
         FLYWHEEL_MAP.put(4.228989917893823, 58.2);
         FLYWHEEL_MAP.put(4.611644034532603, 63.4);
-        FLYWHEEL_MAP.put(4.806505964322358, 68d); 
-        FLYWHEEL_MAP.put(5.0866738021581, 69.5d); // Corner
-        FLYWHEEL_MAP.put(5.5766738021581, 75.8d); // Corner
+        FLYWHEEL_MAP.put(4.806505964322358, 68.0d); 
+        FLYWHEEL_MAP.put(5.0866738021581, 71.5); // Corner
+        FLYWHEEL_MAP.put(5.5766738021581, 77.4); // Corner
 
-        FLYWHEEL_MAP.put(5.843456367540876, 78d); // Corner
-        FLYWHEEL_MAP.put(6.1, 80.0); // Theoretical Passing
+        FLYWHEEL_MAP.put(5.843456367540876, 80.0); // Corner
+        FLYWHEEL_MAP.put(6.1, 84.0); // Theoretical Passing
 
         TOF_MAP.put(1.6149594667137919, 6.81 - 5.64);
         TOF_MAP.put(1.9867200766826991, 3.55 - 2.7);

@@ -15,6 +15,7 @@ public class Intake extends SubsystemBase {
     private final IntakeIO io;
     private final PivotIOInputsAutoLogged pivotInputs = new PivotIOInputsAutoLogged();
     private final InfeedIOInputsAutoLogged infeedInputs = new InfeedIOInputsAutoLogged();
+    
 
     private double desiredAngle = 0;
 

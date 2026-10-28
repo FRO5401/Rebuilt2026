@@ -102,7 +102,7 @@ public class Autos {
                 firstGrab.cmd()));
 
         firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
-                (indexer.setIndexerCommand(() -> .8, () -> 11.0))));
+                (indexer.setIndexerCommand(() -> .8, () -> 12.0))));
 
         firstGrab.done().onTrue(Commands.waitSeconds(3)
                 .andThen(indexer.setIndexerCommand(() -> 0.0, () -> 0.0))
@@ -111,7 +111,7 @@ public class Autos {
         secondGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(
                 turret.setSmartTarget(),
                 Commands.waitSeconds(.1).andThen(
-                        indexer.setIndexerCommand(() -> .8, () -> 11.0)))
+                        indexer.setIndexerCommand(() -> .8, () -> 12.0)))
                 .andThen(Commands.waitSeconds(1))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
@@ -135,8 +135,8 @@ public class Autos {
 
 
         firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
-                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
-                        () -> 11.0))).andThen(
+                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> 0.8,
+                        () -> 12.0))).andThen(
                 intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE))
                 .andThen(Commands.waitSeconds(3))
@@ -163,13 +163,39 @@ public class Autos {
 
         firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
                 Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
-                        () -> 11.0))).andThen(
+                        () -> 12.0))).andThen(
                 intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE))
                 .andThen(Commands.waitSeconds(3))
                 .andThen(intake.setPivotPositionCommand(
                         IntakeConstants.INTAKE_OUT_POSE
                         * .3)).andThen(Commands.waitSeconds(2)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)));
+
+        return routine;
+    }
+
+        public AutoRoutine rightSingleTrenchStopAuto() {
+        AutoRoutine routine = autoFactory.newRoutine("RightTrenchSweep");
+
+        AutoTrajectory firstGrab = routine.trajectory("RightTrenchSweep");
+
+        firstGrab.active().onTrue(intake
+                .setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)
+                .andThen(intake.setInfeedVelocityCommand(
+                        IntakeConstants.INTAKE_SPEED + .1)));
+
+        routine.active().onTrue(
+                Commands.sequence(firstGrab.resetOdometry(), firstGrab.cmd()));
+
+        firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget(),
+                Commands.waitSeconds(.4).andThen(indexer.setIndexerCommand(() -> .8,
+                        () -> 12.0))).andThen(
+                intake.setPivotPositionCommand(
+                        IntakeConstants.INTAKE_OUT_POSE))
+                .andThen(Commands.waitSeconds(3))
+                .andThen(intake.setPivotPositionCommand(
+                        IntakeConstants.INTAKE_OUT_POSE
+                        * .3)).andThen(Commands.waitSeconds(2)).andThen(intake.setPivotPositionCommand(IntakeConstants.INTAKE_OUT_POSE)).andThen(intake.setInfeedVelocityCommand(0)));
 
         return routine;
     }
@@ -316,7 +342,7 @@ public class Autos {
 
       firstGrab.atTime("Shoot 1").onTrue(new ParallelCommandGroup(turret.setSmartTarget().andThen(indexer.setIndexerCommand(() -> -.5,() -> -11.0)),
                 Commands.waitSeconds(.2).andThen(indexer.setIndexerCommand(() -> .8,
-                        () -> 11.0))).andThen(
+                        () -> 12.0))).andThen(
                 intake.setInfeedVelocityCommand(
                         IntakeConstants.INTAKE_SPEED+.1)));
 
